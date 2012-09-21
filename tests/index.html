@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src='../lib/class.js'></script>
+    </head>
+    <body>
+        
+        <script type="text/javascript">
+                        
+                        
+            function Animal() {
+                this.type = 'animal';
+                this.types = [1];
+            }
+            
+            function Pet() {
+                this.home = true;
+            }
+            
+            var Tiger = Class({
+                Base: Animal,
+                Construct: function(nick) {
+                    this.name = 'Tiger';
+                    this.arr = [1, 2, 3];
+                    this.nick = nick
+                },
+                log: function() {
+                    console.log('TigerSays: ', this.name);
+                },
+                getType: function() {
+                    return 'Tiger';
+                }
+            });
+			
+			var Region = Class({
+				Construct: function(){
+					this.region = 'Africa';
+				}
+			});
+            
+            var AngryTiger = Class({
+                Extends: [Region, Tiger],
+                Construct: function() {
+                    console.log('angry construct');
+                },
+                feature: 'angry',
+                log: function() {
+                    console.log('AngryTigerSays: ', this.name);
+                    Tiger.prototype.log.apply(this, arguments);
+                }
+            });
+            
+            function log(message){
+                var div = document.createElement('div');
+                div.innerHTML = message;
+                document.body.appendChild(div);
+                console.log(message);
+            }
+            var tiger = new Tiger();            
+            var angry = new AngryTiger('Zlostik');
+            
+            
+            log(tiger instanceof Tiger || 'Error: Tiger not Tiger');
+            log(tiger instanceof Animal || 'Error: Tiger not Animal');
+            log(tiger instanceof Object || 'Error: Tiger not Object');
+            
+            log(tiger.type == 'animal' || 'Error: Type not Animal');
+            log(tiger.name == 'Tiger' || 'Error: Tiger name is not Tiger!');
+            
+            
+            log(angry instanceof Tiger || 'Error: Angry not Tiger');
+            log(angry instanceof Animal || 'Error: Angry not Animal');
+            log(tiger instanceof Object || 'Error: Angry not Object');
+            
+            log(angry.feature == 'angry' || 'Error: Feature not angry');
+			log(angry.name == 'Tiger' || 'Error: AngryTiger"s name is not Tiger!');
+			log(angry.region == 'Africa' || 'Error: AngryTiger is not from Africa!');
+			
+			
+            
+            log(angry.nick == 'Zlostik' || 'Error: Nick not Zlostik');
+            log(angry.getType != null || 'Error: getType is not Tiger');
+
+
+        </script>
+        
+    </body>
+</html>
