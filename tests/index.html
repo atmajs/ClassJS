@@ -39,7 +39,8 @@
 			});
             
             var AngryTiger = Class({
-                Extends: [Region, Tiger],
+                Base: Tiger,
+                Extends: [Region],
                 Construct: function() {
                     console.log('angry construct');
                 },
@@ -81,6 +82,31 @@
             log(angry.nick == 'Zlostik' || 'Error: Nick not Zlostik');
             log(angry.getType != null || 'Error: getType is not Tiger');
 
+
+            
+            log(tiger.constructor  === Tiger || 'Error: Tigers constructor is not Tiger');            
+
+            log(angry.constructor  === AngryTiger || 'Error: AngryTigers constructor is not AngryTiger');  
+
+
+            var A = Class({
+                Construct: function(){
+                    console.log('A');
+                }
+            });
+
+            var B = Class({
+                Base: A,
+                Construct: function(){
+                    console.log('B');
+                }
+            });
+
+            var a = new A();
+            var b = new B();
+            
+            log(a.constructor  === A || 'Error: A constructor is not A');            
+            log(b.constructor  === B || 'Error: B constructor is not B');  
 
         </script>
         
