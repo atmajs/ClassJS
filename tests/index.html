@@ -40,7 +40,7 @@
             
             var AngryTiger = Class({
                 Base: Tiger,
-                Extends: [Region],
+                Extends: Region,
                 Construct: function() {
                     console.log('angry construct');
                 },
@@ -102,11 +102,17 @@
                 }
             });
 
+            var C = Class({
+                Base: B,
+                toString: function(){}
+            })
+
             var a = new A();
             var b = new B();
-            
+            var c = new C();
             log(a.constructor  === A || 'Error: A constructor is not A');            
             log(b.constructor  === B || 'Error: B constructor is not B');  
+            log(c.constructor  === C || 'Error: C constructor is not C');  
 
         </script>
         
