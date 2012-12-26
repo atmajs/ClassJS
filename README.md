@@ -1,6 +1,6 @@
 <h4>ClassJS</h4>
-<h5>Very fast Class Implementation for Javascript</h5>
+<h5>Fast Class Implementation for browsers or nodejs based on prototypes chaining</h5>
 
 <p>
-	<a href='http://tenbits.github.com/CompoJS/#class'>Help</a>
+	<a href='http://libjs.it/#class'>Documentation</a>
 </p>
