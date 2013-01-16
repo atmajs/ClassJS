@@ -1,0 +1,15 @@
+{
+  "name": "libjs-class",
+  "description": "ClassJS - Simple and Fast Class Implementation For Browsers and Node",
+  "author": {
+    "name": "Alexander Kit",
+    "email": "source.kit@gmail.com"
+  },
+  "version": "1.0.3",
+  "main": "./lib/class.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tenbits/ClassJS.git"
+  },
+  "license": "MIT"
+}
