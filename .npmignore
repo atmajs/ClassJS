@@ -1,0 +1,7 @@
+node_modules/
+.gitignore
+.komodotools
+*.komodoproject
+build.bat
+build.config
+test/

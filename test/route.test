@@ -1,0 +1,29 @@
+
+
+function create(path, object, expect) {
+	var route = new Route(path).create(object);
+	
+	assert.equal(route, expect, 'Path - ' + path + ' Object - ' + JSON.stringify(object));
+}
+
+include.inject('../src/business/route.js').done(function(){
+	
+	create('user/:id',{id: 5}, 'user/5');	
+	create('user/{id}',{id: 5}, 'user/5');
+	
+	create('user/{id}text',{id: 5}, 'user/5text');
+	
+	create('users?date=:date',{date: 'today'}, 'users?date=today');
+	create('user/{id}?date=:date',{date: 'today', id: 5}, 'user/5?date=today');
+	
+	create('user/{id}/{key}?date={date}',{date: 'today', id: 5, key: 'key'}, 'user/5/key?date=today');
+
+	create('user/{id}/{key}?date={?date}&name={?name}',{id: 5, key: 'key'}, 'user/5/key');
+	create('user/{id}/{key}?date={?date}&name={?name}',{id: 5, key: 'key', name: 'x'}, 'user/5/key?name=x');
+	create('{?id}/{?key}?date={?date}&name={?name}',{id: 5, name: 'x'}, '5?name=x');
+	create('{?id}/{?key}?date={?date}&name={?name}',{name: 'x'}, '?name=x');
+	create('?:id/?:key?date={?date}&name={?name}',{name: 'x'}, '?name=x');
+});
+
+
+

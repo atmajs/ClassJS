@@ -1,0 +1,36 @@
+
+include.inject('lib/class.js').done(function(){
+	
+	
+	UTest({
+		
+		'data fetch': function(done){
+			
+			
+			var Foo = Class({
+				Store: Class.Remote('test/dom/data/{number}.json')
+			});
+			
+			
+			var foo = Foo.fetch({number: 1});
+			
+			assert.equal(typeof foo.done, 'function');
+
+			
+			
+			foo.done(assert.callback(function(){
+				
+				assert.equal(foo.name, 'A');
+
+				foo.number = 5;			
+				foo.fetch().fail(assert.callback(function(){
+					done();	
+				}));
+				
+			}));
+			
+		}
+		
+	})
+	
+});

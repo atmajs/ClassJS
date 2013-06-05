@@ -1,0 +1,133 @@
+include.inject('lib/class.js').done(function() {
+
+	  UTest({
+
+		  'inheritance': function() {
+			
+			  function Animal() {
+				  this.type = 'animal';
+				  this.types = [1];
+			  }
+
+			  function Pet() {
+				  this.home = true;
+			  }
+
+			  var Tiger = Class({
+				  Base: Animal,
+				  Construct: function(nick) {
+					  this.name = 'Tiger';
+					  this.arr = [1, 2, 3];
+					  this.nick = nick
+				  },
+				  log: function() {
+					  console.log('TigerSays: ', this.name);
+				  },
+				  getType: function() {
+					  return 'Tiger';
+				  }
+			  });
+
+			  var Region = Class({
+				  Construct: function() {
+					  this.region = 'Africa';
+				  }
+			  });
+
+			  var AngryTiger = Class({
+				  Base: Tiger,
+				  Extends: Region,
+				  Construct: function() {
+
+				  },
+				  feature: 'angry',
+				  log: function() {
+					  Tiger.prototype.log.apply(this, arguments);
+				  }
+			  });
+
+
+			  var tiger = new Tiger();
+			  var angry = new AngryTiger('Zlostik');
+
+
+			  assert.equal(tiger instanceof Tiger, true, 'Error: Tiger not Tiger');
+			  assert.equal(tiger instanceof Animal, true, 'Error: Tiger not Animal');
+			  assert.equal(tiger instanceof Object, true, 'Error: Tiger not Object');
+
+			  assert.equal(tiger.type == 'animal', true, 'Error: Type not Animal');
+			  assert.equal(tiger.name == 'Tiger', true, 'Error: Tiger name is not Tiger!');
+
+
+			  assert.equal(angry instanceof Tiger, true, 'Error: Angry not Tiger');
+			  assert.equal(angry instanceof Animal, true, 'Error: Angry not Animal');
+			  assert.equal(tiger instanceof Object, true, 'Error: Angry not Object');
+
+			  assert.equal(angry.feature == 'angry', true, 'Error: Feature not angry');
+			  assert.equal(angry.name == 'Tiger', true, 'Error: AngryTiger"s name is not Tiger!');
+			  assert.equal(angry.region == 'Africa', true, 'Error: AngryTiger is not from Africa!');
+
+
+
+			  assert.equal(angry.nick == 'Zlostik', true, 'Error: Nick not Zlostik');
+			  assert.equal(angry.getType != null, true, 'Error: getType is not Tiger');
+
+
+
+			  assert.equal(tiger.constructor === Tiger, true, 'Error: Tigers constructor is not Tiger');
+
+			  assert.equal(angry.constructor === AngryTiger, true, 'Error: AngryTigers constructor is not AngryTiger');
+
+
+			  var A = Class({});
+
+			  var B = Class({
+				  Base: A
+			  });
+
+			  var C = Class({
+				  Base: B,
+				  toString: function() {}
+			  })
+
+			  var a = new A();
+			  var b = new B();
+			  var c = new C();
+			  assert.equal(a.constructor === A, true, 'Error: A constructor is not A');
+			  assert.equal(b.constructor === B, true, 'Error: B constructor is not B');
+			  assert.equal(c.constructor === C, true, 'Error: C constructor is not C');
+
+		  },
+
+		  'static inheritance': function() {
+				var foo = Class({
+					Static: {
+						foo: function(){}
+					}
+				});
+				
+				var bar = Class({
+					Base: foo,
+					Static: {
+						bar: function(){}
+					}
+				});
+				
+				var baz = Class({
+					Extends: [foo, bar],
+					Static: {
+						baz: function(){}
+					}
+				});
+				
+				assert.equal(typeof bar.foo, 'function');
+				assert.equal(typeof bar.bar, 'function');
+				
+				assert.equal(typeof baz.foo, 'function');
+				assert.equal(typeof baz.bar, 'function');
+				assert.equal(typeof baz.baz, 'function');
+		  }
+	  });
+
+
+  });

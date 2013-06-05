@@ -1,0 +1,61 @@
+
+
+
+UTest({
+	
+	'collection storage': function(){
+				
+		var Users = Class.Collection(Object, {
+			Store: Class.LocalStore('users'),
+			print: function(){
+				console.log(this.array);
+			},
+			
+			
+		});
+		
+		
+		var users = new Users;
+		
+		assert.equal(users.length, 0)
+		assert.equal(typeof users.push, 'function')
+		
+		users.push({letter: 'A'});
+		
+		assert.equal(users.serialize(), '[{"letter":"A"}]');
+		
+		users.save(assert.callback(function(){}));
+		
+		
+		users = new Users;
+		assert.equal(typeof users.length, 'number')
+		
+		users.fetch();
+		users.push({letter: 'B'});
+		assert.equal(users.serialize(), '[{"letter":"A"},{"letter":"B"}]');
+		
+		
+		assert.equal(users[0].letter, 'A')
+		var first = users.first({letter: 'B'});
+		assert.equal(first.letter, 'B');
+		
+		users = users.where({letter: 'B'});
+		assert.equal(users[0].letter, 'B');
+		
+		
+		['C','D','D2'].forEach(function(x){
+			users.push({letter: x});
+		});
+		assert.equal(users.length, 4);
+		
+		
+		users.del({letter: 'C'});
+		assert.equal(users.length, 3);
+		
+		users.del(function(x){
+			return x.letter.indexOf('D') === 0;
+		});
+		assert.equal(users.length, 1);
+	}
+	
+})
