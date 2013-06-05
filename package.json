@@ -11,9 +11,15 @@
     "type": "git",
     "url": "git://github.com/tenbits/ClassJS.git"
   },
-  "license": "MIT",
+  
+  "devDependencies": {
+    "includejs": "~0.9.26"
+  },
+  
   "scripts" : {
       "test" : "node_modules/.bin/includejs test"
-  }
+  },
+  
+  "license": "MIT"
   
 }
