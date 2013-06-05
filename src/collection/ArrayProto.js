@@ -74,10 +74,9 @@ var ArrayProto = (function(){
 		},
 		
 		each: function(fn, cntx){
-			for (var i = 0, x, imax = array.length; i < imax; i++){
-				x = array[i];
+			for (var i = 0, imax = this.length; i < imax; i++){
 				
-				fn.call(cntx || this, x, i);
+				fn.call(cntx || this, this[i], i);
 			}
 		},
 		

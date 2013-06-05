@@ -35,9 +35,7 @@ var Route = (function(){
 		regexp_pathByBraces = /^([^\{\?]*)(\{(\??)([\w]+)\})?([^\s]*)?$/;
 	
 	function parse_single(string) {
-		var match = regexp_pathByColon.exec(string),
-			optional,
-			parts;
+		var match = regexp_pathByColon.exec(string);
 		
 		if (match) {
 			return {
@@ -60,8 +58,7 @@ var Route = (function(){
 	}
 	
 	function parse_path(path, delimiter) {
-		var parts = path.split(delimiter),
-			key, value;
+		var parts = path.split(delimiter);
 		
 		for (var i = 0, imax = parts.length; i < imax; i++){
 			parts[i] = parse_single(parts[i]);
@@ -90,12 +87,11 @@ var Route = (function(){
 	/** - route - [] */
 	function route_interpolate(breadcrumbs, object, delimiter) {
 		var route = [],
-			value,
 			key,
 			parts;
 		
 		
-		for (var i = 0, imax = breadcrumbs.length; i < imax; i++){
+		for (var i = 0, x, imax = breadcrumbs.length; i < imax; i++){
 			x = breadcrumbs[i];
 			parts = x.parts.slice(0);
 			

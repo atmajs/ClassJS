@@ -45,7 +45,7 @@ var Collection = (function(){
 			
 			return array;
 		}	
-	}
+	};
 	
 	function overrideConstructor(baseConstructor, Child) {
 		

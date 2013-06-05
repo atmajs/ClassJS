@@ -30,7 +30,7 @@ var class_inherit = (function() {
 				}
 				
 				return __super.apply(this, arguments);
-			}
+			};
         
         return function(){
             this.super = __proxy;
@@ -73,8 +73,7 @@ var class_inherit = (function() {
 	// browser that doesnt support __proto__ 
 	function inherit_protoLess(_class, _base, _extends, original) {
 		if (_base != null) {
-			var proto = {},
-				tmp = function() {};
+			var tmp = function() {};
 
 			tmp.prototype = _base.prototype;
 
@@ -137,4 +136,4 @@ var class_inheritStatics = function(_class, mix){
 		}
 		return;
 	}
-}
+};

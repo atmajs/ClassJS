@@ -6,7 +6,7 @@ var Remote = (function(){
 	
 	var XHRRemote = function(route){
 		this._route = new Route(route);
-	}
+	};
 	
 	obj_inherit(XHRRemote, StoreProto, DeferredProto, {
 		

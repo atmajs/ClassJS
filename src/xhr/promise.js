@@ -207,5 +207,5 @@
         exports.promise = promise;
     }
 
-    
+
 })(XHR);

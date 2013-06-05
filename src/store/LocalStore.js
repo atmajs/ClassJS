@@ -2,7 +2,7 @@ var LocalStore = (function(){
 	
 	var LocalStore = function(route){
 		this._route = new Route(route);
-	}
+	};
 	
 	obj_inherit(LocalStore, StoreProto, DeferredProto, {
 		

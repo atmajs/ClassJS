@@ -1,5 +1,6 @@
 (function(global){
 	
+	"use strict";
 	
 	// import ../src/util/array.js
 	// import ../src/util/proto.js
@@ -27,5 +28,4 @@
 	
 	global.Class = Class;
 	
-}((typeof window === 'undefined' || window.document == null) 
-	&& typeof global !== 'undefined' ? global : window));
+}((typeof window === 'undefined' || window.document == null) && typeof global !== 'undefined' ? global : window));

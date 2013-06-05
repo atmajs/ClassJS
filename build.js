@@ -40,7 +40,7 @@ function JSHint() {
 
 	return {
 		options: {
-			curly: true,
+			curly: false,
 			eqeqeq: true,
 			forin: false,
 			immed: true,
@@ -54,7 +54,7 @@ function JSHint() {
 			undef: true,
 			unused: true,
 			strict: true,
-			trailing: true,
+			trailing: false,
 
 			boss: true,
 			eqnull: true,
@@ -65,10 +65,12 @@ function JSHint() {
 			onevar: false,
 			evil: true,
 			sub: true,
+			smarttabs: true
 		},
 		globals: {
 			define: true,
 			require: true,
+			ActiveXObject: true
 		}
 	};
 }

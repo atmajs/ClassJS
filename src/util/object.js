@@ -68,19 +68,19 @@ var JSONHelper = {
 		for (key in this) {
 			
 			// _
-			if (key.charCodeAt(0) === 95) 
-				continue
+			if (key.charCodeAt(0) === 95)
+				continue;
 			
-			if ('Static' === key) 
-				continue
+			if ('Static' === key)
+				continue;
 			
 			value = this[key];
 			
 			if (value == null)
 				continue;
 			
-			if (typeof value === 'function') 
-				continue
+			if (typeof value === 'function')
+				continue;
 			
 			
 			obj[key] = value;
