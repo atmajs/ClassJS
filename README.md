@@ -40,7 +40,7 @@ Class({
 	Store: { Remote | LocalStore }
 
 
-	/*
+	/* 
 	 * Other class functions / properties you need
 	 * This Object is then transformed into prototype object of
 	 * a class.
@@ -76,6 +76,8 @@ user.del().done(onDone).fail(onFail).always(onComplete)
 
 ```
 
+More route samples can be found from tests [test/route.test](Route Tests)
+
 *LocalStore*
 _same as remote, as localStorage is remote class doesnt extend Class.Deferred_
 ```javascript
@@ -106,7 +108,7 @@ Creates Array-alike Object with store/query features
 ```javascript
 
 var Users = Class.Collection(User, {
-	Store: Remote('/api/users?location={country}')
+	Store: Remote('/api/users?location={?country}')
 });
 
 var list = Users.fetch({country: 'DE'});
