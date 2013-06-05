@@ -5,11 +5,15 @@
     "name": "Alexander Kit",
     "email": "source.kit@gmail.com"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "./lib/class.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/tenbits/ClassJS.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "scripts" : {
+      "test" : "node_modules/.bin/includejs test"
+  }
+  
 }
