@@ -47,7 +47,7 @@ UTest({
 			users.push({letter: x});
 		});
 		assert.equal(users.length, 4);
-		
+		 
 		
 		users.del({letter: 'C'});
 		assert.equal(users.length, 3);
@@ -56,6 +56,19 @@ UTest({
 			return x.letter.indexOf('D') === 0;
 		});
 		assert.equal(users.length, 1);
+		
+		
+		
+		users = new Users;
+		[1,2,3,4,5,6,7,8].forEach(function(x){
+			users.push({age: x});
+		});
+		
+		assert.equal(users.length, 8);
+		
+		users = users.where({age: '>4'});
+		assert.equal(users.length, 4);
+		assert.equal(users[0].age, 5);
 	}
 	
 })
