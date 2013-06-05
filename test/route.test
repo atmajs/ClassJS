@@ -6,7 +6,7 @@ function create(path, object, expect) {
 	assert.equal(route, expect, 'Path - ' + path + ' Object - ' + JSON.stringify(object));
 }
 
-include.inject('../src/business/route.js').done(function(){
+include.inject('/src/business/Route.js').done(function(){
 	
 	create('user/:id',{id: 5}, 'user/5');	
 	create('user/{id}',{id: 5}, 'user/5');

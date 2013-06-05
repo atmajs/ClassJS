@@ -1,5 +1,5 @@
 
-include.inject('lib/class.js').done(function(){
+include.inject('/lib/class.js').done(function(){
 	
 	
 	UTest({
