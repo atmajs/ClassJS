@@ -7,7 +7,7 @@ ClassJS
 Perfomant and Powerful Class - Model Implementation for browsers or nodejs
 
 
-[http://libjs.it/#class](Documentation)
+[Documentation](http://libjs.it/#class)
 
 
 ```javascript
@@ -76,7 +76,7 @@ user.del().done(onDone).fail(onFail).always(onComplete)
 
 ```
 
-More route samples can be found from tests [test/route.test](Route Tests)
+More route samples can be found from tests [Route Tests](test/route.test)
 
 *LocalStore*
 _same as remote, as localStorage is remote class doesnt extend Class.Deferred_

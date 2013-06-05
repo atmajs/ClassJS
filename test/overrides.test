@@ -1,0 +1,26 @@
+
+var A = Class({
+	array: [],
+	foo: function(letter){
+		this.array.push(letter || 'A');
+	}
+})
+
+var B = Class({
+	Base: A,
+	Override: {
+		foo: function(letter){
+			this.array.push('B');
+			this.super(letter);
+		}
+	}
+});
+
+
+var b = new B();
+
+b.foo();
+eq(b.array.join('-'), 'B-A');
+
+b.foo('K');
+eq(b.array.join('-'), 'B-A-B-K');

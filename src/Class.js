@@ -5,6 +5,9 @@ var Class = function(data) {
 		_construct = data.Construct,
 		_class = null,
 		_store = data.Store,
+		
+		_overrides = data.Override,
+		
 		key;
 
 	if (_base != null) {
@@ -22,6 +25,10 @@ var Class = function(data) {
 	
 	if (_store != null) {
 		delete data.Store;
+	}
+	
+	if (_overrides != null) {
+		delete data.Override;
 	}
 	
 	if (_extends == null) {
@@ -101,7 +108,7 @@ var Class = function(data) {
 	}
 
 
-	class_inherit(_class, _base, _extends, data);
+	class_inherit(_class, _base, _extends, data, _overrides);
 
 
 	data = null;
