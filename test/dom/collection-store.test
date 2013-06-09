@@ -124,6 +124,23 @@ UTest({
 			
 			
 		}
+	},
+	
+	'array.sort/reverse': function(){
+		users = new Users()
+			.push({x:1}, {x:0}, {x:2})
+			.sort(function(a,b){
+				return a.x < b.x ? -1 : 1;
+			});
+		
+		eq(users[0].x, 0);
+		eq(users[2].x, 2);
+		
+		
+		users.reverse();
+		eq(users[0].x, 2);
+		eq(users[2].x, 0);
+		
 	}
 	
 })

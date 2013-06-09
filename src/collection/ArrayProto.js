@@ -62,8 +62,12 @@ var ArrayProto = (function(){
 	}
 
 	var ArrayProto = {
-		push: function(mix) {
-			this[this.length++] = create(this._constructor, mix);
+		push: function(/*mix*/) {
+			for (var i = 0, imax = arguments.length; i < imax; i++){
+				
+				this[this.length++] = create(this._constructor, arguments[i]);
+			}
+			
 			return this;
 		},
 		pop: function() {
@@ -167,6 +171,23 @@ var ArrayProto = (function(){
 			return _Array_slice.apply(this, arguments);
 		},
 		
+		sort: function(fn){
+			_Array_sort.call(this, fn);
+			return this;
+		},
+		
+		reverse: function(){
+			var array = _Array_slice.call(this, 0);
+				
+			for (var i = 0, imax = this.length; i < imax; i++){
+				this[i] = array[imax - i - 1];
+			}
+		},
+		
+		toString: function(){
+			return _Array_slice.call(this, 0).toString()
+		},
+		
 		each: function(fn, cntx){
 			for (var i = 0, imax = this.length; i < imax; i++){
 				
@@ -174,21 +195,6 @@ var ArrayProto = (function(){
 			}
 		},
 		
-		sort: function(fn){
-			//var x;
-			//for (var i = 0, imax = this.length - 1; i < imax; i++){
-			//	
-			//	if (fn(this[i], this[i + 1]) > 0) {
-			//		x = this[i];
-			//		
-			//		this[i] = this[i + 1];
-			//		this[i + 1] = x;
-			//	}
-			//	
-			//}
-			_Array_sort.call(this, fn);
-			return this;
-		},
 		
 		where: function(mix){
 			

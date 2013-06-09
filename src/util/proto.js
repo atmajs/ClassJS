@@ -26,7 +26,7 @@ var class_inherit = (function() {
 			__proxy = function(args){
 				
 				if (_isArguments(args)) {
-					return __super.apply(this, arguments);
+					return __super.apply(this, args);
 				}
 				
 				return __super.apply(this, arguments);
@@ -35,7 +35,7 @@ var class_inherit = (function() {
         return function(){
             this.super = __proxy;
             
-            fn.apply(this, arguments);
+            return fn.apply(this, arguments);
         };
     }
 
