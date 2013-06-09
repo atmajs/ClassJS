@@ -12,6 +12,7 @@
 	// import ../src/xhr/XHR.js
 	// import ../src/xhr/promise.js
 	
+	// import ../src/business/Serializable.js
 	// import ../src/business/Route.js
 	// import ../src/business/Deferred.js
 	// import ../src/business/EventEmitter.js

@@ -20,3 +20,4 @@ Class.LocalStore = LocalStore;
 Class.Deferred = DeferredProto;
 Class.EventEmitter = EventEmitter;
 Class.Collection = Collection;
+Class.Serializable = Serializable;
