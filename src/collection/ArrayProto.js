@@ -1,5 +1,5 @@
 
-var ArrayProto = window.X = (function(){
+var ArrayProto = (function(){
 
 	function check(x, mix) {
 		if (mix == null)
