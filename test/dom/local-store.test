@@ -1,8 +1,5 @@
 
 
-	
-var eq = assert.equal;
-
 UTest({
 	
 	'data fetch': function(){

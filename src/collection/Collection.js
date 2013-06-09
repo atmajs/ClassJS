@@ -26,6 +26,12 @@ var Collection = (function(){
 		del: function(mix){
 			
 			if (mix == null) {
+				
+				for (var i = 0, imax = this.length; i < imax; i++){
+					this[i] = null;
+				}
+				this.length = 0;
+				
 				LocalStore.prototype.del.call(this);
 				return this;
 			}

@@ -56,10 +56,15 @@ var LocalStore = (function(){
 	
 	
 	
-	return function(route){
+	var Constructor = function(route){
 		
 		return new LocalStore(route);
 		
 	};
 	
+	Constructor.prototype = LocalStore.prototype;
+	
+	
+	return Constructor;
+
 }());

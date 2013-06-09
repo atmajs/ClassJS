@@ -1,61 +1,57 @@
 
+var Users = Class.Collection(Object, {
+	Store: Class.LocalStore('users'),
+	print: function(){},
+});
 
+var users;
 
 UTest({
 	
 	'collection storage': function(){
-				
-		var Users = Class.Collection(Object, {
-			Store: Class.LocalStore('users'),
-			print: function(){
-				console.log(this.array);
-			},
 			
-			
-		});
+		users = new Users;
 		
-		
-		var users = new Users;
-		
-		assert.equal(users.length, 0)
-		assert.equal(typeof users.push, 'function')
+		eq(users.length, 0)
+		eq(typeof users.push, 'function')
+		eq(typeof users.print, 'function')
 		
 		users.push({letter: 'A'});
 		
-		assert.equal(users.serialize(), '[{"letter":"A"}]');
+		eq(users.serialize(), '[{"letter":"A"}]');
 		
 		users.save(assert.callback(function(){}));
 		
 		
 		users = new Users;
-		assert.equal(typeof users.length, 'number')
+		eq(typeof users.length, 'number')
 		
 		users.fetch();
 		users.push({letter: 'B'});
-		assert.equal(users.serialize(), '[{"letter":"A"},{"letter":"B"}]');
+		eq(users.serialize(), '[{"letter":"A"},{"letter":"B"}]');
 		
 		
-		assert.equal(users[0].letter, 'A')
+		eq(users[0].letter, 'A')
 		var first = users.first({letter: 'B'});
-		assert.equal(first.letter, 'B');
+		eq(first.letter, 'B');
 		
 		users = users.where({letter: 'B'});
-		assert.equal(users[0].letter, 'B');
+		eq(users[0].letter, 'B');
 		
 		
 		['C','D','D2'].forEach(function(x){
 			users.push({letter: x});
 		});
-		assert.equal(users.length, 4);
+		eq(users.length, 4);
 		 
 		
 		users.del({letter: 'C'});
-		assert.equal(users.length, 3);
+		eq(users.length, 3);
 		
 		users.del(function(x){
 			return x.letter.indexOf('D') === 0;
 		});
-		assert.equal(users.length, 1);
+		eq(users.length, 1);
 		
 		
 		
@@ -64,11 +60,70 @@ UTest({
 			users.push({age: x});
 		});
 		
-		assert.equal(users.length, 8);
+		eq(users.length, 8);
 		
 		users = users.where({age: '>4'});
-		assert.equal(users.length, 4);
-		assert.equal(users[0].age, 5);
+		eq(users.length, 4);
+		eq(users[0].age, 5);
+		
+		users.del();
+		eq(users.length, 0);
+		users.fetch();
+		eq(users.length, 0);
+	},
+	
+	
+	'array.splice': function(){
+		var index = 0;
+		
+		users = new Users();
+		
+		
+		mutate(0, 0, 1); // l 1
+		mutate(0, 1, 1); // l 1
+		mutate(1, 0, 1); // l 2
+		mutate(1, 1, 2); // l 3
+		
+		
+		function mutate(start, removeCount, insertCount) {
+			var insert = [];
+			for (var i = 0, imax = insertCount; i < imax; i++){
+				
+				insert.push({x: ++index});
+			}
+			
+			splice(users, start, removeCount, insert)
+		}
+		
+		function splice(coll, start, count, insert) {
+			var array = coll.slice(0);
+			eq(coll.length, array.length);
+			
+			
+			coll.splice.apply(coll, [start, count].concat(insert));
+			
+			eq(array.length - count + insert.length, coll.length);
+			
+			
+			// head
+			for (var i = 0, imax = start; i < imax; i++){
+				deepEq(coll[i], array[i]);
+			}
+			
+			// new
+			
+			insert.length && eq(coll[start].x, insert[0].x);
+			for (var i = 0, imax = insert.length; i < imax; i++) {
+				deepEq(coll[start + i], insert[i]);
+			}
+			
+			// tail
+			for (var i = start + count; i< array.length; i++) {
+				deepEq(coll[i - count + insert.length], array[i]);
+			}
+			
+			
+		}
 	}
 	
 })

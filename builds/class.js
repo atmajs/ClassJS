@@ -2,6 +2,9 @@
 	
 	"use strict";
 	
+	var _Array_slice = Array.prototype.slice,
+		_Array_sort = Array.prototype.sort;
+	
 	// import ../src/util/array.js
 	// import ../src/util/proto.js
 	// import ../src/util/object.js
