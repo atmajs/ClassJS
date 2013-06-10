@@ -17,7 +17,8 @@ Class.bind = function(cntx) {
 
 Class.Remote = Remote;
 Class.LocalStore = LocalStore;
+Class.Collection = Collection;
+
+Class.Serializable = Serializable;
 Class.Deferred = DeferredProto;
 Class.EventEmitter = EventEmitter;
-Class.Collection = Collection;
-Class.Serializable = Serializable;

@@ -24,21 +24,20 @@ var Class = function(data) {
 	}
 	
 	if (_store != null) {
+		
+		if (_extends == null) {
+			_extends = _store;
+		} else if (Array.isArray(_extends)) {
+			_extends.push(_store)
+		} else {
+			_extends = [_extends, _store];
+		}
+		
 		delete data.Store;
 	}
 	
 	if (_overrides != null) {
 		delete data.Override;
-	}
-	
-	if (_extends == null) {
-		_extends = _store;
-	}else{
-		if (Array.isArray(_extends)) {
-			_extends.push(_store);
-		}else{
-			_extends = [_extends, _store];
-		}
 	}
 	
 	if (data.toJSON === void 0) {

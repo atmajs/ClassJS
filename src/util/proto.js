@@ -2,6 +2,8 @@
 
 var class_inherit = (function() {
 	
+	var PROTO = '__proto__';
+	
 	function proto_extend(proto, source) {
 		if (source == null) {
 			return;
@@ -10,6 +12,10 @@ var class_inherit = (function() {
 			proto = proto.prototype;
 		}
 	
+		if (typeof source === 'function') {
+			source = source.prototype;
+		}
+		
 		for (var key in source) {
 			proto[key] = source[key];
 		}
@@ -47,16 +53,16 @@ var class_inherit = (function() {
 		prototype.constructor = _class.prototype.constructor;
 
 		if (_extends != null) {
-			proto['__proto__'] = {};
+			proto[PROTO] = {};
 
 			arr_each(_extends, function(x) {
-				proto_extend(proto['__proto__'], x);
+				proto_extend(proto[PROTO], x);
 			});
-			proto = proto['__proto__'];
+			proto = proto[PROTO];
 		}
 
 		if (_base != null) {
-			proto['__proto__'] = _base.prototype;
+			proto[PROTO] = _base.prototype;
 		}
 
 		
