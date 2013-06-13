@@ -1,5 +1,18 @@
-(function(global){
+(function(root, factory){
 	
+	if (root == null) {
+		root = typeof window !== 'undefined' && typeof document !== 'undefined' ? window : global;
+	}
+	
+	
+	if (typeof module !== 'undefined') {
+		module.exports = factory(root);
+		return;
+	}
+	
+	root.Class = factory(root);
+	
+}(this, function(global){
 	"use strict";
 	
 	var _Array_slice = Array.prototype.slice,
@@ -30,6 +43,6 @@
 	
 	
 	
-	global.Class = Class;
+	return Class;
 	
-}((typeof window === 'undefined' || window.document == null) && typeof global !== 'undefined' ? global : window));
+}));
