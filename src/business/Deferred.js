@@ -4,24 +4,24 @@ var DeferredProto = {
 	_done: null,
 	_fail: null,
 	_always: null,
-	_isResolved: false,
-	_isRejected: false,
+	_resolved: false,
+	_rejected: false,
 	
 	deferr: function(){
-		this._isRejected = false;
-		this._isResolved = false;
+		this._rejected = false;
+		this._resolved = false;
 	},
 	
 	resolve: function() {
 		this._fail = null;
-		this._isResolved = true;
+		this._resolved = arguments;
 
 		var cbs = this._done,
 			imax = cbs && cbs.length,
 			i = 0;
 		if (cbs) {
 			while (imax-- !== 0) {
-				cbs[i++](this);
+				cbs[i++].apply(this, arguments);
 			}
 			this._done = null;
 		}
@@ -31,7 +31,7 @@ var DeferredProto = {
 		i = 0;
 		if (cbs) {
 			while (imax-- !== 0) {
-				cbs[i++](this);
+				cbs[i++].apply(this, this);
 			}
 			this._always = null;
 		}
@@ -40,14 +40,14 @@ var DeferredProto = {
 	},
 	reject: function() {
 		this._done = null;
-		this._isRejected = true;
+		this._rejected = arguments;
 
 		var cbs = this._fail,
 			imax = cbs && cbs.length,
 			i = 0;
 		if (cbs) {
 			while (imax-- !== 0) {
-				cbs[i++](this);
+				cbs[i++].apply(this, arguments);
 			}
 			this._fail = null;
 		}
@@ -57,7 +57,7 @@ var DeferredProto = {
 		i = 0;
 		if (cbs) {
 			while (imax-- !== 0) {
-				cbs[i++](this);
+				cbs[i++].apply(this, this);
 			}
 			this._always = null;
 		}
@@ -67,32 +67,29 @@ var DeferredProto = {
 
 	done: function(callback) {
 		
-		if (this._isResolved)
-			callback(this);
+		if (this._resolved)
+			callback.apply(this, this._resolved);
 		else
-			(this._done || (this._done = []))
-				.push(callback);
+			(this._done || (this._done = [])).push(callback);
 
 
 		return this;
 	},
 	fail: function(callback) {
 		
-		if (this._isRejected)
-			callback(this);
+		if (this._rejected)
+			callback.apply(this, this._rejected);
 		else
-			(this._fail || (this._fail = []))
-				.push(callback);
+			(this._fail || (this._fail = [])).push(callback);
 
 
 		return this;
 	},
 	always: function(callback) {
-		if (this._isRejected || this._isResolved)
-			callback(this);
+		if (this._rejected || this._resolved)
+			callback.apply(this, this);
 		else
-			(this._always || (this._always = []))
-				.push(callback);
+			(this._always || (this._always = [])).push(callback);
 
 		return this;
 	},
