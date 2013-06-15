@@ -15,30 +15,47 @@ Class({
 	/*
 	 * instanceof also works on deep inheritances
 	 */
-	Base: { Function } BaseConstructor,
+	Base: < Function > BaseConstructor,
 
 	/* 
 	 * Same as base, but instanceof wont work, 
 	 * as instanceof allows linear inheritance only
 	 */
-	Extends: { Function | Object | Array } Mixins
+	Extends: < Function | Object | Array > Mixins
 
 	/*
 	 * constructor of a class - if has inheritance, 
 	 * also all constructors will be called
 	 */
-	Construct: { Function } function(){}
+	Construct: < Function > function(){}
 
 	/*
-	 *Static functions of a created Class
+	 * Static functions of a created Class
+	 * User.key()
 	 */
-	Static: { Object } 
+	Static: < Object > { key: function(){} }
 
 	/*
 	 * RESTFull / LocalStorage serialization / deserialization
 	 */
-	Store: { Remote | LocalStore }
+	Store: < Class.Remote | Class.LocalStore >
 
+    /*
+	 * Override any Base or Extended Function
+	 *
+	 *  Using this object, there will be access to overriden function
+     *  via this.super();
+     */
+	 Override: < Object > {
+		some: function(){
+			
+			// default arguments
+			this.super(arguments);
+			
+			// overriden arguments
+			this.super(arg1, arg2);
+		}
+	 }
 
 	/* 
 	 * Other class functions / properties you need
@@ -56,6 +73,7 @@ Store
 -----
 
 *Remote*
+_async - extends Class.Deferred_
 
 ```javascript
 var User = Class({
@@ -79,7 +97,7 @@ user.del().done(onDone).fail(onFail).always(onComplete)
 More route samples can be found from tests [Route Tests](test/route.test)
 
 *LocalStore*
-_same as remote, as localStorage is remote class doesnt extend Class.Deferred_
+_same as remote, as localStorage is sync - class doesnt extend Class.Deferred_
 ```javascript
 var Settings = Class({
 	Store: Class.LocalStore('app/settings'),
@@ -131,10 +149,65 @@ list.done(function(obj){
 
 	// mutator
 	list.remove({age: '<5'});
+	
+	// storage
+	list.save();
 
 
 	// mutator + storage
 	list.del({age: '<5'});
 })
+
+```
+
+Deferred
+------
+
+```javascript
+var X = Class({
+	Extends: Class.Deferred
+});
+
+new X()
+
+	.resolve ( arg )
+	.reject  ( arg )
+
+	.done   ( callback )
+	.fail   ( callback )
+	.always ( callback )
+	;
+	
+```
+
+EventEmitter
+------
+
+```javascript
+var X = Class({
+	Extends: Class.EventEmitter
+});
+
+new X()
+
+	.trigger( ..args )
+	.on(event, callback)
+	
+	// function is detached after one call
+	.once(event, callback)
+	
+	.off(event, callback)
+	
+	// creates function that can be bound to other event emitter
+	// and transmits the event with new eventName to current listeners
+	.pipe(event);
+
+// pipe sample:
+
+x.on('x-event', function(arg) {console.log('x-event', arg, '!'); });
+y.on('y-event', x.pipe('x-event'));
+	
+y.trigger('y-event', '1.2.3');
+// logs > "x-event 1.2.3!"
 
 ```
