@@ -5,10 +5,10 @@
 	}
 	
 	
-	if (typeof module !== 'undefined') {
-		module.exports = factory(root);
-		return;
-	}
+	// if (typeof module !== 'undefined') {
+	// 	module.exports = factory(root);
+	// 	return;
+	// }
 	
 	root.Class = factory(root);
 	
