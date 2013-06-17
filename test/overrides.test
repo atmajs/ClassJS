@@ -24,3 +24,4 @@ eq(b.array.join('-'), 'B-A');
 
 b.foo('K');
 eq(b.array.join('-'), 'B-A-B-K');
+
