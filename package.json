@@ -13,7 +13,7 @@
   },
   
   "devDependencies": {
-    "includejs": "~0.9.29"
+    "includejs": "~0.9.30"
   },
   
   "scripts" : {
