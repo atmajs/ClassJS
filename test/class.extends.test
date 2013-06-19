@@ -3,7 +3,7 @@ var Animal = Class({
 });
 
 
-function check(Extends,Store) {
+function check(Extends, Store) {
 		
 	var X = Class({
 		Extends: Extends,

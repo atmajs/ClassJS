@@ -4,12 +4,12 @@ var DeferredProto = {
 	_done: null,
 	_fail: null,
 	_always: null,
-	_resolved: false,
-	_rejected: false,
+	_resolved: null,
+	_rejected: null,
 	
 	deferr: function(){
-		this._rejected = false;
-		this._resolved = false;
+		this._rejected = null;
+		this._resolved = null;
 	},
 	
 	resolve: function() {
@@ -67,7 +67,7 @@ var DeferredProto = {
 
 	done: function(callback) {
 		
-		if (this._resolved)
+		if (this._resolved != null)
 			callback.apply(this, this._resolved);
 		else
 			(this._done || (this._done = [])).push(callback);
@@ -77,7 +77,7 @@ var DeferredProto = {
 	},
 	fail: function(callback) {
 		
-		if (this._rejected)
+		if (this._rejected != null)
 			callback.apply(this, this._rejected);
 		else
 			(this._fail || (this._fail = [])).push(callback);
@@ -86,7 +86,7 @@ var DeferredProto = {
 		return this;
 	},
 	always: function(callback) {
-		if (this._rejected || this._resolved)
+		if (this._rejected != null || this._resolved != null)
 			callback.apply(this, this);
 		else
 			(this._always || (this._always = [])).push(callback);

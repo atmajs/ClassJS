@@ -104,6 +104,7 @@ var ArrayProto = (function(){
 			}
 			
 			this[0] = create(this._constructor, mix);
+			return this;
 		},
 		
 		splice: function(index, count /* args */){
@@ -182,6 +183,7 @@ var ArrayProto = (function(){
 			for (var i = 0, imax = this.length; i < imax; i++){
 				this[i] = array[imax - i - 1];
 			}
+			return this;
 		},
 		
 		toString: function(){
@@ -192,6 +194,7 @@ var ArrayProto = (function(){
 			for (var i = 0, imax = this.length; i < imax; i++){
 				
 				fn.call(cntx || this, this[i], i);
+				
 			}
 		},
 		

@@ -3,7 +3,7 @@
 function create(path, object, expect) {
 	var route = new Route(path).create(object);
 	
-	assert.equal(route, expect, 'Path - ' + path + ' Object - ' + JSON.stringify(object));
+	eq(route, expect, 'Path - ' + path + ' Object - ' + JSON.stringify(object));
 }
 
 include.inject('/src/business/Route.js').done(function(){
