@@ -22,3 +22,5 @@ Class.Collection = Collection;
 Class.Serializable = Serializable;
 Class.Deferred = DeferredProto;
 Class.EventEmitter = EventEmitter;
+
+Class.validate = Validation.validate;

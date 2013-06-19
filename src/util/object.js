@@ -67,11 +67,11 @@ var JSONHelper = {
 		
 		for (key in this) {
 			
-			// _
+			// _ (private)
 			if (key.charCodeAt(0) === 95)
 				continue;
 			
-			if ('Static' === key)
+			if ('Static' === key || 'Validate' === key)
 				continue;
 			
 			value = this[key];
