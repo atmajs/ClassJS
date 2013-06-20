@@ -25,6 +25,11 @@ var Collection = (function(){
 		
 		del: function(mix){
 			
+			if (mix == null && arguments.length !== 0) {
+				console.error('Collection.del - selector is specified, but is undefined');
+				return this;
+			}
+			
 			if (mix == null) {
 				
 				for (var i = 0, imax = this.length; i < imax; i++){
