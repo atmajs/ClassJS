@@ -9,6 +9,11 @@ var ArrayProto = (function(){
 			return mix(x);
 		
 		if (typeof mix === 'object'){
+			
+			if (x.constructor === mix.constructor) {
+				return x === mix;
+			}
+			
 			var value, matcher;
 			for (var key in mix) {
 				
