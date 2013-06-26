@@ -10,7 +10,7 @@ var ArrayProto = (function(){
 		
 		if (typeof mix === 'object'){
 			
-			if (x.constructor === mix.constructor) {
+			if (x.constructor === mix.constructor && x.constructor !== Object) {
 				return x === mix;
 			}
 			
