@@ -106,7 +106,7 @@ var Class = function(data) {
 		class_inheritStatics(_class, _extends);
 	}
 
-
+	class_extendProtoObjects(data, _base, _extends);
 	class_inherit(_class, _base, _extends, data, _overrides);
 
 

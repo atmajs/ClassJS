@@ -1,15 +1,20 @@
 function arr_each(array, callback) {
 	
-	if (array instanceof Array) {
+	if (arr_isArray(array)) {
 		for (var i = 0, imax = array.length; i < imax; i++){
 			callback(array[i], i);
-			
 		}
 		return;
 	}
 	
 	callback(array);
+}
 
+function arr_isArray(array) {
+	return array != null
+		&& typeof array === 'object'
+		&& typeof array.length === 'number'
+		&& typeof array.splice === 'function';
 }
 
 if (typeof Array.isArray !== 'function') {

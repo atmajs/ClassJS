@@ -29,14 +29,16 @@ var class_inherit = (function() {
 	
 	function proto_override(proto, key, fn) {
         var __super = proto[key],
-			__proxy = function(args){
+			__proxy = __super == null
+				? function() {}
+				: function(args){
 				
-				if (_isArguments(args)) {
-					return __super.apply(this, args);
-				}
-				
-				return __super.apply(this, arguments);
-			};
+					if (_isArguments(args)) {
+						return __super.apply(this, args);
+					}
+					
+					return __super.apply(this, arguments);
+				};
         
         return function(){
             this.super = __proxy;
@@ -107,6 +109,12 @@ var class_inherit = (function() {
 
 }());
 
+function proto_getProto(mix) {
+	if (typeof mix === 'function') {
+		return mix.prototype;
+	}
+	return mix;
+}
 
 var class_inheritStatics = function(_class, mix){
 	if (mix == null) {
@@ -143,3 +151,29 @@ var class_inheritStatics = function(_class, mix){
 		return;
 	}
 };
+
+function class_extendProtoObjects(proto, _base, _extends){
+	var key,
+		protoValue;
+		
+	for (key in proto) {
+		protoValue = proto[key];
+		
+		if (!obj_isRawObject(protoValue))
+			continue;
+		
+		if (_base != null){
+			if (obj_isRawObject(_base.prototype[key])) 
+				obj_defaults(protoValue, _base.prototype[key]);
+		}
+		
+		if (_extends != null) {
+			arr_each(_extends, function(x){
+				x = proto_getProto(x);
+				
+				if (obj_isRawObject(x[key])) 
+					obj_defaults(protoValue, x[key]);
+			});
+		}
+	}
+}

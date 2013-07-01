@@ -30,3 +30,5 @@ check([Animal]);
 check(Animal, Class.LocalStore('x'));
 check([Animal], Class.LocalStore('x'));
 
+
+
