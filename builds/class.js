@@ -21,6 +21,7 @@
 	// import ../src/util/array.js
 	// import ../src/util/proto.js
 	// import ../src/util/object.js
+	// import ../src/util/function.js
 	
 	// import ../src/xhr/XHR.js
 	// import ../src/xhr/promise.js

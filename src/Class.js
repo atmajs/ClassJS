@@ -5,7 +5,7 @@ var Class = function(data) {
 		_construct = data.Construct,
 		_class = null,
 		_store = data.Store,
-		
+		_self = data.Self,
 		_overrides = data.Override,
 		
 		key;
@@ -18,6 +18,9 @@ var Class = function(data) {
 	}
 	if (_static != null) {
 		delete data.Static;
+	}
+	if (_self != null) {
+		delete data.Self;
 	}
 	if (_construct != null) {
 		delete data.Construct;
@@ -45,7 +48,7 @@ var Class = function(data) {
 	}
 
 
-	if (_base == null && _extends == null) {
+	if (_base == null && _extends == null && _self == null) {
 		if (_construct == null) {
 			_class = function() {};
 		} else {
@@ -81,6 +84,12 @@ var Class = function(data) {
 
 		if (_base != null) {
 			_base.apply(this, arguments);
+		}
+		
+		if (_self != null) {
+			for (var key in _self) {
+				this[key] = fn_proxy(_self[key], this);
+			}
 		}
 
 		if (_construct != null) {
