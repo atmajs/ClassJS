@@ -50,7 +50,7 @@
 	// import ../src/Class.Static.js
 	
 	
-	
+	// import ../src/fn/fn.js
 	
 	exports.Class = Class;
 	
