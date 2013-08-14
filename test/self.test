@@ -1,7 +1,7 @@
 
 
 UTest({
-	'selft' : function(){
+	'self' : function(){
 		
 		var A = Class({
 			name: 'A',

@@ -16,7 +16,7 @@ var LocalStore = (function(){
 				return this;
 			}
 			
-			if (typeof object === 'string'){
+			if (is_String(object)){
 				try {
 					object = JSON.parse(object);
 				} catch(e) {
@@ -59,7 +59,6 @@ var LocalStore = (function(){
 	var Constructor = function(route){
 		
 		return new LocalStore(route);
-		
 	};
 	
 	Constructor.prototype = LocalStore.prototype;

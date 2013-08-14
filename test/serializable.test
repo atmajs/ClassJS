@@ -1,0 +1,41 @@
+(function() {
+
+	var A = Class({
+		Extends: Class.Serializable,
+		name: 'A'
+	});
+
+	var B = Class({
+		Extends: Class.Serializable({
+			a: A
+		}),
+		Construct: function(){
+			this.a = new A;
+		}
+	});
+
+	UTest({
+		'serialize': function() {
+			
+			eq(new A().serialize(), '{"name":"A"}');
+			eq(new B().serialize(), '{"a":{"name":"A"}}');
+		},
+		
+		'deserialize': function() {
+			
+			eq(Class.Serializable.prototype.deserialize.call({}, {name: 'raw'}).name, 'raw');
+			
+			eq(new A().deserialize('{"name":"aX"}').name, 'aX');
+			eq((new A({name: 'aX'})).name, 'aX');
+			
+			
+			var b = new B().deserialize('{"a":{"name":"bX"}}');
+			
+			assert(b instanceof B);
+			assert(b.a instanceof A);
+			eq(b.a.name, 'bX');
+			
+		}
+	});
+
+}());
