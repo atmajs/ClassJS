@@ -45,7 +45,7 @@ var EventEmitter = (function(){
 				if (fn._once === true){
 					fns.splice(i,1);
 					i--;
-					length--;
+					imax--;
 				}
 			}
 		
@@ -65,7 +65,7 @@ var EventEmitter = (function(){
 					arr.splice(i, 1);
 				
 				i--;
-				length--;
+				imax--;
 			}
 		
             return this;

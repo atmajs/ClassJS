@@ -8,7 +8,7 @@ var Route = (function(){
 	
 	function Route(route){
 		this.route = route_parse(route);
-	};
+	}
 	
 	Route.prototype = {
 		constructor: Route,

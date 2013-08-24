@@ -142,7 +142,7 @@
         function onTimeout() {
             xhr.abort();
             p.done(exports.promise.ETIMEOUT, "");
-        };
+        }
 
         var timeout = exports.promise.ajaxTimeout;
         if (timeout) {

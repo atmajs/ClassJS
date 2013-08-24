@@ -30,5 +30,5 @@ function fn_proxy(fn, cntx) {
 		};
 		
 		return fn.apply(cntx, arguments);
-	};
+	}
 }
