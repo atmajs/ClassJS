@@ -20,20 +20,20 @@ var DeferredProto = {
 			imax = cbs && cbs.length,
 			i = 0;
 		if (cbs) {
+			this._done = null;
 			while (imax-- !== 0) {
 				cbs[i++].apply(this, arguments);
 			}
-			this._done = null;
 		}
 
 		cbs = this._always;
 		imax = cbs && cbs.length,
 		i = 0;
 		if (cbs) {
+			this._always = null;
 			while (imax-- !== 0) {
 				cbs[i++].apply(this, this);
 			}
-			this._always = null;
 		}
 
 		return this;
@@ -46,20 +46,20 @@ var DeferredProto = {
 			imax = cbs && cbs.length,
 			i = 0;
 		if (cbs) {
+			this._fail = null;
 			while (imax-- !== 0) {
 				cbs[i++].apply(this, arguments);
 			}
-			this._fail = null;
 		}
 
 		cbs = this._always;
 		imax = cbs && cbs.length,
 		i = 0;
 		if (cbs) {
+			this._always = null;
 			while (imax-- !== 0) {
 				cbs[i++].apply(this, this);
 			}
-			this._always = null;
 		}
 
 		return this;
