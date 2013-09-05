@@ -3,21 +3,21 @@
   "description": "ClassJS - Simple and Fast Class Implementation For Browsers and Node",
   "author": {
     "name": "Alexander Kit",
-    "email": "source.kit@gmail.com"
+    "email": "alex.kit@atmajs.com"
   },
   "version": "1.0.4",
   "main": "./lib/class.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tenbits/ClassJS.git"
+    "url": "git://github.com/atmajs/ClassJS.git"
   },
   
   "devDependencies": {
-    "includejs": "~0.9.30"
+    "atma": ">0.9.30"
   },
   
   "scripts" : {
-      "test" : "node_modules/.bin/includejs test"
+      "test" : "node_modules/.bin/atma test"
   },
   
   "license": "MIT"
