@@ -199,8 +199,8 @@ var ArrayProto = (function(){
 			for (var i = 0, imax = this.length; i < imax; i++){
 				
 				fn.call(cntx || this, this[i], i);
-				
 			}
+            return this;
 		},
 		
 		
