@@ -52,17 +52,22 @@ var EventEmitter = (function(){
             return this;
         },
         off: function(event, callback) {
-            if (this._listeners[event] == null)
+			var listeners = this._listeners[event];
+            if (listeners == null)
 				return this;
-				
-			var arr = this._listeners[event],
-				imax = arr.length,
+			
+			if (arguments.length === 1) {
+				listeners.length = 0;
+				return this;
+			}
+			
+			var imax = listeners.length,
 				i = 0;
 				
 			for (; i < imax; i++) {
 				
-				if (arr[i] === callback) 
-					arr.splice(i, 1);
+				if (listeners[i] === callback) 
+					listeners.splice(i, 1);
 				
 				i--;
 				imax--;
