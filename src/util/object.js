@@ -22,7 +22,9 @@ function obj_inherit(target /* source, ..*/ ) {
 				}
 			}
 			
+			
 			target[key] = source[key];
+			
 		}
 	}
 	return target;

@@ -1,19 +1,20 @@
 {
-  "name": "libjs-class",
+  "name": "atma-class",
   "description": "ClassJS - Simple and Fast Class Implementation For Browsers and Node",
   "author": {
     "name": "Alexander Kit",
     "email": "alex.kit@atmajs.com"
   },
   "version": "1.0.4",
-  "main": "./lib/class.js",
+  "main": "./lib/class.node.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/atmajs/ClassJS.git"
   },
   
   "devDependencies": {
-    "atma": ">0.9.30"
+    "atma": ">0.9.30",
+    "mongodb": ">0.0.0"
   },
   
   "scripts" : {

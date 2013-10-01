@@ -16,23 +16,28 @@ var DeferredProto = {
 		this._fail = null;
 		this._resolved = arguments;
 
-		var cbs = this._done,
-			imax = cbs && cbs.length,
+		var _done = this._done,
+			_always = this._always,
+			imax, i;
+		
+		this._done = null;
+		this._always = null;
+		
+		if (_done != null) {
+			imax = _done.length;
 			i = 0;
-		if (cbs) {
-			this._done = null;
 			while (imax-- !== 0) {
-				cbs[i++].apply(this, arguments);
+				_done[i++].apply(this, arguments);
 			}
+			_done.length = 0;
 		}
 
-		cbs = this._always;
-		imax = cbs && cbs.length,
-		i = 0;
-		if (cbs) {
-			this._always = null;
+		if (_always != null) {
+			imax = _always.length;
+			i = 0;
+		
 			while (imax-- !== 0) {
-				cbs[i++].apply(this, this);
+				_always[i++].call(this, this);
 			}
 		}
 
@@ -41,24 +46,27 @@ var DeferredProto = {
 	reject: function() {
 		this._done = null;
 		this._rejected = arguments;
+		
+		var _fail = this._fail,
+			_always = this._always,
+			imax, i;
+		
+		this._fail = null;
+		this._always = null;
 
-		var cbs = this._fail,
-			imax = cbs && cbs.length,
+		if (_fail != null) {
+			imax = _fail.length;
 			i = 0;
-		if (cbs) {
-			this._fail = null;
 			while (imax-- !== 0) {
-				cbs[i++].apply(this, arguments);
+				_fail[i++].apply(this, arguments);
 			}
 		}
 
-		cbs = this._always;
-		imax = cbs && cbs.length,
-		i = 0;
-		if (cbs) {
-			this._always = null;
+		if (_always != null) {
+			imax = _always.length;
+			i = 0;
 			while (imax-- !== 0) {
-				cbs[i++].apply(this, this);
+				_always[i++].call(this, this);
 			}
 		}
 
@@ -66,7 +74,6 @@ var DeferredProto = {
 	},
 
 	done: function(callback) {
-		
 		if (this._resolved != null)
 			callback.apply(this, this._resolved);
 		else
@@ -86,8 +93,10 @@ var DeferredProto = {
 		return this;
 	},
 	always: function(callback) {
+		
+	
 		if (this._rejected != null || this._resolved != null)
-			callback.apply(this, this);
+			callback.call(this, this);
 		else
 			(this._always || (this._always = [])).push(callback);
 

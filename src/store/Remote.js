@@ -17,10 +17,12 @@ var Remote = (function(){
 		
 		save: function(callback){
 			XHR.post(this._route.create(this), this.serialize(), callback);
+			return this;
 		},
 		
 		del: function(callback){
 			XHR.del(this._route.create(this), this.serialize(), callback);
+			return this;
 		},
 		
 		onSuccess: function(response){

@@ -1,6 +1,8 @@
 /**
  * Can be used in Constructor for binding class's functions to class's context
  * for using, for example, as callbacks
+ *
+ * @obsolete - use 'Self' property instead
  */
 Class.bind = function(cntx) {
 	var arr = arguments,

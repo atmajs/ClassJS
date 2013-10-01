@@ -11,42 +11,6 @@ var Collection = (function(){
 	}
 	
 	var CollectionProto = {
-		serialize: function(){
-			return JSON.stringify(this.toArray());
-		},
-		
-		deserialize: function(mix){
-			for (var i = 0, imax = mix.length; i < imax; i++){
-				this[this.length++] = create(this._constructor, mix[i]);
-			}
-			
-			return this;
-		},
-		
-		del: function(mix){
-			
-			if (mix == null && arguments.length !== 0) {
-				console.error('Collection.del - selector is specified, but is undefined');
-				return this;
-			}
-			
-			if (mix == null) {
-				
-				for (var i = 0, imax = this.length; i < imax; i++){
-					this[i] = null;
-				}
-				this.length = 0;
-				
-				LocalStore.prototype.del.call(this);
-				return this;
-			}
-			
-			var array = this.remove(mix);
-			if (array.length === 0) 
-				return this;
-			
-			return this.save();
-		},
 		
 		toArray: function(){
 			var array = new Array(this.length);
@@ -74,6 +38,10 @@ var Collection = (function(){
 	
 	function Collection(Child, Proto) {
 		
+		//var __proto = {
+		//	Construct: overrideConstructor(Proto.Construct, Child)
+		//};
+		//delete Proto.Construct;
 		Proto.Construct = overrideConstructor(Proto.Construct, Child);
 		
 		

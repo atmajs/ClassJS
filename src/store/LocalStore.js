@@ -38,11 +38,38 @@ var LocalStore = (function(){
 			return this;
 		},
 		
-		del: function(data){
-			var path = this._route.create(data || this);
+		del: function(mix){
 			
-			localStorage.removeItem(path);
-			return this;
+			if (mix == null && arguments.length !== 0) {
+				console.error('<localStore:del> - selector is specified, but is undefined');
+				return this;
+			}
+			
+			// Single
+			if (arr_isArray(this) === false) {
+				store_del(this._route, mix || this);
+				return this;
+			}
+			
+			// Collection
+			if (mix == null) {
+				
+				for (var i = 0, imax = this.length; i < imax; i++){
+					this[i] = null;
+				}
+				this.length = 0;
+				
+				store_del(this._route, this);
+				return this;
+			}
+			
+			var array = this.remove(mix);
+			if (array.length === 0) {
+				// was nothing removed
+				return this;
+			}
+			
+			return this.save();
 		},
 		
 		onError: function(error){
@@ -54,7 +81,11 @@ var LocalStore = (function(){
 		
 	});
 	
-	
+	function store_del(route, data){
+		var path = route.create(data);
+		
+		localStorage.removeItem(path);
+	}
 	
 	var Constructor = function(route){
 		

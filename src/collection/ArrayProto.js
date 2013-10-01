@@ -67,7 +67,7 @@ var ArrayProto = (function(){
 	}
 
 	var ArrayProto = {
-		push: function(/*mix*/) {
+		push: function(/*mix*/) { 
 			for (var i = 0, imax = arguments.length; i < imax; i++){
 				
 				this[this.length++] = create(this._constructor, arguments[i]);

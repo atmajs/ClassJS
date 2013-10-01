@@ -1,0 +1,167 @@
+
+include
+    .inject('../lib/class.node.js')
+    .done(function(){
+        
+        var User = Class({
+            Base: Class.Serializable,
+            Store: Class.MongoStore.Single('user'),
+            username: '',
+            timestamp: 0
+        });
+        
+        eq(new User({name: 'x'}).name, 'x');
+        
+        var Users = Class.Collection(User, {
+            Store: Class.MongoStore.Collection('user')
+        });
+        
+        var timestamp = Date.now();
+        
+        UTest({
+            before: function(){
+                
+                Class.MongoStore.settings({
+                    db: 'test'
+                });
+            },
+            'ensure-no-foo': function(done){
+                
+                Users
+                    .fetch({
+                        username: 'foo'
+                    })
+                    .done(function(users){
+                        
+                        if (users.length === 0) {
+                            done();
+                            return;
+                        }
+                        
+                        logger.log('>> clear collection', users.length);
+                        users
+                            .del()
+                            .always(function(){
+                                Users
+                                    .fetch({ username: 'foo' })
+                                    .done(function(users){
+                                        eq(users.length, 0, 'Not removed');
+                                        done();
+                                    })
+                            });
+                    });
+                  
+                
+            },
+            'write': function(done){
+                var user = new User();
+                
+                user.username = 'foo';
+                user.timestamp = timestamp;
+                
+                user
+                    .save()
+                    .always(function(){
+                        
+                        done();
+                    });
+            },
+            
+            'read': function(done){
+                
+                User
+                    .fetch({ username: 'foo' })
+                    .done(function(x){
+                        eq(x.timestamp, timestamp);
+                        
+                        
+                        User
+                            .fetch({$query: {username: 'foo'}})
+                            .done(function(){
+                                eq(x.timestamp, timestamp);
+                                
+                                User
+                                    .fetch({timestamp: timestamp})
+                                    .done(function(x){
+                                        eq(x.username, 'foo');
+                                        
+                                        done();
+                                    })
+                                
+                            })
+                    });
+            },
+            'find-gt': function(done){
+                User
+                    .fetch({ timestamp: '>' + (timestamp - 20) })
+                    .done(function(x){
+                        assert(x._id != null);
+                        eq(x.username, 'foo');
+                        
+                        done();
+                        
+                    })
+            },
+            'find-gte': function(done){
+                User
+                    .fetch({ timestamp: '>=' + timestamp })
+                    .done(function(x){
+                        eq(x.username, 'foo');
+                        
+                        done();
+                        
+                    })
+            },
+            'find-none-gt': function(done){
+                User
+                    .fetch({ timestamp: '>' + (timestamp + 20) })
+                    .done(function(x){
+                        assert.notEqual(x.username, 'foo');
+                        done();
+                    })
+            },
+            'remove': function(done){
+                User
+                    .fetch({ username: 'foo' })
+                    .done(function(x){
+                        x
+                            .del()
+                            .always(function(){
+                                
+                                User
+                                    .fetch({ username: 'foo' })
+                                    .done(function(x){
+                                        eq(x._id, null);
+                                        
+                                        done();
+                                    })
+                            })
+                        
+                        
+                    });
+            },
+            
+            'write-collection': function(done){
+                var count = 300,
+                    users = new Users();
+                
+                while(--count > -1){
+                    users.push({
+                        username: 'foo',
+                        timestamp: count
+                    });
+                }
+                
+                users
+                    .save()
+                    .done(function(){
+                        Users
+                            .fetch({timestamp: '>=150'})
+                            .done(function(users){
+                                eq(users.length, 150);
+                                done();
+                            });
+                    })
+            }
+        })
+    })
