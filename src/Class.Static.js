@@ -17,9 +17,6 @@ Class.bind = function(cntx) {
 	return cntx;
 };
 
-Class.Remote = Remote;
-Class.LocalStore = LocalStore;
-Class.Collection = Collection;
 
 Class.Serializable = Serializable;
 Class.Deferred = DeferredProto;

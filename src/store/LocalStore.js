@@ -1,4 +1,4 @@
-var LocalStore = (function(){
+Class.LocalStore = (function(){
 	
 	var LocalStore = function(route){
 		this._route = new Route(route);

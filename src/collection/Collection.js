@@ -1,4 +1,4 @@
-var Collection = (function(){
+Class.Collection = (function(){
 	
 	// import ArrayProto.js
 	

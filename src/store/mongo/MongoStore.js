@@ -1,5 +1,5 @@
 
-var MongoStore = (function(){
+Class.MongoStore = (function(){
     
     // import Settings.js
     // import Driver.js

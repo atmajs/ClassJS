@@ -2,7 +2,7 @@
  *	Alpha - Test - End
  */
 
-var Remote = (function(){
+Class.Remote = (function(){
 	
 	var XHRRemote = function(route){
 		this._route = new Route(route);
