@@ -8,7 +8,8 @@ var db_findSingle,
 
 (function(){
     
-    var db;    
+    var db,
+        mongo;
     
     
     db_findSingle = function(coll, data, callback){
@@ -119,9 +120,10 @@ var db_findSingle,
                 return;
             
             connecting = true;
+            mongo = require('mongodb');
             
-            var Client = require('mongodb').MongoClient,
-                Server = require('mongodb').Server;
+            var Client = mongo.MongoClient,
+                Server = mongo.Server;
 
             new Client(new Server(__ip, __port, {
                 auto_reconnect: true
@@ -143,12 +145,18 @@ var db_findSingle,
     
     var queryToMongo = function(query){
         if (query == null) {
-            console.warn('<mongo> query should not be empty');
+            if (arguments.length !== 0) 
+                console.warn('<mongo> query should not be empty');
+            
             return query;
         }
         
         if (query.hasOwnProperty('$query') || query.hasOwnProperty('$limit')) {
             return query;
+        }
+        
+        if (is_notEmptyString(query._id)) {
+            query._id = mongo.ObjectID(query._id);
         }
         
         var comparer = {
