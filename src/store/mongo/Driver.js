@@ -96,7 +96,7 @@ var db_findSingle,
             .collection(collection)
             .remove(query, {
                 justOne: isSingle
-            }, function(error){
+            }, function(error, count){
                 
                 callback(error);
             });
@@ -110,10 +110,12 @@ var db_findSingle,
         
         
         return function(callback){
-            if (db) {
-                callback();
-                return;
-            }
+            if (db) 
+                return callback();
+            
+            if (__db == null) 
+                return callback('Database is not set. Call Class.MongoStore.settings({db:"myDbName"})');
+            
             
             listeners.push(callback);
             
