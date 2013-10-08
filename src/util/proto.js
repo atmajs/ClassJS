@@ -41,7 +41,7 @@ var class_inherit = (function() {
 				};
         
         return function(){
-            this.super = __proxy;
+            this['super'] = __proxy;
             
             return fn.apply(this, arguments);
         };
