@@ -11,7 +11,7 @@ var MongoStoreSingle = (function() {
     /**
      * @TODO - replace ensureFree with a stack of calls
      */
-    obj_inherit(MongoStoreSingle, StoreProto, DeferredProto, {
+    obj_inherit(MongoStoreSingle, StoreProto, Deferred, {
         _busy: false,
         
         fetch: function(data) {

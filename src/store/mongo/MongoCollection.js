@@ -31,7 +31,7 @@ var MongoStoreCollection = (function(){
     }
         
         
-    obj_inherit(MongoStoreCollection, DeferredProto, {
+    obj_inherit(MongoStoreCollection, Deferred, {
         
         fetch: function(data){
             if (this._ensureFree() === false)

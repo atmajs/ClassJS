@@ -9,12 +9,18 @@ var EventEmitter = (function(){
         constructor: Emitter,
 		
         on: function(event, callback) {
-            (this._listeners[event] || (this._listeners[event] = [])).push(callback);
+            if (callback != null){
+				(this._listeners[event] || (this._listeners[event] = [])).push(callback);
+			}
+			
             return this;
         },
         once: function(event, callback){
-            callback._once = true;
-            (this._listeners[event] || (this._listeners[event] = [])).push(callback);
+			if (callback != null) {
+				callback._once = true;
+				(this._listeners[event] || (this._listeners[event] = [])).push(callback);
+			}
+			
             return this;
         },
 		

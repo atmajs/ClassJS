@@ -4,7 +4,7 @@ Class.LocalStore = (function(){
 		this._route = new Route(route);
 	};
 	
-	obj_inherit(LocalStore, StoreProto, DeferredProto, {
+	obj_inherit(LocalStore, StoreProto, Deferred, {
 		
 		fetch: function(data){
 			

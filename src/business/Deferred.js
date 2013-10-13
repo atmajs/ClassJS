@@ -1,4 +1,6 @@
-var DeferredProto = {
+function Deferred(){}
+
+Deferred.prototype = {
 	_isAsync: true,
 		
 	_done: null,

@@ -19,7 +19,7 @@ Class.bind = function(cntx) {
 
 
 Class.Serializable = Serializable;
-Class.Deferred = DeferredProto;
+Class.Deferred = Deferred;
 Class.EventEmitter = EventEmitter;
 
 Class.validate = Validation.validate;

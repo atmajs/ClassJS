@@ -8,7 +8,7 @@ Class.Remote = (function(){
 		this._route = new Route(route);
 	};
 	
-	obj_inherit(XHRRemote, StoreProto, DeferredProto, {
+	obj_inherit(XHRRemote, StoreProto, Deferred, {
 		
 		fetch: function(data){
 			XHR.get(this._route.create(data || this), this);
