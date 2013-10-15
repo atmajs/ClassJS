@@ -6,7 +6,21 @@ function create(path, object, expect) {
 	eq(route, expect, 'Path - ' + path + ' Object - ' + JSON.stringify(object));
 }
 
+function hasAlias(path, object, expect){
+	eq(new Route(path).hasAliases(object), expect, 'hasAlias Fail ' + path);
+}
+
 include.inject('/src/business/Route.js').done(function(){
+	
+	hasAlias('/rest/user/:id', {id: 1}, true);
+	hasAlias('/rest/user/?:id', {id: 1}, true);
+	hasAlias('/rest/user/:_id', {_id: 1}, true);
+	hasAlias('/rest/user/?:_id', {_id: 1}, true);
+	hasAlias('/rest/user/:_id', {id: 1}, false);
+	hasAlias('/rest/user/?:_id', {id: 1}, false);
+	hasAlias('/rest/:username/:age', {username: 'foo', age: 50}, true);
+	hasAlias('/rest/:username/:day/:age', {username: 'foo', age: 50}, false);
+	
 	
 	create('user/:id',{id: 5}, 'user/5');	
 	create('user/{id}',{id: 5}, 'user/5');
@@ -23,6 +37,9 @@ include.inject('/src/business/Route.js').done(function(){
 	create('{?id}/{?key}?date={?date}&name={?name}',{id: 5, name: 'x'}, '5?name=x');
 	create('{?id}/{?key}?date={?date}&name={?name}',{name: 'x'}, '?name=x');
 	create('?:id/?:key?date={?date}&name={?name}',{name: 'x'}, '?name=x');
+	
+	
+	
 });
 
 

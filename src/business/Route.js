@@ -28,6 +28,23 @@ var Route = (function(){
 			}
 			
 			return path + (query ? '?' + query : '');
+		},
+		
+		hasAliases: function(object){
+			
+			var i = 0,
+				imax = this.route.path.length,
+				alias
+				;
+			for (; i < imax; i++){
+				alias = this.route.path[i].parts[1];
+				
+				if (alias && object[alias] == null) {
+					return false;
+				}
+			}
+			
+			return true;
 		}
 	};
 	
@@ -53,7 +70,7 @@ var Route = (function(){
 			};
 		}
 		
-		console.error('Paths breadcrumbs should be match by regexps');
+		console.error('Paths breadcrumbs should be matched by regexps');
 		return { parts: [string] };
 	}
 	

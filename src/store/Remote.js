@@ -16,12 +16,51 @@ Class.Remote = (function(){
 		},
 		
 		save: function(callback){
-			XHR.post(this._route.create(this), this.serialize(), callback);
+			
+			var self = this,
+				json = this.serialize(),
+				path = this._route.create(this),
+				method = this._route.hasAliases(this)
+					? 'put'
+					: 'post'
+				;
+			
+			this._resolved = null;
+			this._rejected = null;
+			
+			XHR[method](path, json, function(error, response){
+					
+					// @obsolete -> use deferred
+					if (callback) 
+						callback(error, response);
+					
+					if (error) 
+						return self.reject(error);
+					
+					self.resolve(response);
+			});
 			return this;
 		},
 		
 		del: function(callback){
-			XHR.del(this._route.create(this), this.serialize(), callback);
+			var self = this,
+				json = this.serialize(),
+				path = this._route.create(this);
+				
+			this._resolved = null;
+			this._rejected = null;
+			
+			XHR.del(path, json, function(error, response){
+					
+					// @obsolete -> use deferred
+					if (callback) 
+						callback(error, response);
+					
+					if (error) 
+						return self.reject(error);
+					
+					self.resolve(response);
+			});
 			return this;
 		},
 		
