@@ -10,6 +10,14 @@ Class.Remote = (function(){
 	
 	obj_inherit(XHRRemote, StoreProto, Deferred, {
 		
+		serialize: function(){
+			
+			return is_Array(this)
+				? JSONHelper.arrayToJSON.call(this)
+				: JSONHelper.toJSON.call(this)
+				;
+		},
+		
 		fetch: function(data){
 			XHR.get(this._route.create(data || this), this);
 			return this;

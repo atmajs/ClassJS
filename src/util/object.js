@@ -83,30 +83,52 @@ function obj_extend(target, source) {
 var JSONHelper = {
 	toJSON: function(){
 		var obj = {},
-			key, value;
+			key, val;
 		
 		for (key in this) {
 			
 			// _ (private)
-			if (key.charCodeAt(0) === 95)
+			if (key.charCodeAt(0) === 95 && key !== '_id')
 				continue;
 			
 			if ('Static' === key || 'Validate' === key)
 				continue;
 			
-			value = this[key];
+			val = this[key];
 			
-			if (value == null)
+			if (val == null) 
 				continue;
 			
-			if (typeof value === 'function')
+			if (typeof val === 'function') 
 				continue;
 			
+			obj[key] = val;
+		}
+		return obj;
+	},
+	
+	arrayToJSON: function(){
+		var array = new Array(this.length),
+			i = 0,
+			imax = this.length,
+			x;
+		
+		for(; i < imax; i++){
 			
-			obj[key] = value;
+			x = this[i];
+			
+			if (typeof x !== 'object') {
+				array[i] = x;
+				return;
+			}
+			
+			array[i] = is_Function(x.toJSON)
+				? x.toJSON()
+				: JSONHelper.toJSON.call(x)
+				;
 			
 		}
 		
-		return obj;
+		return array;
 	}
 };

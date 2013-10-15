@@ -22,13 +22,20 @@ Serializable.prototype = {
 	constructor: Serializable,
 	
 	serialize: function() {
+		
 		return JSON.stringify(this);
 	},
 	
 	deserialize: function(json) {
 		
-		if (is_String(json)) 
-			json = JSON.parse(json);
+		if (is_String(json)) {
+			try {
+				json = JSON.parse(json);
+			}catch(error){
+				console.error('<json:deserialize>', json);
+				return this;
+			}
+		}
 		
 		var props = this._props,
 			key,

@@ -54,31 +54,7 @@ var MongoStoreSingle = (function() {
             }
         },
 
-        serialize: function(){
-            var obj = {},
-                key, val;
-            
-            for (key in this) {
-                
-                // _ (private)
-                if (key.charCodeAt(0) === 95 && key !== '_id')
-                    continue;
-                
-                if ('Static' === key || 'Validate' === key)
-                    continue;
-                
-                val = this[key];
-                
-                if (val == null) 
-                    continue;
-                
-                if (typeof val === 'function') 
-                    continue;
-                
-                obj[key] = val;
-            }
-            return obj;
-        },
+        serialize: JSONHelper.toJSON,
         
         _ensureFree: function(){
             if (this._busy) 

@@ -6,6 +6,16 @@ Class.LocalStore = (function(){
 	
 	obj_inherit(LocalStore, StoreProto, Deferred, {
 		
+		serialize: function(){
+			
+			var json = is_Array(this)
+				? JSONHelper.arrayToJSON.call(this)
+				: JSONHelper.toJSON.call(this)
+				;
+			
+			return JSON.stringify(json);
+		},
+		
 		fetch: function(data){
 			
 			var path = this._route.create(data || this),
