@@ -19,7 +19,25 @@ Class.Collection = (function(){
 			}
 			
 			return array;
-		}	
+		},
+		
+		toJSON: function(){
+			var array = new Array(this.length);
+			for (var i = 0, x, imax = this.length; i < imax; i++){
+				x = this[i];
+				
+				if (x == null)
+					// skip also index - will be undefined
+					continue;
+				
+				array[i] = is_Function(this[i].toJSON)
+					? this[i].toJSON()
+					: JSONHelper.toJSON.call(this[i])
+					;
+			}
+			
+			return array;
+		}
 	};
 	
 	function overrideConstructor(baseConstructor, Child) {

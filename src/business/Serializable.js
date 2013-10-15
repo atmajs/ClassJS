@@ -37,6 +37,14 @@ Serializable.prototype = {
 			}
 		}
 		
+		if (is_Array(json) && is_Function(this.push)) {
+			this.length = 0;
+			for (var i = 0, imax = json.length; i < imax; i++){
+				this.push(json[i]);
+			}
+			return;
+		}
+		
 		var props = this._props,
 			key,
 			Mix;

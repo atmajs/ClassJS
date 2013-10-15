@@ -3,10 +3,16 @@ var StoreProto = {
 	// Serialization
 	deserialize: function(json) {
 		
-		if (typeof json === 'string') 
-			json = JSON.parse(json);
+		if (typeof json === 'string') {
+			try {
+				json = JSON.parse(json);
+			}catch(error){
+				console.error('<json:deserialize>', json);
+				return this;
+			}
+		}
 		
-		if (arr_isArray(json) && typeof fn_isFunction(this.push)) {
+		if (is_Array(json) && is_Function(this.push)) {
 			for (var i = 0, imax = json.length; i < imax; i++){
 				this.push(json[i]);
 			}
