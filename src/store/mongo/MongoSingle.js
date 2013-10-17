@@ -26,12 +26,12 @@ var MongoStoreSingle = (function() {
                 return this;
             
             var json = this.serialize(),
-                fn = json._id != null
+                fn = json._id == null
                     ? db_insert
                     : db_updateSingle
                     ;
             
-            fn(this._collection, json, fn_proxy(this._completed, this));
+            fn(this._collection, json, fn_proxy(this._inserted, this));
             return this;
         },
         del: function() {
@@ -55,10 +55,24 @@ var MongoStoreSingle = (function() {
         },
 
         serialize: JSONHelper.toJSON,
+        deserialize: function(json){
+            
+            Serializable
+                .prototype
+                .deserialize
+                .call(this, json);
+            
+            if (this._id)
+                this._id = db_ensureObjectID(this._id);
+          
+            return this;  
+        },
         
         _ensureFree: function(){
-            if (this._busy) 
+            if (this._busy) {
+                console.warn('<mongo:single> requested transport, but is busy by the same instance.');
                 return false;
+            }
             
             this._busy = true;
             this._resolved = null;
@@ -76,6 +90,21 @@ var MongoStoreSingle = (function() {
         },
         _fetched: function(error, json) {
             this.deserialize(json);
+            
+            this._completed(error);
+        },
+        
+        _inserted: function(error, array){
+            
+            if (array != null && this._id == null) {
+                
+                if (is_Array(array) && array.length === 1) 
+                    this._id = array[0]._id
+                else 
+                    console.error('<mongo:insert-single> expection an array in callback');
+                
+                
+            }
             
             this._completed(error);
         }

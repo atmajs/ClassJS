@@ -4,7 +4,9 @@ var db_findSingle,
     db_insert,
     db_updateSingle,
     db_updateMany,
-    db_remove;
+    db_remove,
+    db_ensureObjectID
+    ;
 
 (function(){
     
@@ -53,18 +55,20 @@ var db_findSingle,
         
         db
             .collection(coll)
-            .insert(data, callback);
+            .insert(data, { safe: true }, callback);
     }
     
     db_updateSingle = function(coll, data, callback){
         if (db == null) 
             return connect(fn_createDelegate(db_updateSingle, coll, data, callback));
         
+        if (data._id == null) 
+            return callback('<mongo:update> invalid ID');
         
         db
             .collection(coll)
             .update({
-                _id: queryToMongo({_id: data._id})
+                _id: db_ensureObjectID(data._id)
             }, data, {
                 upsert: true,
                 multi: false,
@@ -100,7 +104,14 @@ var db_findSingle,
                 
                 callback(error);
             });
-    }
+    };
+    
+    db_ensureObjectID = function(value){
+        if (is_String(value) && value.length === 16) 
+            return getMongo().ObjectID(value);
+        
+        return value;
+    };
     
     
     var connect = (function(){
@@ -146,6 +157,12 @@ var db_findSingle,
         };
     }());
     
+    var getMongo = function(){
+        return db == null 
+            ? (db = require('mongodb'))
+            : db;
+    };
+    
     var queryToMongo = function(query){
         if (query == null) {
             if (arguments.length !== 0) 
@@ -158,9 +175,8 @@ var db_findSingle,
             return query;
         }
         
-        if (is_notEmptyString(query._id)) {
-            query._id = mongo.ObjectID(query._id);
-        }
+        if (query.hasOwnProperty('_id')) 
+            query._id = db_ensureObjectID(query._id);
         
         var comparer = {
             62: {
@@ -206,5 +222,5 @@ var db_findSingle,
         }
         
         return query;
-    }
+    };
 }());
