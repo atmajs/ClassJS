@@ -55,7 +55,7 @@
 			
 			
 			assert(roles[0] instanceof Role);
-			//
+			
 			
 			var Settings = Class({
 				Base: Class.Serializable({

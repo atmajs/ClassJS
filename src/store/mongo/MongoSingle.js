@@ -55,6 +55,7 @@ var MongoStoreSingle = (function() {
         },
 
         serialize: JSONHelper.toJSON,
+        
         deserialize: function(json){
             
             Serializable

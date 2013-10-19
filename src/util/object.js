@@ -99,8 +99,15 @@ var JSONHelper = {
 			if (val == null) 
 				continue;
 			
-			if (typeof val === 'function') 
-				continue;
+			switch(typeof val){
+				case 'function':
+					continue;
+				case 'object':
+					if (is_Function(val.toJSON)) {
+						obj[key] = val.toJSON();
+						continue;
+					}
+			}
 			
 			obj[key] = val;
 		}
