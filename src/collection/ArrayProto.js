@@ -67,10 +67,11 @@ var ArrayProto = (function(){
 	}
 
 	var ArrayProto = {
+		length: 0,
 		push: function(/*mix*/) { 
 			for (var i = 0, imax = arguments.length; i < imax; i++){
 				
-				this[this.length++] = create(this._constructor, arguments[i]);
+				this[this.length++] = create(this._ctor, arguments[i]);
 			}
 			
 			return this;
@@ -108,7 +109,7 @@ var ArrayProto = (function(){
 				this[imax] = this[imax - 1];
 			}
 			
-			this[0] = create(this._constructor, mix);
+			this[0] = create(this._ctor, mix);
 			return this;
 		},
 		
@@ -165,7 +166,7 @@ var ArrayProto = (function(){
 			i = rm_start;
 			y = 2;
 			for (; y < arguments.length; y) {
-				this[i++] = create(this._constructor, arguments[y++]);
+				this[i++] = create(this._ctor, arguments[y++]);
 			}
 			
 			

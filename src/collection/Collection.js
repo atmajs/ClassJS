@@ -11,7 +11,6 @@ Class.Collection = (function(){
 	}
 	
 	var CollectionProto = {
-		
 		toArray: function(){
 			var array = new Array(this.length);
 			for (var i = 0, imax = this.length; i < imax; i++){
@@ -21,46 +20,28 @@ Class.Collection = (function(){
 			return array;
 		},
 		
-		toJSON: function(){
-			var array = new Array(this.length);
-			for (var i = 0, x, imax = this.length; i < imax; i++){
-				x = this[i];
-				
-				if (x == null)
-					// skip also index - will be undefined
-					continue;
-				
-				array[i] = is_Function(this[i].toJSON)
-					? this[i].toJSON()
-					: JSONHelper.toJSON.call(this[i])
-					;
-			}
-			
-			return array;
-		}
+		toJSON: JSONHelper.arrayToJSON
 	};
 	
-	function overrideConstructor(baseConstructor, Child) {
-		
-		return function CollectionConstructor(){
-			this.length = 0;
-			this._constructor = Child;
-			
-			if (baseConstructor != null)
-				return baseConstructor.apply(this, arguments);
-			
-			return this;
-		};
-		
-	}
+	//////function overrideConstructor(baseConstructor, Child) {
+	//////	
+	//////	return function CollectionConstructor(){
+	//////		this.length = 0;
+	//////		this._constructor = Child;
+	//////		
+	//////		if (baseConstructor != null)
+	//////			return baseConstructor.apply(this, arguments);
+	//////		
+	//////		return this;
+	//////	};
+	//////	
+	//////}
 	
 	function Collection(Child, Proto) {
 		
-		//var __proto = {
-		//	Construct: overrideConstructor(Proto.Construct, Child)
-		//};
-		//delete Proto.Construct;
-		Proto.Construct = overrideConstructor(Proto.Construct, Child);
+		//////Proto.Construct = overrideConstructor(Proto.Construct, Child);
+		
+		Proto._ctor = Child;
 		
 		
 		obj_inherit(Proto, CollectionProto, ArrayProto);

@@ -35,6 +35,47 @@
 			assert(b.a instanceof A);
 			eq(b.a.name, 'bX');
 			
+		},
+		
+		
+		'deep': function(){
+			
+			var Role = Class({
+				Base: Class.Serializable,
+				
+				name: ''
+			});
+			
+			var RoleCollection = Class.Collection(Role, {
+				Base: Class.Serializable
+			});
+			
+			
+			var roles = new RoleCollection('[{"name":"foo"}]');
+			
+			
+			assert(roles[0] instanceof Role);
+			//
+			
+			var Settings = Class({
+				Base: Class.Serializable({
+					roles: RoleCollection
+				}),
+				roles: new RoleCollection
+			});
+			
+			eq(new Settings().serialize(), '{"roles":[]}');
+			
+			var setts = new Settings('{ "roles":[{"name":"foo"}] }');
+			
+			
+			
+			assert(setts.roles instanceof RoleCollection)
+			assert(setts.roles[0] instanceof Role);
+			
+			
+			setts.roles.push({name: "bar"});
+			eq(setts.serialize(), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
 		}
 	});
 
