@@ -8,7 +8,7 @@ Class.Remote = (function(){
 		this._route = new Route(route);
 	};
 	
-	obj_inherit(XHRRemote, StoreProto, Deferred, {
+	obj_inherit(XHRRemote, StoreProto, Serializable, Deferred, {
 		
 		serialize: function(){
 			
