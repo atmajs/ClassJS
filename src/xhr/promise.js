@@ -6,72 +6,79 @@
 
 (function(exports) {
 
-    function bind(func, context) {
-        return function() {
-            return func.apply(context, arguments);
-        };
-    }
-
+    var ct_URL_ENCODED = 'application/x-www-form-urlencoded',
+        ct_JSON = 'application/json';
+    
+    var e_NO_XHR = 1,
+        e_TIMEOUT = 2,
+        e_PRAPAIR_DATA = 3;
+        
     function Promise() {
         this._callbacks = [];
     }
 
     Promise.prototype.then = function(func, context) {
-        var f = bind(func, context);
+        var p;
         if (this._isdone) {
-            f(this.error, this.result);
+            p = func.apply(context, this.result);
         } else {
-            this._callbacks.push(f);
+            p = new Promise();
+            this._callbacks.push(function () {
+                var res = func.apply(context, arguments);
+                if (res && typeof res.then === 'function')
+                    res.then(p.done, p);
+            });
         }
+        return p;
     };
 
-    Promise.prototype.done = function(error, result) {
+    Promise.prototype.done = function() {
+        this.result = arguments;
         this._isdone = true;
-        this.error = error;
-        this.result = result;
         for (var i = 0; i < this._callbacks.length; i++) {
-            this._callbacks[i](error, result);
+            this._callbacks[i].apply(null, arguments);
         }
         this._callbacks = [];
     };
 
-    function join(funcs) {
-        var numfuncs = funcs.length;
-        var numdone = 0;
+    function join(promises) {
         var p = new Promise();
-        var errors = [];
         var results = [];
 
+        if (!promises || !promises.length) {
+            p.done(results);
+            return p;
+        }
+
+        var numdone = 0;
+        var total = promises.length;
+
         function notifier(i) {
-            return function(error, result) {
+            return function() {
                 numdone += 1;
-                errors[i] = error;
-                results[i] = result;
-                if (numdone === numfuncs) {
-                    p.done(errors, results);
+                results[i] = Array.prototype.slice.call(arguments);
+                if (numdone === total) {
+                    p.done(results);
                 }
             };
         }
 
-        for (var i = 0; i < numfuncs; i++) {
-            funcs[i]()
-                .then(notifier(i));
+        for (var i = 0; i < total; i++) {
+            promises[i].then(notifier(i));
         }
 
         return p;
     }
 
-    function chain(funcs, error, result) {
+    function chain(funcs, args) {
         var p = new Promise();
         if (funcs.length === 0) {
-            p.done(error, result);
+            p.done.apply(p, args);
         } else {
-            funcs[0](error, result)
-                .then(function(res, err) {
+            funcs[0].apply(null, args).then(function() {
                 funcs.splice(0, 1);
-                chain(funcs, res, err)
-                    .then(function(r, e) {
-                    p.done(r, e);
+                chain(funcs, arguments).then(function() {
+                    p.done.apply(p, arguments);
                 });
             });
         }
@@ -111,28 +118,57 @@
         return xhr;
     }
 
+
     function ajax(method, url, data, headers) {
-        var p = new Promise();
-        var xhr, payload;
-        data = data || {};
-        headers = headers || {};
+        var p = new Promise(),
+            contentType = headers && headers['Content-Type'] || promise.contentType;
+        
+        var xhr,
+            payload;
+        
 
         try {
             xhr = new_xhr();
         } catch (e) {
-            p.done(-1, "");
+            p.done(e_NO_XHR, "");
             return p;
         }
-
-        payload = _encode(data);
-        if (method === 'GET' && payload) {
-            url += '?' + payload;
-            payload = null;
+        if (data) {
+            
+            if ('GET' === method) {
+                
+                url += '?' + _encode(data);
+                data = null;
+            } else {
+                
+                
+                switch (contentType) {
+                    case ct_URL_ENCODED:
+                        data = _encode(data);
+                        break;
+                    case ct_JSON:
+                        try {
+                            data = JSON.stringify(data);
+                        } catch(error){
+                            
+                            p.done(e_PRAPAIR_DATA, '');
+                            return p;
+                        }
+                    default:
+                        // @TODO notify not supported content type
+                        // -> fallback to url encode
+                        data = _encode(data);
+                        break;
+                }
+            }
+            
         }
-
+        
         xhr.open(method, url);
-        xhr.setRequestHeader('Content-type',
-            'application/x-www-form-urlencoded');
+        
+        if (data) 
+            xhr.setRequestHeader('Content-Type', contentType);
+        
         for (var h in headers) {
             if (headers.hasOwnProperty(h)) {
                 xhr.setRequestHeader(h, headers[h]);
@@ -141,10 +177,10 @@
 
         function onTimeout() {
             xhr.abort();
-            p.done(exports.promise.ETIMEOUT, "");
+            p.done(e_TIMEOUT, "", xhr);
         }
 
-        var timeout = exports.promise.ajaxTimeout;
+        var timeout = promise.ajaxTimeout;
         if (timeout) {
             var tid = setTimeout(onTimeout, timeout);
         }
@@ -154,15 +190,14 @@
                 clearTimeout(tid);
             }
             if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    p.done(null, xhr.responseText);
-                } else {
-                    p.done(xhr.status, xhr.responseText);
-                }
+                var err = (!xhr.status ||
+                           (xhr.status < 200 || xhr.status >= 300) &&
+                           xhr.status !== 304);
+                p.done(err, xhr.responseText, xhr);
             }
         };
 
-        xhr.send(payload);
+        xhr.send(data);
         return p;
     }
 
@@ -183,9 +218,9 @@
         del: _ajaxer('DELETE'),
 
         /* Error codes */
-        ENOXHR: 1,
-        ETIMEOUT: 2,
-
+        ENOXHR: e_NO_XHR,
+        ETIMEOUT: e_TIMEOUT,
+        E_PREPAIR_DATA: e_PRAPAIR_DATA,
         /**
          * Configuration parameter: time in milliseconds after which a
          * pending AJAX request is considered unresponsive and is
@@ -195,7 +230,10 @@
          * Aborted requests resolve the promise with a ETIMEOUT error
          * code.
          */
-        ajaxTimeout: 0
+        ajaxTimeout: 0,
+        
+        
+        contentType: ct_JSON
     };
 
     if (typeof define === 'function' && define.amd) {
@@ -207,5 +245,4 @@
         exports.promise = promise;
     }
 
-
-})(XHR);
+})(this);

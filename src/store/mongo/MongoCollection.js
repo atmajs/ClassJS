@@ -9,7 +9,7 @@ var MongoStoreCollection = (function(){
     }
     
     function collection_push(collection, json){
-        var Constructor = collection._constructor,
+        var Constructor = collection._ctor,
             instance = new Constructor(json);
             
         if (instance._id == null && fn_isFunction(instance.deserialize)) {

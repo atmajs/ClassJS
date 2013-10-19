@@ -1,5 +1,11 @@
 var XHR = {};
 
+(function(){
+	
+	// import promise.js
+	
+}.call(XHR));
+
 arr_each(['get'], function(key){
 	XHR[key] = function(path, sender){
 		
