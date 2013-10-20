@@ -88,7 +88,7 @@ var JSONHelper = {
 		for (key in this) {
 			
 			// _ (private)
-			if (key.charCodeAt(0) === 95 && key !== '_id')
+			if (key.charCodeAt(0) === 95)
 				continue;
 			
 			if ('Static' === key || 'Validate' === key)
@@ -111,6 +111,11 @@ var JSONHelper = {
 			
 			obj[key] = val;
 		}
+		
+		// make mongodb _id property not private
+		if (this._id != null) 
+			obj._id = this._id;
+		
 		return obj;
 	},
 	
