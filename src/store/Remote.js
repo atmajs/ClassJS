@@ -36,17 +36,7 @@ Class.Remote = (function(){
 			this._resolved = null;
 			this._rejected = null;
 			
-			XHR[method](path, json, function(error, response){
-					
-					// @obsolete -> use deferred
-					if (callback) 
-						callback(error, response);
-					
-					if (error) 
-						return self.reject(error);
-					
-					self.resolve(response);
-			});
+			XHR[method](path, json, resolveDelegate(this, callback));
 			return this;
 		},
 		
@@ -58,44 +48,54 @@ Class.Remote = (function(){
 			this._resolved = null;
 			this._rejected = null;
 			
-			XHR.del(path, json, function(error, response){
-					
-					// @obsolete -> use deferred
-					if (callback) 
-						callback(error, response);
-					
-					if (error) 
-						return self.reject(error);
-					
-					self.resolve(response);
-			});
+			XHR.del(path, json, resolveDelegate(this, callback));
 			return this;
 		},
 		
 		onSuccess: function(response){
-			var json;
-			
-			try {
-				json = JSON.parse(response);	
-			} catch(error) {
-				this.onError(error);
-				return;
-			}
-			
-			
-			this.deserialize(json);
-			this.resolve(this);
+			parseFetched(this, response);
 		},
-		onError: function(error){
-			this.reject({
-				error: error
-			});
+		onError: function(errored, response, xhr){
+			reject(this, response, xhr);
 		}
 		
 		
 	});
 	
+	function parseFetched(self, response){
+		var json;
+			
+		try {
+			json = JSON.parse(response);	
+		} catch(error) {
+			
+			reject(self, error);
+			return;
+		}
+		
+		
+		self.deserialize(json);
+		self.resolve(self);
+	}
 	
+	function reject(self, response, xhr){
+		self.reject(response);
+	}
+	
+	function resolveDelegate(self, callback){
+		
+		return function(error, response, xhr){
+					
+				// @obsolete -> use deferred
+				if (callback) 
+					callback(error, response);
+				
+				if (error) 
+					return reject(self, response, xhr);
+				
+				self.resolve(response);
+		};
+	}
 	
 	return function(route){
 		

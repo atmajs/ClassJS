@@ -7,14 +7,14 @@ var XHR = {};
 }.call(XHR));
 
 arr_each(['get'], function(key){
-	XHR[key] = function(path, sender){
+	XHR[key] = function(path, data, sender){
 		
 		this
 			.promise[key](path)
-			.then(function(error, response){
+			.then(function(errored, response, xhr){
 				
-				if (error) {
-					sender.onError(error, response);
+				if (errored) {
+					sender.onError(errored, response, xhr);
 					return;
 				}
 				
@@ -28,8 +28,8 @@ arr_each(['del', 'post', 'put'], function(key){
 	XHR[key] = function(path, data, cb){
 		this
 			.promise[key](path, data)
-			.then(function(error, response){
-				cb(error, response);
+			.then(function(error, response, xhr){
+				cb(error, response, xhr);
 			});
 	};
 });
