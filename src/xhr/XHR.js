@@ -7,7 +7,7 @@ var XHR = {};
 }.call(XHR));
 
 arr_each(['get'], function(key){
-	XHR[key] = function(path, data, sender){
+	XHR[key] = function(path, sender){
 		
 		this
 			.promise[key](path)
