@@ -1,13 +1,13 @@
 ClassJS
 -----
 
-<img src='https://secure.travis-ci.org/tenbits/ClassJS.png'/>
+[![Build Status](https://travis-ci.org/atmajs/ClassJS.png?branch=master)](https://travis-ci.org/atmajs/ClassJS)
 
 
-Perfomant and Powerful Class - Model Implementation for browsers or nodejs
+Perfomant and Powerful Class-Model Implementation for browsers or nodejs
 
 
-[Documentation](http://libjs.it/#class)
+[Documentation](http://atmajs.com/class)
 
 
 ```javascript
@@ -36,7 +36,7 @@ Class({
 	Static: < Object > { key: function(){} }
 
 	/*
-	 * RESTFull / LocalStorage serialization / deserialization
+	 * RESTfull/LocalStorage/MongoDB serialization/deserialization
 	 */
 	Store: < Class.Remote | Class.LocalStore >
 
@@ -55,6 +55,13 @@ Class({
 			// overriden arguments
 			this.super(arg1, arg2);
 		}
+	 },
+	 
+	 Self: {
+		/*
+		 * Functions, that are always bound to the instance of the class
+		 * e.g. setTimeout(this.foo, 1000);
+		foo: function(){}
 	 }
 
 	/* 
@@ -72,7 +79,7 @@ Class({
 Store
 -----
 
-*Remote*
+**Remote**
 _async - extends Class.Deferred_
 
 ```javascript
@@ -96,7 +103,7 @@ user.del().done(onDone).fail(onFail).always(onComplete)
 
 More route samples can be found from tests [Route Tests](test/route.test)
 
-*LocalStore*
+**LocalStore**
 _same as remote, as localStorage is sync - class doesnt extend Class.Deferred_
 ```javascript
 var Settings = Class({
@@ -117,6 +124,47 @@ setts.save();
 setts.del();
 ```
 
+**MongoDB**
+
+```javascript
+// settings:
+Class.MongoStore.settings({
+	db: 'myDBName',
+	ip: '127.0.0.1' // <- default
+	port: 27017 // <- default
+});
+//
+
+var User = Class({
+	Store: Class.MongoStore.Single('users'),
+	
+	username: ''
+});
+
+var _user = User
+	.fetch({username: 'bar'})
+	.done(function(user){
+		_user === user // -> true
+	})
+	.fail(function(error){
+	
+	})
+
+_user.username = 'foo'
+_user
+	.save()
+	.done(callback)
+	.fail(callback)
+	.always(callback)
+	;
+
+_user
+	.del()
+	.done(callback)
+	.fail(callback)
+	.always(callback);
+
+```
 
 Collections
 ----
@@ -126,7 +174,7 @@ Creates Array-alike Object with store/query features
 ```javascript
 
 var Users = Class.Collection(User, {
-	Store: Remote('/api/users?location={?country}')
+	Store: Class.Remote('/api/users?location={?country}')
 });
 
 var list = Users.fetch({country: 'DE'});
