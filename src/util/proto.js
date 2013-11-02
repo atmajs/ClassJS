@@ -79,15 +79,8 @@ var class_inherit = (function() {
 
 
 	// browser that doesnt support __proto__ 
-	function inherit_protoLess(_class, _base, _extends, original) {
-		if (_base != null) {
-			var tmp = function() {};
-
-			tmp.prototype = _base.prototype;
-
-			_class.prototype = new tmp();
-			_class.prototype.constructor = _class;
-		}
+	function inherit_protoLess(_class, _base, _extends, original, _overrides) {
+		
 
 		if (_extends != null) {
 			arr_each(_extends, function(x) {
@@ -96,6 +89,23 @@ var class_inherit = (function() {
 				proto_extend(_class, x);
 			});
 		}
+		
+		if (_base != null) {
+			var tmp = function() {};
+
+			tmp.prototype = _base.prototype;
+
+			_class.prototype = new tmp();
+			_class.prototype.constructor = _class;
+		}
+		
+		if (_overrides != null) {
+			var prototype = _class.prototype;
+			for (var key in _overrides) {
+				prototype[key] = proto_override(prototype, key, _overrides[key]);
+			}
+		}
+		
 		
 		proto_extend(_class, original); 
 	}
