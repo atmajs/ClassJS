@@ -5,6 +5,7 @@
 	// import ../src/util/is.js
 	// import ../src/util/array.js
 	// import ../src/util/proto.js
+	// import ../src/util/json.js
 	// import ../src/util/object.js
 	// import ../src/util/function.js
 	
