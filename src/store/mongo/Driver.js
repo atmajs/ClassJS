@@ -1,17 +1,29 @@
 
-var db_findSingle,
+var db_getCollection,
+    db_findSingle,
     db_findMany,
     db_insert,
     db_updateSingle,
     db_updateMany,
     db_remove,
-    db_ensureObjectID
+    db_ensureObjectID,
+    db_patchSingle
     ;
 
 (function(){
     
     var db,
         mongo;
+        
+    
+    db_getCollection = function(name, callback){
+        if (db == null) 
+            return connect(fn_createDelegate(db_getCollection, name));
+        
+        var coll = db.collection(name);
+        
+        callback(coll);
+    };
     
     
     db_findSingle = function(coll, query, callback){
@@ -90,6 +102,22 @@ var db_findSingle,
             db_updateMany(coll, array, callback); 
         });
     };
+    
+    db_patchSingle = function(coll, id, patch, callback){
+        if (db == null) 
+            return connect(fn_createDelegate(db_patchSingle, coll, id, patch, callback));
+        
+        db
+            .collection(coll)
+            .update({
+                _id: db_ensureObjectID(id)
+            }, patch, function(error){
+                
+                callback(error);
+            })
+    };
+    
+    
     
     db_remove = function(collection, query, isSingle, callback){
         if (db == null) 

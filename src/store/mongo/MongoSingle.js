@@ -48,9 +48,37 @@ var MongoStoreSingle = (function() {
             return this;
         },
         
+        patch: function(patch){
+            if (this._ensureFree() === false) 
+                return this;
+            
+            if (this._id) {
+                db_patchSingle(
+                    this._collection,
+                    this._id, patch,
+                    fn_proxy(this._completed, this)
+                );
+            }
+            else {
+                this._completed();
+            }
+            
+            return this;
+        },
+        
         Static: {
             fetch: function(data) {
                 return new this().fetch(data);
+            },
+            
+            resolveDriver: function(){
+                var dfr = new Class.Deferred();
+                
+                db_getCollection(new this()._collection, function(coll) {
+                    dfr.resolve(coll)
+                });
+                
+                return dfr;
             }
         },
 
