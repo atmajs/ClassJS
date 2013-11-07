@@ -9,7 +9,7 @@ Deferred.prototype = {
 	_resolved: null,
 	_rejected: null,
 	
-	deferr: function(){
+	defer: function(){
 		this._rejected = null;
 		this._resolved = null;
 	},

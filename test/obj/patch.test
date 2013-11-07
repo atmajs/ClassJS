@@ -1,0 +1,68 @@
+include
+	.inject(
+		'/src/util/array.js',
+		'/src/util/object.js',
+		'/src/util/patchObject.js'
+	)
+	.done(function(){
+		
+		UTest({
+			patch: function(){
+				
+				var obj = {};
+				
+				function apply(patch){
+					obj_patch(obj, patch);
+				}
+				
+				
+				apply({
+					$set: {
+						foo: [],
+						bar: 1,
+						'sub.foo': [],
+						'y.sub': 'sub'
+					}
+				})
+				assert(obj.foo instanceof Array);
+				eq(obj.bar, 1);
+				eq(obj.y.sub, 'sub');
+				assert(obj.sub.foo instanceof Array);
+				
+				apply({
+					$inc: {
+						bar: 2
+					}
+				});
+				eq(obj.bar, 3);
+				
+				apply({
+					$unset: {
+						'y.sub': true
+					}
+				});
+				eq(obj.y.sub, null);
+				
+				apply({
+					$push: {
+						foo: 1,
+						'sub.foo': {
+							$each: [2, 3, 4]
+						}
+					}
+				});
+				eq(obj.foo[0], 1);
+				eq(obj.sub.foo[2], 4);
+				
+				apply({
+					$pop: {
+						'sub.foo': 1
+					}
+				})
+				eq(obj.sub.foo.length, 2);
+				eq(obj.sub.foo[1], 3);
+				
+				
+			}
+		})
+	})

@@ -24,7 +24,7 @@ arr_each(['get'], function(key){
 	};
 });
 
-arr_each(['del', 'post', 'put'], function(key){
+arr_each(['del', 'post', 'put', 'patch'], function(key){
 	XHR[key] = function(path, data, cb){
 		this
 			.promise[key](path, data)

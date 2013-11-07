@@ -3,7 +3,11 @@
  */
 
 Class.Remote = (function(){
-	
+
+	var str_CONTENT_TYPE = 'content-type',
+		str_JSON = 'json'
+		;
+		
 	var XHRRemote = function(route){
 		this._route = new Route(route);
 	};
@@ -33,10 +37,16 @@ Class.Remote = (function(){
 					: 'post'
 				;
 			
-			this._resolved = null;
-			this._rejected = null;
+			this.defer();
+			XHR[method](path, json, resolveDelegate(this, callback, 'save'));
+			return this;
+		},
+		
+		patch: function(patch){
+			obj_patch(patch);
 			
-			XHR[method](path, json, resolveDelegate(this, callback));
+			this.defer();
+			XHR.patch(path, json, resolveDelegate(this, callback));
 			return this;
 		},
 		
@@ -45,9 +55,7 @@ Class.Remote = (function(){
 				json = this.serialize(),
 				path = this._route.create(this);
 				
-			this._resolved = null;
-			this._rejected = null;
-			
+			this.defer();
 			XHR.del(path, json, resolveDelegate(this, callback));
 			return this;
 		},
@@ -82,16 +90,37 @@ Class.Remote = (function(){
 		self.reject(response);
 	}
 	
-	function resolveDelegate(self, callback){
+	function resolveDelegate(self, callback, action){
 		
 		return function(error, response, xhr){
+				
+				var isJSON = xhr
+					.getResponseHeader(str_CONTENT_TYPE)
+					.indexOf(str_JSON) !== -1
+					;
 					
+				if (isJSON) {
+					try {
+						response = JSON.parse(response);
+					} catch(error){
+						console.error('<XHR> invalid json response', response);
+						
+						return reject(self, response, xhr);
+					}
+				}
+				
 				// @obsolete -> use deferred
 				if (callback) 
 					callback(error, response);
 				
 				if (error) 
 					return reject(self, response, xhr);
+				
+				if ('save' === action) {
+					self.deserialize(response);
+					
+					return self.resolve(self)
+				}
 				
 				self.resolve(response);
 		};

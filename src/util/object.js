@@ -30,25 +30,38 @@ function obj_inherit(target /* source, ..*/ ) {
 	return target;
 }
 
- function obj_getProperty(o, chain) {
-	if (typeof o !== 'object' || chain == null) {
-		return o;
-	}
 
-	var value = o,
-		props = chain.split('.'),
-		length = props.length,
-		i = 0,
-		key;
 
+function obj_getProperty(obj, property) {
+	var chain = property.split('.'),
+		length = chain.length,
+		i = 0;
 	for (; i < length; i++) {
-		key = props[i];
-		value = value[key];
-		if (value == null) 
-			return value;
-		
+		if (obj == null) {
+			return null;
+		}
+
+		obj = obj[chain[i]];
 	}
-	return value;
+	return obj;
+}
+
+
+function obj_setProperty(obj, property, value) {
+	var chain = property.split('.'),
+		length = chain.length,
+		i = 0,
+		key = null;
+
+	for (; i < length - 1; i++) {
+		key = chain[i];
+		if (obj[key] == null) {
+			obj[key] = {};
+		}
+		obj = obj[key];
+	}
+
+	obj[chain[i]] = value;
 }
 
 function obj_isRawObject(value) {
