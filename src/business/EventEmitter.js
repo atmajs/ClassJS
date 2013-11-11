@@ -49,7 +49,7 @@ var EventEmitter = (function(){
 				fn.apply(this, args);
 				
 				if (fn._once === true){
-					fns.splice(i,1);
+					fns.splice(i, 1);
 					i--;
 					imax--;
 				}
@@ -68,15 +68,17 @@ var EventEmitter = (function(){
 			}
 			
 			var imax = listeners.length,
-				i = 0;
+				i = -1;
 				
-			for (; i < imax; i++) {
+			while (++i < imax) {
 				
-				if (listeners[i] === callback) 
+				if (listeners[i] === callback) {
+					
 					listeners.splice(i, 1);
+					i--;
+					imax--;
+				}
 				
-				i--;
-				imax--;
 			}
 		
             return this;
