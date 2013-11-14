@@ -26,17 +26,17 @@ var EventEmitter = (function(){
 		
 		pipe: function(event){
 			var that = this,
-				slice = Array.prototype.slice, 
 				args;
 			return function(){
-				args = slice.call(arguments);
+				args = _Array_slice.call(arguments);
 				args.unshift(event);
-				that.trigger.apply(that, args);
+				
+				fn_apply(that.trigger, that, args);
 			};
 		},
         
         trigger: function() {
-            var args = Array.prototype.slice.call(arguments),
+            var args = _Array_slice.call(arguments),
                 event = args.shift(),
                 fns = this._listeners[event],
                 fn, imax, i = 0;
@@ -46,7 +46,7 @@ var EventEmitter = (function(){
 			
 			for (imax = fns.length; i < imax; i++) {
 				fn = fns[i];
-				fn.apply(this, args);
+				fn_apply(fn, this, args);
 				
 				if (fn._once === true){
 					fns.splice(i, 1);

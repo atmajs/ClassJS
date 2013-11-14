@@ -1,5 +1,6 @@
 
-var db_getCollection,
+var db_getDb,
+    db_getCollection,
     db_findSingle,
     db_findMany,
     db_insert,
@@ -18,13 +19,19 @@ var db_getCollection,
     
     db_getCollection = function(name, callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_getCollection, name));
+            return connect(fn_createDelegate(db_getCollection, name, callback));
         
         var coll = db.collection(name);
         
         callback(coll);
     };
     
+    db_getDb = function(callback){
+        if (db == null) 
+            return connect(fn_createDelegate(db_getDb, callback));
+        
+        callback(db);
+    };
     
     db_findSingle = function(coll, query, callback){
         

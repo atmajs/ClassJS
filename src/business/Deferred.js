@@ -29,7 +29,7 @@ Deferred.prototype = {
 			imax = _done.length;
 			i = 0;
 			while (imax-- !== 0) {
-				_done[i++].apply(this, arguments);
+				fn_apply(_done[i++], this, arguments);
 			}
 			_done.length = 0;
 		}
@@ -60,7 +60,7 @@ Deferred.prototype = {
 			imax = _fail.length;
 			i = 0;
 			while (imax-- !== 0) {
-				_fail[i++].apply(this, arguments);
+				fn_apply(_fail[i++], this, arguments);
 			}
 		}
 
@@ -77,7 +77,7 @@ Deferred.prototype = {
 
 	done: function(callback) {
 		if (this._resolved != null)
-			callback.apply(this, this._resolved);
+			fn_apply(callback, this, this._resolved);
 		else
 			(this._done || (this._done = [])).push(callback);
 
@@ -87,7 +87,7 @@ Deferred.prototype = {
 	fail: function(callback) {
 		
 		if (this._rejected != null)
-			callback.apply(this, this._rejected);
+			fn_apply(callback, this, this._rejected);
 		else
 			(this._fail || (this._fail = [])).push(callback);
 

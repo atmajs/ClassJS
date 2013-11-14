@@ -11,5 +11,15 @@ Class.MongoStore = (function(){
         Single: MongoStoreSingle,
         Collection: MongoStoreCollection,
         settings: Settings,
+        
+        resolveDb: function(){
+            var dfr = new Class.Deferred();
+            
+            db_getDb(function(db){
+                dfr.resolve(db);
+            })
+            
+            return dfr;
+        }
     };
 }());

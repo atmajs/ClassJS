@@ -20,9 +20,12 @@ UTest({
 			assert.equal(foo.name, 'A');
 
 			foo.number = 5;			
-			foo.fetch().fail(assert.callback(function(){
-				done();	
-			}));
+			foo
+				.fetch()
+				.fail(assert.callback(function(){
+					done();	
+				}))
+				;
 			
 		}));
 		

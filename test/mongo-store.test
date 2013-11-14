@@ -19,11 +19,20 @@ include
         var timestamp = Date.now();
         
         UTest({
-            before: function(){
+            $before: function(){
                 
                 Class.MongoStore.settings({
                     db: 'test'
                 });
+            },
+            $after: function(){
+                
+                Class
+                    .MongoStore
+                    .resolveDb()
+                    .done(function(db){
+                        db.close(true);
+                    });
             },
             'ensure-no-foo': function(done){
                 
@@ -38,7 +47,6 @@ include
                             return;
                         }
                         
-                        logger.log('>> clear collection', users.length);
                         users
                             .del()
                             .always(function(){
@@ -62,7 +70,7 @@ include
                 user
                     .save()
                     .always(function(){
-                        
+                        eq(user._rejected, null);  
                         done();
                     });
             },

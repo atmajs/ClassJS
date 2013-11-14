@@ -43,7 +43,7 @@ function fn_memoize(fn) {
 
 		
 		return _cache[id] == null
-			? (_cache[id] = fn.apply(this, arguments))
+			? (_cache[id] = fn_apply(fn, this, arguments))
 			: _cache[id];
 	};
 }
@@ -56,7 +56,7 @@ function fn_resolveDelegate(cache, cbs, id) {
 		
 		for (var i = 0, x, imax = cbs[id].length; i < imax; i++){
 			x = cbs[id][i];
-			x.apply(this, arguments);
+			fn_apply(x, this, arguments);
 		}
 		
 		cbs[i] = null;
@@ -72,13 +72,13 @@ function fn_memoizeAsync(fn) {
 		
 	return function(){
 		
-		var args = Array.prototype.slice.call(arguments),
+		var args = _Array_slice.call(arguments),
 			callback = args.pop();
 		
 		var id = args_id(_args, args);
 		
 		if (_cache[id]){
-			callback.apply(this, _cache[id])
+			fn_apply(callback, this, _cache[id])
 			return; 
 		}
 		
@@ -89,10 +89,10 @@ function fn_memoizeAsync(fn) {
 		
 		_cacheCbs[id] = [callback];
 		
-		args = Array.prototype.slice.call(args);
+		args = _Array_slice.call(args);
 		args.push(fn_resolveDelegate(_cache, _cacheCbs, id));
 		
-		fn.apply(this, args);
+		fn_apply(fn, this, args);
 	};
 }
 

@@ -1,6 +1,10 @@
 
 include
-	.inject('/src/fn/memoize.js')
+	.inject(
+		'/src/vars.js',
+		'/src/util/function.js',
+		'/src/fn/memoize.js'
+	)
 	.done(function(){
 		
 		UTest({

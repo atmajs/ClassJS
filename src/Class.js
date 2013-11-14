@@ -69,35 +69,47 @@ var Class = function(data) {
 	}
 
 	_class = function() {
-
+		
+		//// consider to remove 
+		////if (this instanceof _class === false) 
+		////	return new (_class.bind.apply(_class, [null].concat(arguments)));
+		
+	
 		if (_extends != null) {
 			var isarray = _extends instanceof Array,
-				length = isarray ? _extends.length : 1,
+				
+				imax = isarray ? _extends.length : 1,
+				i = 0,
 				x = null;
-			for (var i = 0; isarray ? i < length : i < 1; i++) {
-				x = isarray ? _extends[i] : _extends;
+			for (; i < imax; i++) {
+				x = isarray
+					? _extends[i]
+					: _extends
+					;
 				if (typeof x === 'function') {
-					x.apply(this, arguments);
+					fn_apply(x, this, arguments);
 				}
 			}
 		}
 
 		if (_base != null) {
-			_base.apply(this, arguments);
+			fn_apply(_base, this, arguments);
 		}
 		
-		if (_self != null) {
+		if (_self != null && obj_isNullOrGlobal(this) === false) {
+			
 			for (var key in _self) {
 				this[key] = fn_proxy(_self[key], this);
 			}
 		}
 
 		if (_construct != null) {
-			var r = _construct.apply(this, arguments);
+			var r = fn_apply(_construct, this, arguments);
 			if (r != null) {
 				return r;
 			}
 		}
+		
 		return this;
 	};
 

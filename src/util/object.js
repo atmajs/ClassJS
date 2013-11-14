@@ -91,3 +91,8 @@ function obj_extend(target, source) {
 	}
 	return target;
 }
+
+
+function obj_isNullOrGlobal(ctx){
+	return ctx === void 0 || ctx === global;
+}

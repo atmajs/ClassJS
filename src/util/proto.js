@@ -34,16 +34,16 @@ var class_inherit = (function() {
 				: function(args){
 				
 					if (_isArguments(args)) {
-						return __super.apply(this, args);
+						return fn_apply(__super, this, args);
 					}
 					
-					return __super.apply(this, arguments);
+					return fn_apply(__super, this, arguments);
 				};
         
         return function(){
             this['super'] = __proxy;
             
-            return fn.apply(this, arguments);
+            return fn_apply(fn, this, arguments);
         };
     }
 

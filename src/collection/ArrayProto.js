@@ -175,7 +175,7 @@ var ArrayProto = (function(){
 		},
 		
 		slice: function(){
-			return _Array_slice.apply(this, arguments);
+			return fn_apply(_Array_slice, this, arguments);
 		},
 		
 		sort: function(fn){
