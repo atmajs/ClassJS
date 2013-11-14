@@ -20,6 +20,7 @@ Deferred.prototype = {
 
 		var _done = this._done,
 			_always = this._always,
+			
 			imax, i;
 		
 		this._done = null;
@@ -27,24 +28,24 @@ Deferred.prototype = {
 		
 		if (_done != null) {
 			imax = _done.length;
-			i = 0;
-			while (imax-- !== 0) {
-				fn_apply(_done[i++], this, arguments);
+			i = -1;
+			while ( ++i < imax ) {
+				fn_apply(_done[i], this, arguments);
 			}
 			_done.length = 0;
 		}
 
 		if (_always != null) {
 			imax = _always.length;
-			i = 0;
-		
-			while (imax-- !== 0) {
-				_always[i++].call(this, this);
+			i = -1;
+			while ( ++i < imax ) {
+				_always[i].call(this, this);
 			}
 		}
 
 		return this;
 	},
+	
 	reject: function() {
 		this._done = null;
 		this._rejected = arguments;
@@ -58,32 +59,40 @@ Deferred.prototype = {
 
 		if (_fail != null) {
 			imax = _fail.length;
-			i = 0;
-			while (imax-- !== 0) {
-				fn_apply(_fail[i++], this, arguments);
+			i = -1;
+			while ( ++i < imax ) {
+				fn_apply(_fail[i], this, arguments);
 			}
 		}
 
 		if (_always != null) {
 			imax = _always.length;
-			i = 0;
-			while (imax-- !== 0) {
-				_always[i++].call(this, this);
+			i = -1;
+			while ( ++i < imax ) {
+				_always[i].call(this, this);
 			}
 		}
 
 		return this;
 	},
-
+	
+	resolveDelegate: function(){
+		return fn_proxy(this.resolve, this);
+	},
+	
+	rejectDelegate: function(){
+		return fn_proxy(this.reject, this);
+	},
+	
 	done: function(callback) {
 		if (this._resolved != null)
 			fn_apply(callback, this, this._resolved);
 		else
 			(this._done || (this._done = [])).push(callback);
 
-
 		return this;
 	},
+	
 	fail: function(callback) {
 		
 		if (this._rejected != null)
@@ -91,11 +100,10 @@ Deferred.prototype = {
 		else
 			(this._fail || (this._fail = [])).push(callback);
 
-
 		return this;
 	},
+	
 	always: function(callback) {
-		
 	
 		if (this._rejected != null || this._resolved != null)
 			callback.call(this, this);
