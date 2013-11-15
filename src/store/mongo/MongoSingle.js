@@ -74,7 +74,10 @@ var MongoStoreSingle = (function() {
             resolveCollection: function(){
                 var dfr = new Class.Deferred();
                 
-                db_getCollection(new this()._collection, function(coll) {
+                db_getCollection(new this()._collection, function(err, coll) {
+                    if (err) 
+                        return dfr.reject(err);
+                    
                     dfr.resolve(coll)
                 });
                 

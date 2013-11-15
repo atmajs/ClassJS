@@ -15,7 +15,10 @@ Class.MongoStore = (function(){
         resolveDb: function(){
             var dfr = new Class.Deferred();
             
-            db_getDb(function(db){
+            db_getDb(function(error, db){
+                if (error) 
+                    return dfr.reject(error);
+                
                 dfr.resolve(db);
             })
             

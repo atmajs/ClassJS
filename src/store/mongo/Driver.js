@@ -19,24 +19,26 @@ var db_getDb,
     
     db_getCollection = function(name, callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_getCollection, name, callback));
+            return connect(createDbDelegate(db_getCollection, name, callback));
         
         var coll = db.collection(name);
+        if (coll == null) 
+            return callback('<mongo> Collection Not Found: ' + name);
         
-        callback(coll);
+        callback(null, coll);
     };
     
     db_getDb = function(callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_getDb, callback));
+            return connect(createDbDelegate(db_getDb, callback));
         
-        callback(db);
+        callback(null, db);
     };
     
     db_findSingle = function(coll, query, callback){
         
         if (db == null) 
-            return connect(fn_createDelegate(db_findSingle, coll, query, callback));
+            return connect(createDbDelegate(db_findSingle, coll, query, callback));
             
         query = queryToMongo(query);
         db
@@ -50,16 +52,15 @@ var db_getDb,
     
     db_findMany = function(coll, query, callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_findMany, coll, query, callback));
+            return connect(createDbDelegate(db_findMany, coll, query, callback));
         
         query = queryToMongo(query);
         db
             .collection(coll)
             .find(query, function(error, cursor){
-                if (error) {
-                    callback(error);
-                    return;
-                }
+                if (error) 
+                    return callback(error);
+                
                 
                 cursor.toArray(function(error, items){
                     callback(error, items);
@@ -70,7 +71,7 @@ var db_getDb,
     
     db_insert = function(coll, data, callback){
         if (db == null)
-            return connect(fn_createDelegate(db_insert, coll, data, callback));
+            return connect(createDbDelegate(db_insert, coll, data, callback));
         
         db
             .collection(coll)
@@ -79,7 +80,7 @@ var db_getDb,
     
     db_updateSingle = function(coll, data, callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_updateSingle, coll, data, callback));
+            return connect(createDbDelegate(db_updateSingle, coll, data, callback));
         
         if (data._id == null) 
             return callback('<mongo:update> invalid ID');
@@ -112,7 +113,7 @@ var db_getDb,
     
     db_patchSingle = function(coll, id, patch, callback){
         if (db == null) 
-            return connect(fn_createDelegate(db_patchSingle, coll, id, patch, callback));
+            return connect(createDbDelegate(db_patchSingle, coll, id, patch, callback));
         
         db
             .collection(coll)
@@ -152,7 +153,8 @@ var db_getDb,
     var connect = (function(){
         
         var listeners = [],
-            connecting = false;
+            connecting = false,
+            connection;
         
         
         return function(callback){
@@ -171,25 +173,33 @@ var db_getDb,
             getMongo();
             
             connecting = true;
+            connection = settings_getConnectionString();
             
-            var Client = mongo.MongoClient,
-                Server = mongo.Server;
+            if (!connection) 
+                return callback('<mongo> Invalid connection string');
+            
+            mongo
+                .MongoClient
+                .connect(
+                    connection,
+                    __params,
+                    onConnected
+                );
 
-            new Client(new Server(__ip, __port, {
-                auto_reconnect: true
-            })).open(function(err, client) {
+            function onConnected(err, database){
+                if (err == null) 
+                    db = database;
                 
-                db = client.db(__db);
+                var imax = listeners.length,
+                    i = -1;
                 
-                
-                for (var i = 0, x, imax = listeners.length; i < imax; i++){
-                    x = listeners[i];
-                    x();
+                while( ++i < imax ) {
+                    listeners[i](err);
                 }
                 
                 listeners = null;
-            });
-    
+                connecting = false;
+            }
         };
     }());
     
@@ -263,4 +273,20 @@ var db_getDb,
         
         return query;
     };
+    
+    
+    var createDbDelegate = function(fn){
+        var args = _Array_slice.call(arguments, 1),
+            callback = args[args.length - 1]
+            ;
+        return function(error){
+            if (error) 
+                return callback(error);
+            
+            if (arguments.length > 0) 
+                args = args.concat(arguments);
+            
+            return fn_apply(fn, null, args);
+        };
+    }
 }());
