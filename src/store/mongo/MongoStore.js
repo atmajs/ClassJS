@@ -20,6 +20,10 @@ Class.MongoStore = (function(){
             })
             
             return dfr;
+        },
+        
+        createId: function(id){
+            return db_ensureObjectID(id);
         }
     };
 }());
