@@ -71,7 +71,7 @@ var MongoStoreSingle = (function() {
                 return new this().fetch(data);
             },
             
-            resolveDriver: function(){
+            resolveCollection: function(){
                 var dfr = new Class.Deferred();
                 
                 db_getCollection(new this()._collection, function(coll) {
