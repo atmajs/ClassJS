@@ -79,6 +79,8 @@ Class({
 Store
 -----
 
+Storage interface is the same for all types, so you can easily switch between localStorage, AJAX or MongoDB.
+
 **Remote**
 _async - extends Class.Deferred_
 
@@ -87,18 +89,37 @@ var User = Class({
 	Store: Class.Remote('/user/:id')
 });
 
-// resolve user GET
+// resolve user (GET)
 var user = User.fetch({id: 5});
 
-user.done(onDone).fail(onFail).always(onComplete);
+user
+    .done(onDone)
+	.fail(onFail)
+	.always(onComplete);
 
-// Update POST
+// update (PUT) or Save (POST) - (look for existance of id/_id properties);
+
 user.name = 'X';
-user.save().done(onDone).fail(onFail).always(onComplete);
+user
+    .save()
+	.done(onDone)
+	.fail(onFail)
+	.always(onComplete);
 
-// Remove DEL
-user.del().done(onDone).fail(onFail).always(onComplete)
+// Remove (DELETE)
+user
+    .del()
+	.done(onDone)
+	.fail(onFail)
+	.always(onComplete)
 
+// patch object (PATCH) - MongoDB update query syntax is used
+user
+	.patch({
+		$inc: { 'visits': 1 },
+		$set: { 'current.date' : new Date }
+	})
+	
 ```
 
 More route samples can be found from tests [Route Tests](test/route.test)
@@ -116,12 +137,17 @@ var setts = new Settings;
 // get
 setts.fetch();
 
-// save / update
+// save or update
 setts.points = 10;
 setts.save();
 
 // remove
 setts.del();
+
+// patch
+setts.patch({
+	$inc: { points: 1 }
+});
 ```
 
 **MongoDB**
@@ -142,13 +168,33 @@ var User = Class({
 });
 
 var _user = User
-	.fetch({username: 'bar'})
+	.fetch({ username: 'bar' })
+//  .fetch({ age: '>10' })
 	.done(function(user){
 		_user === user // -> true
 	})
 	.fail(function(error){
 	
 	})
+
+// To perform more complex queries, use $query of MongoDB
+User
+	.fetch({
+		$query:{
+			name: 'Smith'
+			age: {
+				$gte: 40
+			}
+		},
+		$orderby:{
+			surname: -1
+		}, 
+		$maxScan: 1, 
+	})
+	.done(function(users){
+		
+	})
+	;
 
 _user.username = 'foo'
 _user
@@ -163,8 +209,53 @@ _user
 	.done(callback)
 	.fail(callback)
 	.always(callback);
+	
+_user
+	.patch({
+		$inc: { age: 1 }
+	})
+	;
 
+// To run complex MongoDB queries:
+
+// 1) Get MongoDB `db` object
+Class
+	.MongoStore
+	.resolveDb()
+	.done(function(db){
+		// do smth with the database
+	})
+	.fail(onError);
+
+// 2) Get MongoDB Collection object
+User
+	.resolveCollection()
+	.done(function(collection){
+		// do smth with the collection object
+	})
+	.fail(onError)
+	;
 ```
+
+All work with the database is encapsulated, so you do not need even to connect to the database,
+just apply settings and with the first query the connection will be established.
+
+Connection to a Replicaset:
+```javascript
+Class
+	.MongoStore
+	.settings({
+		connection: 'mongodb://localhost:30000,localhost:30001,localhost:30002/myDatabase',
+		
+		// redefine options, defaults are:
+		params: {
+			auto_reconnect: true,
+			native_parser: true,
+			w: 1
+		}
+	})
+```
+
 
 Collections
 ----
