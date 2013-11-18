@@ -1,11 +1,22 @@
 var MongoStoreSingle = (function() {
 
-    function MongoStoreSingle(collection) {
-        if (!collection) {
-            console.error('<MongoStore> should define a collection name');
+    function MongoStoreSingle(mix) {
+        var coll, indexes;
+        
+        if (is_String(mix)) {
+            coll = mix;
+        }
+        else if (is_Object(mix)) {
+            coll = mix.collection;
+            indexes = mix.indexes;
         }
         
-        this._collection = collection;
+        // if DEBUG
+        !coll && console.error('<MongoStore> should define a collection name');
+        // endif
+        
+        this._coll = coll;
+        this._indexes = indexes;
     }
 
     /**
@@ -18,7 +29,7 @@ var MongoStoreSingle = (function() {
             if (this._ensureFree() === false)
                 return this;
             
-            db_findSingle(this._collection, data, fn_proxy(this._fetched, this));
+            db_findSingle(this._coll, data, fn_proxy(this._fetched, this));
             return this;
         },
         save: function() {
@@ -31,7 +42,7 @@ var MongoStoreSingle = (function() {
                     : db_updateSingle
                     ;
             
-            fn(this._collection, json, fn_proxy(this._inserted, this));
+            fn(this._coll, json, fn_proxy(this._inserted, this));
             return this;
         },
         del: function() {
@@ -39,7 +50,7 @@ var MongoStoreSingle = (function() {
                 return this;
             
             if (this._id) 
-                db_remove(this._collection, {
+                db_remove(this._coll, {
                     _id: this._id
                 }, true, fn_proxy(this._completed, this));
             else
@@ -54,7 +65,7 @@ var MongoStoreSingle = (function() {
             
             if (this._id) {
                 db_patchSingle(
-                    this._collection,
+                    this._coll,
                     this._id, patch,
                     fn_proxy(this._completed, this)
                 );
@@ -74,7 +85,7 @@ var MongoStoreSingle = (function() {
             resolveCollection: function(){
                 var dfr = new Class.Deferred();
                 
-                db_getCollection(new this()._collection, function(err, coll) {
+                db_getCollection(new this()._coll, function(err, coll) {
                     if (err) 
                         return dfr.reject(err);
                     

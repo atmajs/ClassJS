@@ -1,6 +1,7 @@
 
 Class.MongoStore = (function(){
     
+    // import utils.js
     // import Settings.js
     // import Driver.js
     // import MongoSingle.js
@@ -13,7 +14,7 @@ Class.MongoStore = (function(){
         settings: Settings,
         
         resolveDb: function(){
-            var dfr = new Class.Deferred();
+            var dfr = new Deferred();
             
             db_getDb(function(error, db){
                 if (error) 
@@ -27,6 +28,36 @@ Class.MongoStore = (function(){
         
         createId: function(id){
             return db_ensureObjectID(id);
+        },
+        
+        ensureIndexes: function(Ctor) {
+            var proto = Ctor.prototype,
+                indexes = proto._indexes,
+                coll = proto._coll
+                ;
+            if (indexes == null) {
+                // if DEBUG
+                console.error('<class:mongodb> No indexes>', Ctor);
+                // endif
+                return;
+            }
+            
+            var i = -1,
+                imax = indexes.length,
+                dfr = new Deferred(),
+                listener = cb_createListener(imax - 1, complete)
+                ;
+            
+            while(++i < imax){
+                db_ensureIndex(coll, indexes[i], listener);
+            }
+            
+            function complete(error){
+                if (error) 
+                    return dfr.reject(error);
+                
+                dfr.resolve();
+            }
         }
     };
 }());

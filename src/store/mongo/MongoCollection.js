@@ -5,7 +5,7 @@ var MongoStoreCollection = (function(){
             console.error('<MongoStore> should define a collection name');
         }
         
-        this._collection = collection;
+        this._coll = collection;
     }
     
     function collection_push(collection, json){
@@ -18,17 +18,6 @@ var MongoStoreCollection = (function(){
         
         collection[collection.length++] = instance;
     }
-    
-    function cb_createListener(count, cb){
-        var _error;
-        return function(error){
-            if (error)
-                _error = error;
-                
-            if (--count === 0)
-                cb(_error);
-        }
-    }
         
         
     obj_inherit(MongoStoreCollection, Deferred, {
@@ -37,7 +26,7 @@ var MongoStoreCollection = (function(){
             if (this._ensureFree() === false)
                 return this;
             
-            db_findMany(this._collection, data, fn_proxy(this._fetched, this));
+            db_findMany(this._coll, data, fn_proxy(this._fetched, this));
             return this;
         },
         save: function(){
@@ -47,7 +36,7 @@ var MongoStoreCollection = (function(){
             var insert = [],
 				insertIndexes = [],
                 update = [],
-                coll = this._collection,
+                coll = this._coll,
                 onComplete = fn_proxy(this._completed, this);
             
             for (var i = 0, x, imax = this.length; i < imax; i++){
@@ -104,7 +93,7 @@ var MongoStoreCollection = (function(){
                     }
                 }
                 
-                db_remove(this._collection, {
+                db_remove(this._coll, {
                     _id: {
                         $in: ids
                     }

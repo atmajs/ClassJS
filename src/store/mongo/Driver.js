@@ -8,7 +8,8 @@ var db_getDb,
     db_updateMany,
     db_remove,
     db_ensureObjectID,
-    db_patchSingle
+    db_patchSingle,
+    db_ensureIndex
     ;
 
 (function(){
@@ -140,6 +141,16 @@ var db_getDb,
                 
                 callback(error);
             });
+    };
+    
+    db_ensureIndex = function(collection, index, callback){
+        if (db == null) 
+            return connect(createDbDelegate(db_ensureIndex, collection, index, callback));
+        
+        db
+            .collection(collection)
+            .ensureIndex(index, callback)
+            ;
     };
     
     db_ensureObjectID = function(value){
