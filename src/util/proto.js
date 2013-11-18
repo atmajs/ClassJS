@@ -27,13 +27,12 @@ var class_inherit = (function() {
 		};
 	
 	
-	function proto_override(proto, key, fn) {
-        var __super = proto[key],
-			__proxy = __super == null
+	function proto_override(__super, fn) {
+        var __proxy = __super == null
 				? function() {}
 				: function(args){
 				
-					if (_isArguments(args)) {
+					if (arguments.length === 1 && _isArguments(args)) {
 						return fn_apply(__super, this, args);
 					}
 					
@@ -70,7 +69,7 @@ var class_inherit = (function() {
 		
 		if (_overrides != null) {
 			for (var key in _overrides) {
-				prototype[key] = proto_override(prototype, key, _overrides[key]);
+				prototype[key] = proto_override(prototype[key], _overrides[key]);
 			}
 		}
 		
@@ -102,7 +101,7 @@ var class_inherit = (function() {
 		if (_overrides != null) {
 			var prototype = _class.prototype;
 			for (var key in _overrides) {
-				prototype[key] = proto_override(prototype, key, _overrides[key]);
+				prototype[key] = proto_override(prototype[key], _overrides[key]);
 			}
 		}
 		

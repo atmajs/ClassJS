@@ -110,6 +110,8 @@ var Class = function(data) {
 			}
 		}
 		
+		this['super'] = null;
+		
 		return this;
 	};
 
