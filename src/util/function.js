@@ -8,6 +8,8 @@ function fn_proxy(fn, ctx) {
 function fn_apply(fn, ctx, _arguments){
 	
 	switch (_arguments.length) {
+		case 0:
+			return fn.call(ctx);
 		case 1:
 			return fn.call(ctx, _arguments[0]);
 		case 2:
