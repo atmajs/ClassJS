@@ -14,8 +14,8 @@ function obj_inherit(target /* source, ..*/ ) {
 			if ('Static' === key) {
 				if (target.Static != null) {
 					
-					for (key in target.Static) {
-						target.Static[key] = target.Static[key];
+					for (key in source.Static) {
+						target.Static[key] = source.Static[key];
 					}
 					
 					continue;
