@@ -9,7 +9,9 @@ var db_getDb,
     db_remove,
     db_ensureObjectID,
     db_patchSingle,
-    db_ensureIndex
+    db_ensureIndex,
+    
+    db_getMongo
     ;
 
 (function(){
@@ -155,11 +157,20 @@ var db_getDb,
     
     db_ensureObjectID = function(value){
         if (is_String(value) && value.length === 24) 
-            return getMongo().ObjectID(value);
+            return db_getMongo().ObjectID(value);
         
         return value;
     };
     
+    db_getMongo = function(){
+        db_getMongo = function() {
+            return mongo;
+        };
+        
+        mongo = require('mongodb');
+        
+        return db_getMongo();
+    };
     
     var connect = (function(){
         
@@ -181,7 +192,7 @@ var db_getDb,
             if (connecting) 
                 return;
             
-            getMongo();
+            db_getMongo();
             
             connecting = true;
             connection = settings_getConnectionString();
@@ -214,15 +225,7 @@ var db_getDb,
         };
     }());
     
-    var getMongo = function(){
-        getMongo = function() {
-            return mongo;
-        };
-        
-        mongo = require('mongodb');
-        
-        return getMongo();
-    };
+    
     
     var queryToMongo = function(query){
         if (query == null) {

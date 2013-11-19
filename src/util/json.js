@@ -1,8 +1,13 @@
 var JSONHelper = (function() {
 	
-	var _date_toJSON = Date.prototype.toJSON;
+	var _date_toJSON = Date.prototype.toJSON,
+		_skipped;
 	
 	return {
+		skipToJSON: function(toJSON){
+			_skipped && console.error('@TODO: Not implemented: only one skipped value allowed');
+			_skipped = toJSON;
+		},
 		// Create from Complex Class Instance a lightweight json object 
 		toJSON: function() {
 			var obj = {},
@@ -30,6 +35,11 @@ var JSONHelper = (function() {
 						
 						if (toJSON === _date_toJSON) {
 							// do not serialize Date
+							break;
+						}
+						
+						if (toJSON === _skipped) {
+							// skip to json - @TODO quick hack to skip MongoDB.ObjectID
 							break;
 						}
 						
@@ -64,7 +74,10 @@ var JSONHelper = (function() {
 					return;
 				}
 
-				array[i] = is_Function(x.toJSON) ? x.toJSON() : JSONHelper.toJSON.call(x);
+				array[i] = is_Function(x.toJSON)
+					? x.toJSON()
+					: JSONHelper.toJSON.call(x)
+					;
 
 			}
 

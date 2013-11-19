@@ -96,7 +96,7 @@ var MongoStoreSingle = (function() {
             }
         },
 
-        serialize: JSONHelper.toJSON,
+        serialize: mongoSingle_serialize,
         
         deserialize: function(json){
             
