@@ -96,14 +96,14 @@ var MongoStoreSingle = (function() {
             }
         },
 
-        serialize: mongoSingle_serialize,
+        serialize: function(){
+            return mongoSingle_serialize.call(this);
+        },
         
         deserialize: function(json){
             
             Serializable
-                .prototype
-                .deserialize
-                .call(this, json);
+                .deserialize(this, json);
             
             if (this._id)
                 this._id = db_ensureObjectID(this._id);

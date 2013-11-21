@@ -6,9 +6,7 @@ UTest({
 		var setts;
 		
 		var Settings = Class({
-			Construct: function(data){
-				this.deserialize(data);
-			},
+			Base: Class.Serializable,
 			Store: Class.LocalStore('app/settings'),
 			
 			width: 50

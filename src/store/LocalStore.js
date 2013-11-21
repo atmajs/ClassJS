@@ -15,7 +15,9 @@ Class.LocalStore = (function(){
 			
 			return JSON.stringify(json);
 		},
-		
+		deserialize: function(json){
+			return Serializable.deserialize(this, json);
+		},
 		fetch: function(data){
 			
 			var path = this._route.create(data || this),

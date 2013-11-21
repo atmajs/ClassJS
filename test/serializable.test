@@ -17,19 +17,19 @@
 	UTest({
 		'serialize': function() {
 			
-			eq(new A().serialize(), '{"name":"A"}');
-			eq(new B().serialize(), '{"a":{"name":"A"}}');
+			eq(JSON.stringify(new A()), '{"name":"A"}');
+			eq(JSON.stringify(new B()), '{"a":{"name":"A"}}');
 		},
 		
 		'deserialize': function() {
 			
-			eq(Class.Serializable.prototype.deserialize.call({}, {name: 'raw'}).name, 'raw');
+			eq(Class.Serializable.deserialize({}, {name: 'raw'}).name, 'raw');
 			
-			eq(new A().deserialize('{"name":"aX"}').name, 'aX');
+			eq(Class.Serializable.deserialize(new A(), '{"name":"aX"}').name, 'aX');
 			eq((new A({name: 'aX'})).name, 'aX');
 			
 			
-			var b = new B().deserialize('{"a":{"name":"bX"}}');
+			var b = Class.Serializable.deserialize(new B(), '{"a":{"name":"bX"}}');
 			
 			assert(b instanceof B);
 			assert(b.a instanceof A);
@@ -64,7 +64,7 @@
 				roles: new RoleCollection
 			});
 			
-			eq(new Settings().serialize(), '{"roles":[]}');
+			eq(JSON.stringify(new Settings()), '{"roles":[]}');
 			
 			var setts = new Settings('{ "roles":[{"name":"foo"}] }');
 			
@@ -75,7 +75,7 @@
 			
 			
 			setts.roles.push({name: "bar"});
-			eq(setts.serialize(), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
+			eq(JSON.stringify(setts), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
 		}
 	});
 

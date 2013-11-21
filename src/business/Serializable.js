@@ -8,73 +8,81 @@ function Serializable(data) {
 		
 		Ctor.prototype._props = data;
 		
-		obj_extend(Ctor.prototype, Serializable.prototype);
+		//- 
+		//obj_extend(Ctor.prototype, Serializable.prototype);
 		
 		return Ctor;
 	}
 	
-	if (data != null)
-		this.deserialize(data);
+	if (data != null) {
+		
+		if (this.deserialize) 
+			this.deserialize(data);
+		else
+			Serializable.deserialize(this, data);
+		
+	}
 	
 }
 
-Serializable.prototype = {
-	constructor: Serializable,
+Serializable.serialize = function(instance) {
+		
+	if (is_Function(instance.toJSON)) 
+		return instance.toJSON();
 	
-	serialize: function() {
-		
-		return JSON.stringify(this);
-	},
 	
-	deserialize: function(json) {
-		
-		if (is_String(json)) {
-			try {
-				json = JSON.parse(json);
-			}catch(error){
-				console.error('<json:deserialize>', json);
-				return this;
-			}
-		}
-		
-		if (is_Array(json) && is_Function(this.push)) {
-			this.length = 0;
-			for (var i = 0, imax = json.length; i < imax; i++){
-				this.push(json[i]);
-			}
-			return;
-		}
-		
-		var props = this._props,
-			key,
-			Mix;
-		
-		for (key in json) {
-			
-			if (props != null) {
-				Mix = props[key];
-				
-				if (Mix != null) {
-					
-					if (is_Function(Mix)) {
-						this[key] = new Mix(json[key]);
-						continue;
-					}
-					
-					var deserialize = Mix.deserialize;
-					
-					if (is_Function(deserialize)) {
-						this[key] = deserialize(json[key]);
-						continue;
-					}
-					
-				}
-			}
-			
-			this[key] = json[key];
-		}
-		
-		return this;
-	}
+	return JSONHelper.toJSON.call(instance);
 };
+
+Serializable.deserialize = function(instance, json) {
+		
+	if (is_String(json)) {
+		try {
+			json = JSON.parse(json);
+		}catch(error){
+			console.error('<json:deserialize>', json);
+			return instance;
+		}
+	}
+	
+	if (is_Array(json) && is_Function(instance.push)) {
+		instance.length = 0;
+		for (var i = 0, imax = json.length; i < imax; i++){
+			instance.push(json[i]);
+		}
+		return instance;
+	}
+	
+	var props = instance._props,
+		key,
+		Mix;
+	
+	for (key in json) {
+		
+		if (props != null) {
+			Mix = props[key];
+			
+			if (Mix != null) {
+				
+				if (is_Function(Mix)) {
+					instance[key] = new Mix(json[key]);
+					continue;
+				}
+				
+				var deserialize = Mix.deserialize;
+				
+				if (is_Function(deserialize)) {
+					instance[key] = deserialize(json[key]);
+					continue;
+				}
+				
+			}
+		}
+		
+		instance[key] = json[key];
+	}
+	
+	return instance;
+}
+
 

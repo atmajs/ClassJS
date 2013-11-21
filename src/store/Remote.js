@@ -22,6 +22,10 @@ Class.Remote = (function(){
 				;
 		},
 		
+		deserialize: function(json){
+			return Serializable.deserialize(this, json);
+		},
+		
 		fetch: function(data){
 			XHR.get(this._route.create(data || this), this);
 			return this;

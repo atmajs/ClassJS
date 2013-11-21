@@ -219,7 +219,7 @@ var db_getDb,
                     listeners[i](err);
                 }
                 
-                listeners = null;
+                listeners.length = 0;
                 connecting = false;
             }
         };
