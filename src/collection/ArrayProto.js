@@ -114,13 +114,14 @@ var ArrayProto = (function(){
 		},
 		
 		splice: function(index, count /* args */){
-			var i, imax, length, y;
 			
+			var length = this.length;
+			var i, imax, y;
 			
 			// clear range after length until index
-			if (index >= this.length) {
+			if (index >= length) {
 				count = 0;
-				for (i = this.length, imax = index; i < imax; i++){
+				for (i = length, imax = index; i < imax; i++){
 					this[i] = void 0;
 				}
 			}
@@ -130,14 +131,14 @@ var ArrayProto = (function(){
 				rm_end = index + rm_count,
 				add_count = arguments.length - 2,
 				
-				new_length = this.length + add_count - rm_count;
+				new_length = length + add_count - rm_count;
 			
 			
 			// move block
 			
 			var block_start = rm_end,
-				block_end = this.length,
-				block_shift = new_length - this.length;
+				block_end = length,
+				block_shift = new_length - length;
 			
 			if (0 < block_shift) {
 				// move forward
@@ -184,9 +185,11 @@ var ArrayProto = (function(){
 		},
 		
 		reverse: function(){
-			var array = _Array_slice.call(this, 0);
-				
-			for (var i = 0, imax = this.length; i < imax; i++){
+			var array = _Array_slice.call(this),
+				imax = this.length,
+				i = -1
+				;
+			while( ++i < imax) {
 				this[i] = array[imax - i - 1];
 			}
 			return this;
@@ -196,10 +199,13 @@ var ArrayProto = (function(){
 			return _Array_slice.call(this, 0).toString()
 		},
 		
-		each: function(fn, cntx){
-			for (var i = 0, imax = this.length; i < imax; i++){
+		each: function(fn, ctx){
+			var imax = this.length,
+				i = -1
+				;
+			while( ++i < imax ) {
 				
-				fn.call(cntx || this, this[i], i);
+				fn.call(ctx || this, this[i], i);
 			}
             return this;
 		},

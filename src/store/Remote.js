@@ -1,7 +1,3 @@
-/**
- *	Alpha - Test - End
- */
-
 Class.Remote = (function(){
 
 	var str_CONTENT_TYPE = 'content-type',
@@ -34,20 +30,24 @@ Class.Remote = (function(){
 		save: function(callback){
 			
 			var self = this,
-				json = this.serialize(),
-				path = this._route.create(this),
-				method = this._route.hasAliases(this)
+				json = self.serialize(),
+				path = self._route.create(self),
+				method = self._route.hasAliases(self)
 					? 'put'
 					: 'post'
 				;
 			
-			this.defer();
-			XHR[method](path, json, resolveDelegate(this, callback, 'save'));
-			return this;
+			self.defer();
+			XHR[method](path, json, resolveDelegate(self, callback, 'save'));
+			return self;
 		},
 		
 		patch: function(patch){
-			obj_patch(patch);
+			obj_patch(this, patch);
+			
+			var path = this._route.create(this),
+				json = patch
+				;
 			
 			this.defer();
 			XHR.patch(path, json, resolveDelegate(this, callback));
@@ -56,12 +56,13 @@ Class.Remote = (function(){
 		
 		del: function(callback){
 			var self = this,
-				json = this.serialize(),
-				path = this._route.create(this);
+				json = self.serialize(),
+				path = self._route.create(self)
+				;
 				
-			this.defer();
-			XHR.del(path, json, resolveDelegate(this, callback));
-			return this;
+			self.defer();
+			XHR.del(path, json, resolveDelegate(self, callback));
+			return self;
 		},
 		
 		onSuccess: function(response){
@@ -123,7 +124,7 @@ Class.Remote = (function(){
 				if ('save' === action) {
 					self.deserialize(response);
 					
-					return self.resolve(self)
+					return self.resolve(self);
 				}
 				
 				self.resolve(response);

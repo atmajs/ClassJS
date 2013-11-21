@@ -60,8 +60,7 @@ var Await = (function(){
 			await._result[name] = null;
 		}
 		
-		var proxy = fn_proxy(await_listener, await),
-			delegate = fn_createDelegate(await_listener, await, name, errorable)
+		var delegate = fn_createDelegate(await_listener, await, name, errorable)
 			;
 
 		await._timeout = setTimeout(delegate, Await.TIMEOUT);
@@ -81,22 +80,27 @@ var Await = (function(){
 		if (await._wait === 0) 
 			return;
 		
+		var result = await._result;
+		
 		if (name) {
-			var result = _Array_slice.call(arguments, 3);
+			var args = _Array_slice.call(arguments, 3);
 			
-			await._result[name] = {
-				error: errorable ? result.shift() : null,
-				arguments: result
+			result[name] = {
+				error: errorable ? args.shift() : null,
+				arguments: args
 			};
 		} else if (errorable && arguments[3] != null) {
-			await._result.__error = arguments[3];
+			
+			if (result == null) 
+				result = await._result = {};
+			
+			result.__error = arguments[3];
 		}
 		
 		if (--await._wait === 0) {
 			clearTimeout(await._timeout);
 			
-			var result = await._result,
-				error = result && result.__error
+			var error = result && result.__error
 				;
 			var val,
 				key;
