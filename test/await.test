@@ -1,0 +1,115 @@
+include
+	.inject(
+		'/src/vars.js',
+		'/src/util/function.js',
+		'/src/util/array.js',
+		'/src/business/Deferred.js::Deferred',
+		'/src/business/Await.js::Await'
+	)
+	.done(function() {
+
+
+	function delegate(response, timeout, callback) {
+
+		setTimeout(function() {
+
+			callback.apply(null, response);
+
+		}, timeout);
+	}
+
+	function defer(response, timeout, dfr) {
+		
+		setTimeout(function() {
+
+			if (response[0]){
+				return dfr.reject(response[0]);
+			}
+			
+			response.shift();
+			
+			dfr.resolve.apply(dfr, response);
+		}, timeout)
+
+	}
+
+	UTest({
+		'delegate': function(done) {
+			
+			var await = new Await;
+			
+			delegate([], 20, await.delegate());
+			delegate([], 40, await.delegate());
+			
+			await.done(done);
+		},
+		
+		'delegate - args': function(done) {
+			
+			var await = new Await;
+			
+			delegate([null, 'foo'], 20, await.delegate('test'));
+			delegate([], 40, await.delegate());
+			
+			await.done(function(result){
+				eq(result.test.arguments[0], 'foo');
+				done();
+			});
+		},
+		
+		'delegate - args - fail': function(done) {
+			
+			var await = new Await;
+			
+			delegate([null, 'foo'], 20, await.delegate('test'));
+			delegate(['bar-error'], 40, await.delegate());
+			
+			await.fail(function(error, result){
+				eq(error, 'bar-error');
+				eq(result.test.arguments[0], 'foo');
+				
+				done();
+			});
+		},
+		
+		'dfr': function(done){
+			
+			var await = new Await;
+			
+			defer([], 20, await.deferred());
+			defer([], 40, await.deferred());
+			
+			await.done(done);
+			
+		},
+		
+		'dfr - args': function(done) {
+			
+			var await = new Await;
+			
+			defer([null, 'foo'], 20, await.deferred('test'));
+			defer([], 40, await.deferred());
+			
+			await.done(function(result){
+				
+				eq(result.test.arguments[0], 'foo');
+				done();
+			});
+		},
+		
+		'dfr - args - fail': function(done) {
+			
+			var await = new Await;
+			
+			defer([null, 'foo'], 20, await.deferred('test'));
+			defer(['bar-error'], 40, await.deferred());
+			
+			await.fail(function(error, result){
+				eq(error, 'bar-error');
+				eq(result.test.arguments[0], 'foo');
+				
+				done();
+			});
+		},
+	})
+})

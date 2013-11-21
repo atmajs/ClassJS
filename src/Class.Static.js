@@ -21,5 +21,5 @@ Class.bind = function(cntx) {
 Class.Serializable = Serializable;
 Class.Deferred = Deferred;
 Class.EventEmitter = EventEmitter;
-
+Class.Await = Await;
 Class.validate = Validation.validate;
