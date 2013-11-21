@@ -48,7 +48,7 @@ function fn_createDelegate(fn /* args */) {
 	var args = _Array_slice.call(arguments, 1);
 	return function(){
 		if (arguments.length > 0) 
-			args = args.concat(arguments);
+			args = args.concat(_Array_slice.call(arguments));
 		
 		return fn_apply(fn, null, args);
 	};
