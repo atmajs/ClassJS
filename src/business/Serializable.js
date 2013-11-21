@@ -55,9 +55,12 @@ Serializable.deserialize = function(instance, json) {
 	
 	var props = instance._props,
 		key,
+		val,
 		Mix;
 	
 	for (key in json) {
+		
+		val = json[key];
 		
 		if (props != null) {
 			Mix = props[key];
@@ -65,21 +68,24 @@ Serializable.deserialize = function(instance, json) {
 			if (Mix != null) {
 				
 				if (is_Function(Mix)) {
-					instance[key] = new Mix(json[key]);
+					instance[key] = val instanceof Mix
+						? val
+						: new Mix(val)
+						;
 					continue;
 				}
 				
 				var deserialize = Mix.deserialize;
 				
 				if (is_Function(deserialize)) {
-					instance[key] = deserialize(json[key]);
+					instance[key] = deserialize(val);
 					continue;
 				}
 				
 			}
 		}
 		
-		instance[key] = json[key];
+		instance[key] = val;
 	}
 	
 	return instance;
