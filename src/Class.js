@@ -1,4 +1,21 @@
-var Class = function(data) {
+var Class = function(mix) {
+	
+	var namespace,
+		data;
+	
+	if (is_String(mix)) {
+		namespace = mix;
+		
+		if (arguments.length === 1) 
+			return class_get(mix);
+		
+		
+		data = arguments[1];
+	} else {
+		data = mix;
+	}
+	
+	
 	var _base = data.Base,
 		_extends = data.Extends,
 		_static = data.Static,
@@ -10,21 +27,21 @@ var Class = function(data) {
 		
 		key;
 
-	if (_base != null) {
+	if (_base != null) 
 		delete data.Base;
-	}
-	if (_extends != null) {
+	
+	if (_extends != null) 
 		delete data.Extends;
-	}
-	if (_static != null) {
+	
+	if (_static != null) 
 		delete data.Static;
-	}
-	if (_self != null) {
+	
+	if (_self != null) 
 		delete data.Self;
-	}
-	if (_construct != null) {
+	
+	if (_construct != null) 
 		delete data.Construct;
-	}
+	
 	
 	if (_store != null) {
 		
@@ -39,22 +56,20 @@ var Class = function(data) {
 		delete data.Store;
 	}
 	
-	if (_overrides != null) {
+	if (_overrides != null) 
 		delete data.Override;
-	}
 	
-	if (data.toJSON === void 0) {
+	if (data.toJSON === void 0) 
 		data.toJSON = JSONHelper.toJSON;
-	}
-
+	
 
 	if (_base == null && _extends == null && _self == null) {
-		if (_construct == null) {
-			_class = function() {};
-		} else {
-			_class = _construct;
-		}
-
+		
+		_class = _construct == null
+			? function() {}
+			: _construct
+			;
+		
 		data.constructor = _class.prototype.constructor;
 
 		if (_static != null) {
@@ -64,8 +79,11 @@ var Class = function(data) {
 		}
 
 		_class.prototype = data;
+		
+		if (namespace != null) 
+			
+		
 		return _class;
-
 	}
 
 	_class = function() {
@@ -96,7 +114,7 @@ var Class = function(data) {
 			fn_apply(_base, this, arguments);
 		}
 		
-		if (_self != null && obj_isNullOrGlobal(this) === false) {
+		if (_self != null && is_NullOrGlobal(this) === false) {
 			
 			for (var key in _self) {
 				this[key] = fn_proxy(_self[key], this);
@@ -121,13 +139,12 @@ var Class = function(data) {
 		}
 	}
 	
-	if (_base != null) {
+	if (_base != null) 
 		class_inheritStatics(_class, _base);
-	}
 	
-	if (_extends != null) {
+	if (_extends != null) 
 		class_inheritStatics(_class, _extends);
-	}
+	
 
 	class_extendProtoObjects(data, _base, _extends);
 	class_inherit(_class, _base, _extends, data, _overrides);

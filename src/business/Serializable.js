@@ -63,8 +63,10 @@ Serializable.deserialize = function(instance, json) {
 		val = json[key];
 		
 		if (props != null) {
-			Mix = props[key];
-			
+			Mix = props.hasOwnProperty(key) 
+				? props[key]
+				: null
+				;
 			if (Mix != null) {
 				
 				if (is_Function(Mix)) {

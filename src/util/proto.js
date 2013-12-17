@@ -1,25 +1,11 @@
+var class_inherit,
+	class_inheritStatics,
+	class_extendProtoObjects
+	;
 
-
-var class_inherit = (function() {
+(function(){
 	
 	var PROTO = '__proto__';
-	
-	function proto_extend(proto, source) {
-		if (source == null) {
-			return;
-		}
-		if (typeof proto === 'function') {
-			proto = proto.prototype;
-		}
-	
-		if (typeof source === 'function') {
-			source = source.prototype;
-		}
-		
-		for (var key in source) {
-			proto[key] = source[key];
-		}
-	}
 	
 	var _toString = Object.prototype.toString,
 		_isArguments = function(args){
@@ -27,20 +13,110 @@ var class_inherit = (function() {
 		};
 	
 	
-	function proto_override(__super, fn) {
-        var __proxy = __super == null
-				? function() {}
-				: function(args){
-				
-					if (arguments.length === 1 && _isArguments(args)) {
-						return fn_apply(__super, this, args);
-					}
+	class_inherit = PROTO in Object.prototype
+		? inherit
+		: inherit_protoLess
+		;
+	
+	class_inheritStatics = function(_class, mix){
+		if (mix == null) 
+			return;
+		
+		if (is_Function(mix)) {
+			for (var key in mix) {
+				if (is_Function(mix[key]) && mix.hasOwnProperty(key) && _class[key] == null) {
+					_class[key] = mix[key];
+				}
+			}
+			return;
+		}
+		
+		if (Array.isArray(mix)) {
+			var imax = mix.length,
+				i = -1;
+			
+			
+			while ( ++i < imax ) {
+				class_inheritStatics(_class, mix[i]);
+			}
+			return;
+		}
+		
+		if (mix.Static) {
+			mix = mix.Static;
+			for (var key in mix) {
+				if (mix.hasOwnProperty(key) && _class[key] == null) {
+					_class[key] = mix[key];
+				}
+			}
+			return;
+		}
+	};
+	
+	
+	class_extendProtoObjects = function(proto, _base, _extends){
+		var key,
+			protoValue;
+			
+		for (key in proto) {
+			protoValue = proto[key];
+			
+			if (!is_rawObject(protoValue))
+				continue;
+			
+			if (_base != null){
+				if (is_rawObject(_base.prototype[key])) 
+					obj_defaults(protoValue, _base.prototype[key]);
+			}
+			
+			if (_extends != null) {
+				arr_each(_extends, function(x){
+					x = proto_getProto(x);
 					
-					return fn_apply(__super, this, arguments);
-				};
+					if (is_rawObject(x[key])) 
+						obj_defaults(protoValue, x[key]);
+				});
+			}
+		}
+	}
+	
+	// PRIVATE
+	function proto_extend(proto, source) {
+		if (source == null) 
+			return;
+		
+		if (typeof proto === 'function') 
+			proto = proto.prototype;
+		
+		if (typeof source === 'function') 
+			source = source.prototype;
+		
+		for (var key in source) {
+			proto[key] = source[key];
+		}
+	}
+	
+	function proto_override(super_, fn) {
+        var proxy;
+		
+		if (super_) {
+			proxy = function(mix){
+				
+				var args = arguments.length === 1 && _isArguments(mix)
+					? mix
+					: arguments
+					;
+				
+				return  fn_apply(super_, this, args);
+			}
+		} else{
+			
+			proxy = fn_doNothing;
+		}
+		
         
         return function(){
-            this['super'] = __proxy;
+            this['super'] = proxy;
             
             return fn_apply(fn, this, arguments);
         };
@@ -62,10 +138,8 @@ var class_inherit = (function() {
 			proto = proto[PROTO];
 		}
 
-		if (_base != null) {
+		if (_base != null) 
 			proto[PROTO] = _base.prototype;
-		}
-
 		
 		if (_overrides != null) {
 			for (var key in _overrides) {
@@ -80,7 +154,6 @@ var class_inherit = (function() {
 	// browser that doesnt support __proto__ 
 	function inherit_protoLess(_class, _base, _extends, original, _overrides) {
 		
-
 		if (_extends != null) {
 			arr_each(_extends, function(x) {
 				
@@ -108,76 +181,14 @@ var class_inherit = (function() {
 		
 		proto_extend(_class, original); 
 	}
-
-	return '__proto__' in Object.prototype === true ? inherit : inherit_protoLess;
-
+	
+		
+	function proto_getProto(mix) {
+		
+		return is_Function(mix)
+			? mix.prototype
+			: mix
+			;
+	}
+	
 }());
-
-function proto_getProto(mix) {
-	if (typeof mix === 'function') {
-		return mix.prototype;
-	}
-	return mix;
-}
-
-var class_inheritStatics = function(_class, mix){
-	if (mix == null) {
-		return;
-	}
-	
-	if (typeof mix === 'function') {
-		for (var key in mix) {
-			if (typeof mix[key] === 'function' && mix.hasOwnProperty(key) && _class[key] == null) {
-				_class[key] = mix[key];
-			}
-		}
-		return;
-	}
-	
-	if (Array.isArray(mix)) {
-		var imax = mix.length,
-			i = 0;
-		
-		// backwards for proper inhertance flow
-		while (imax-- !== 0) {
-			class_inheritStatics(_class, mix[i++]);
-		}
-		return;
-	}
-	
-	if (mix.Static) {
-		mix = mix.Static;
-		for (var key in mix) {
-			if (mix.hasOwnProperty(key) && _class[key] == null) {
-				_class[key] = mix[key];
-			}
-		}
-		return;
-	}
-};
-
-function class_extendProtoObjects(proto, _base, _extends){
-	var key,
-		protoValue;
-		
-	for (key in proto) {
-		protoValue = proto[key];
-		
-		if (!obj_isRawObject(protoValue))
-			continue;
-		
-		if (_base != null){
-			if (obj_isRawObject(_base.prototype[key])) 
-				obj_defaults(protoValue, _base.prototype[key]);
-		}
-		
-		if (_extends != null) {
-			arr_each(_extends, function(x){
-				x = proto_getProto(x);
-				
-				if (obj_isRawObject(x[key])) 
-					obj_defaults(protoValue, x[key]);
-			});
-		}
-	}
-}

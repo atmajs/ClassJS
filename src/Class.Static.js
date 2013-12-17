@@ -17,7 +17,29 @@ Class.bind = function(cntx) {
 	return cntx;
 };
 
+Class.cfg = function(mix, value){
+	
+	if (is_String(mix)) {
+		
+		if (arguments.length === 1) 
+			return _cfg[mix];
+		
+		_cfg[mix] = value;
+		return;
+	}
+	
+	if (is_Object(mix)) {
+		
+		for(var key in mix){
+			
+			Class.cfg(key, mix[key]);
+		}
+	}
+	
+};
 
+
+Class.Model = {};
 Class.Serializable = Serializable;
 Class.Deferred = Deferred;
 Class.EventEmitter = EventEmitter;

@@ -54,7 +54,7 @@ var MongoStoreSingle = (function() {
                     _id: this._id
                 }, true, fn_proxy(this._completed, this));
             else
-                this._completed();
+                this._completed('<class:patch> `_id` is not defined');
             
             return this;
         },
@@ -71,7 +71,7 @@ var MongoStoreSingle = (function() {
                 );
             }
             else {
-                this._completed();
+                this._completed('<class:patch> `_id` is not defined');
             }
             
             return this;

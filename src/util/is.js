@@ -19,3 +19,17 @@ function is_String(x) {
 function is_notEmptyString(x) {
 	return typeof x === 'string' && x !== '';
 }
+
+function is_rawObject(obj) {
+	if (obj == null) 
+		return false;
+	
+	if (typeof obj !== 'object')
+		return false;
+	
+	return obj.constructor === Object;
+}
+
+function is_NullOrGlobal(ctx){
+	return ctx === void 0 || ctx === global;
+}

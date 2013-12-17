@@ -53,3 +53,5 @@ function fn_createDelegate(fn /* args */) {
 		return fn_apply(fn, null, args);
 	};
 }
+
+function fn_doNothing(){}

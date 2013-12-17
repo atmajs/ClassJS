@@ -42,15 +42,16 @@ Class.Remote = (function(){
 			return self;
 		},
 		
-		patch: function(patch){
-			obj_patch(this, patch);
-			
-			var path = this._route.create(this),
-				json = patch
-				;
+		patch: function(json){
+			obj_patch(this, json);
 			
 			this.defer();
-			XHR.patch(path, json, resolveDelegate(this, callback));
+			
+			XHR.patch(
+				this._route.create(this),
+				json,
+				resolveDelegate(this)
+			);
 			return this;
 		},
 		
