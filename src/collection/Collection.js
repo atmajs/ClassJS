@@ -20,26 +20,11 @@ Class.Collection = (function(){
 			return array;
 		},
 		
-		toJSON: JSONHelper.arrayToJSON
+		toJSON: json_proto_arrayToJSON
 	};
-	
-	//////function overrideConstructor(baseConstructor, Child) {
-	//////	
-	//////	return function CollectionConstructor(){
-	//////		this.length = 0;
-	//////		this._constructor = Child;
-	//////		
-	//////		if (baseConstructor != null)
-	//////			return baseConstructor.apply(this, arguments);
-	//////		
-	//////		return this;
-	//////	};
-	//////	
-	//////}
 	
 	function Collection(Child, Proto) {
 		
-		//////Proto.Construct = overrideConstructor(Proto.Construct, Child);
 		
 		Proto._ctor = Child;
 		

@@ -1,88 +1,90 @@
-var JSONHelper = (function() {
+// Create from Complex Class Instance a lightweight json object
+
+var json_proto_toJSON,
+	json_proto_arrayToJSON
+	;
 	
-	var _date_toJSON = Date.prototype.toJSON,
-		_skipped;
+(function(){
 	
-	return {
-		skipToJSON: function(toJSON){
-			_skipped && console.error('@TODO: Not implemented: only one skipped value allowed');
-			_skipped = toJSON;
-		},
-		// Create from Complex Class Instance a lightweight json object 
-		toJSON: function() {
-			var obj = {},
-				key, val;
+	json_proto_toJSON = function(){
+		
+		var object = this,
+			json = {},
+			
+			key, val;
+		
+		for (key in object){
+			// _ (private)
+			if (key.charCodeAt(0) === 95)
+				continue;
 
-			for (key in this) {
+			if ('Static' === key || 'Validate' === key)
+				continue;
 
-				// _ (private)
-				if (key.charCodeAt(0) === 95)
+			val = object[key];
+
+			if (val == null)
+				continue;
+
+			switch (typeof val) {
+				case 'function':
 					continue;
-
-				if ('Static' === key || 'Validate' === key)
-					continue;
-
-				val = this[key];
-
-				if (val == null)
-					continue;
-
-				switch (typeof val) {
-					case 'function':
+				case 'object':
+					
+					var toJSON = val.toJSON;
+					if (toJSON == null) 
+						break;
+					
+					if (toJSON === json_proto_toJSON || toJSON === json_proto_arrayToJSON) {
+						json[key] = val.toJSON();
 						continue;
-					case 'object':
-						var toJSON = val.toJSON;
-						
-						if (toJSON === _date_toJSON) {
-							// do not serialize Date
-							break;
-						}
-						
-						if (toJSON === _skipped) {
-							// skip to json - @TODO quick hack to skip MongoDB.ObjectID
-							break;
-						}
-						
-						if (is_Function(toJSON)) {
-							obj[key] = val.toJSON();
-							continue;
-						}
-				}
-
-				obj[key] = val;
+					}
+					
+					break;
 			}
 
-			// make mongodb's _id property not private
-			if (this._id != null)
-				obj._id = this._id;
-
-			return obj;
-		},
-
-		arrayToJSON: function() {
-			var array = new Array(this.length),
-				i = 0,
-				imax = this.length,
-				x;
-
-			for (; i < imax; i++) {
-
-				x = this[i];
-
-				if (typeof x !== 'object') {
-					array[i] = x;
-					return;
-				}
-
-				array[i] = is_Function(x.toJSON)
-					? x.toJSON()
-					: JSONHelper.toJSON.call(x)
-					;
-
-			}
-
-			return array;
+			json[key] = val;
 		}
+		
+		// make mongodb's _id property not private
+		if (object._id != null)
+			json._id = object._id;
+		
+		return json;	
 	};
+	
+	json_proto_arrayToJSON =  function() {
+		var array = this,
+			imax = array.length,
+			i = 0,
+			output = new Array(imax),
+			
+			x;
 
+		for (; i < imax; i++) {
+
+			x = array[i];
+			
+			if (x != null && typeof x === 'object') {
+				
+				var toJSON = x.toJSON;
+				if (toJSON === json_proto_toJSON || toJSON === json_proto_arrayToJSON) {
+					
+					output[i] = x.toJSON();
+					continue;
+				}
+				
+				if (toJSON == null) {
+					
+					output[i] = json_proto_toJSON.call(x);
+					continue;
+				}
+			}
+			
+			output[i] = x;
+		}
+
+		return output;
+	};
+	
 }());

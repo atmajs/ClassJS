@@ -13,8 +13,8 @@ Class.Remote = (function(){
 		serialize: function(){
 			
 			return is_Array(this)
-				? JSONHelper.arrayToJSON.call(this)
-				: JSONHelper.toJSON.call(this)
+				? json_proto_arrayToJSON.call(this)
+				: json_proto_toJSON.call(this)
 				;
 		},
 		
@@ -100,9 +100,8 @@ Class.Remote = (function(){
 		
 		return function(error, response, xhr){
 				
-				var isJSON = xhr
-					.getResponseHeader(str_CONTENT_TYPE)
-					.indexOf(str_JSON) !== -1
+				var header = xhr.getResponseHeader(str_CONTENT_TYPE),
+					isJSON = header != null &&  header.indexOf(str_JSON) !== -1
 					;
 					
 				if (isJSON) {

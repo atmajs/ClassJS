@@ -11,6 +11,7 @@ var Class = function(mix) {
 		
 		
 		data = arguments[1];
+		data[str_CLASS_IDENTITY] = namespace;
 	} else {
 		data = mix;
 	}
@@ -60,7 +61,7 @@ var Class = function(mix) {
 		delete data.Override;
 	
 	if (data.toJSON === void 0) 
-		data.toJSON = JSONHelper.toJSON;
+		data.toJSON = json_proto_toJSON;
 	
 
 	if (_base == null && _extends == null && _self == null) {

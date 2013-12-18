@@ -31,7 +31,7 @@ Serializable.serialize = function(instance) {
 		return instance.toJSON();
 	
 	
-	return JSONHelper.toJSON.call(instance);
+	return json_proto_toJSON.call(instance);
 };
 
 Serializable.deserialize = function(instance, json) {

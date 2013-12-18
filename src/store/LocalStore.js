@@ -9,8 +9,8 @@ Class.LocalStore = (function(){
 		serialize: function(){
 			
 			var json = is_Array(this)
-				? JSONHelper.arrayToJSON.call(this)
-				: JSONHelper.toJSON.call(this)
+				? json_proto_arrayToJSON.call(this)
+				: json_proto_toJSON.call(this)
 				;
 			
 			return JSON.stringify(json);

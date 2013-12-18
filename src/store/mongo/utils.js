@@ -10,16 +10,16 @@ function cb_createListener(count, cb){
 }
 
 
-
-function mongoSingle_serialize(){
-	
-	JSONHelper.skipToJSON(db_getMongo().ObjectID().toJSON);
-	
-	
-	mongoSingle_serialize =
-		MongoStoreSingle.prototype.toJSON =
-			JSONHelper.toJSON
-	;
-	
-	return mongoSingle_serialize.call(this);
-}
+//
+//function mongoSingle_serialize(){
+//	
+//	JSONHelper.skipToJSON(db_getMongo().ObjectID().toJSON);
+//	
+//	
+//	mongoSingle_serialize =
+//		MongoStoreSingle.prototype.toJSON =
+//			JSONHelper.toJSON
+//	;
+//	
+//	return mongoSingle_serialize.call(this);
+//}
