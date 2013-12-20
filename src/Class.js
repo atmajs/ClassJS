@@ -82,7 +82,7 @@ var Class = function(mix) {
 		_class.prototype = data;
 		
 		if (namespace != null) 
-			
+			class_register(namespace, _class);
 		
 		return _class;
 	}
@@ -133,6 +133,9 @@ var Class = function(mix) {
 		
 		return this;
 	};
+	
+	if (namespace != null) 
+		class_register(namespace, _class);
 
 	if (_static != null) {
 		for (key in _static) {

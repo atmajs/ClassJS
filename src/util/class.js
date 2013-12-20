@@ -15,6 +15,7 @@ var class_register,
 		
 		var host = _cfg.ModelHost || Class.Model;
 		
-		obj_getProperty(host, namespace);
+		return obj_getProperty(host, namespace);
 	};
-})
+	
+}());
