@@ -76,6 +76,30 @@
 			
 			setts.roles.push({name: "bar"});
 			eq(JSON.stringify(setts), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
+		},
+		
+		
+		'class-repository': function(){
+			
+			var Foo = Class('Foo', {
+				Base: Class.Serializable,
+				number: null,
+				add: function(x){
+					return this.number + x;
+				}
+			});
+			
+			var foo = new Foo({number: 5}),
+				str = Class.stringify(foo);
+			
+			eq(str, '{"number":5,"__$class__":"Foo"}');
+			
+			foo = Class.parse(str);
+			
+			
+			eq(foo.number, 5)
+			eq(typeof foo.add, 'function');
+			eq(foo.add(5), 10);
 		}
 	});
 
