@@ -1,8 +1,11 @@
 var class_register,
 	class_get,
 	
+	class_patch,
+	
 	class_stringify,
 	class_parse
+	
 	;
 
 (function(){
@@ -22,6 +25,28 @@ var class_register,
 			_cfg.ModelHost || Class.Model,
 			namespace
 		);
+	};
+	
+	class_patch = function(mix, Proto){
+		
+		var class_ = is_String(mix)
+			? class_get(mix)
+			: mix
+			;
+			
+		// if DEBUG
+		!is_Function(class_)
+			&& console.error('<class:patch> Not a Function', mix);
+		// endif
+			
+		Proto.Base = class_;
+		
+		class_ = Class(Proto);
+		
+		if (is_String(mix)) 
+			class_register(mix, class_);
+		
+		return class_;
 	};
 	
 	class_stringify = function(class_){

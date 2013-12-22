@@ -35,8 +35,8 @@ Class.cfg = function(mix, value){
 			Class.cfg(key, mix[key]);
 		}
 	}
-	
 };
+
 
 
 Class.Model = {};
@@ -48,3 +48,4 @@ Class.validate = Validation.validate;
 
 Class.stringify = class_stringify;
 Class.parse = class_parse;
+Class.patch = class_patch;
