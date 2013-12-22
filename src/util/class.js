@@ -48,12 +48,22 @@ var class_register,
 		
 		if (obj[str_CLASS_IDENTITY] && obj.toJSON) {
 			
-			val[str_CLASS_IDENTITY] = obj[str_CLASS_IDENTITY];
-			return val;
+			return stringifyMetaJSON(obj[str_CLASS_IDENTITY], val)
+			
+			////val[str_CLASS_IDENTITY] = obj[str_CLASS_IDENTITY];
+			////return val;
 		}
 		
 		
 		return val;
+	}
+	
+	function stringifyMetaJSON(className, json){
+		var out = {};
+		out['json'] = json;
+		out[str_CLASS_IDENTITY] = className;
+		
+		return out;
 	}
 	
 	function parse(key, val) {
@@ -65,7 +75,7 @@ var class_register,
 		
 			if (typeof Ctor === 'function') {
 				
-				val = new Ctor(val);
+				val = new Ctor(val.json);
 			} else {
 				
 				console.error('<class:parse> Class was not registered', val[str_CLASS_IDENTITY]);

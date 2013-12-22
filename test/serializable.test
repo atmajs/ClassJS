@@ -79,7 +79,7 @@
 		},
 		
 		
-		'class-repository': function(){
+		'!class-repository': function(){
 			
 			var Foo = Class('Foo', {
 				Base: Class.Serializable,
@@ -92,7 +92,7 @@
 			var foo = new Foo({number: 5}),
 				str = Class.stringify(foo);
 			
-			eq(str, '{"number":5,"__$class__":"Foo"}');
+			eq(str, '{"json":{"number":5},"__$class__":"Foo"}');
 			
 			foo = Class.parse(str);
 			
@@ -100,6 +100,26 @@
 			eq(foo.number, 5)
 			eq(typeof foo.add, 'function');
 			eq(foo.add(5), 10);
+			
+			
+			var Foos = Class.Collection('Foos', Foo, {
+					Base: Class.Serializable,
+				}),
+				foos = new Foos;
+			
+			foos.push({
+				number: 3
+			});
+			
+			
+			str = Class.stringify(foos);
+			eq(str, '{"json":[{"number":3}],"__$class__":"Foos"}');
+			
+			foos = Class.parse(str);
+			
+			eq(foos.length, 1);
+			eq(foos[0].number, 3);
+			eq(foos[0].add(2), 5);
 		}
 	});
 

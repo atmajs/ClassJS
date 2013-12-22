@@ -23,14 +23,25 @@ Class.Collection = (function(){
 		toJSON: json_proto_arrayToJSON
 	};
 	
-	function Collection(Child, Proto) {
+	function Collection(/* (ClassName, Child, Proto) (Child, Proto) */) {
+		var length = arguments.length,
+			Proto = arguments[length - 1],
+			Child = arguments[length - 2],
+			
+			className
+			;
+		
+		if (length > 2) 
+			className = arguments[0];
 		
 		
 		Proto._ctor = Child;
-		
-		
 		obj_inherit(Proto, CollectionProto, ArrayProto);
-		return Class(Proto);
+		
+		return className == null
+			? Class(Proto)
+			: Class(className, Proto)
+			;
 	}
 	
 	
