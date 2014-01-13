@@ -91,8 +91,11 @@ var class_inherit,
 		if (typeof source === 'function') 
 			source = source.prototype;
 		
-		for (var key in source) {
-			proto[key] = source[key];
+		var key, val;
+		for (key in source) {
+			val = source[key];
+			if (val != null) 
+				proto[key] = val;
 		}
 	}
 	
