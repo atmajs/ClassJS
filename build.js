@@ -13,6 +13,10 @@ global.config = {
 			}
 		}
 	},
+	'add-handlers': {
+		action: 'custom',
+		script: 'tools/license-handler.js'
+	},
 	'import': {
 		files: 'builds/**',
 		output: 'lib/'
@@ -29,8 +33,14 @@ global.config = {
 		files: 'src/**',
 		config: '#[import]'
 	},
+	
+	// `> atma bump`
+	'bump': {
+		action: 'custom',
+		script: 'tools/bump.js'
+	},
 
-	'defaults': ['import', 'jshint', 'uglify']
+	'defaults': ['add-handlers', 'import', 'jshint', 'uglify']
 };
 
 
