@@ -5,18 +5,11 @@
 			? global
 			: window
 			,
-		_isCommonJS = false,
 		_exports
 		;
 
     
-	if (typeof exports !== 'undefined' && (root == null || root === exports || root === _global)){
-		// raw commonjs module
-		_isCommonJS = true;
-        root = exports;
-    }
-	
-    _exports = root || _global;
+	_exports = root || _global;
     
 
     function construct(){
@@ -32,9 +25,8 @@
 	// Browser OR Node
     construct();
 	
-	if (_isCommonJS) 
+	if (typeof module !== 'undefined') 
 		module.exports = _exports.Class;
-	
 	
 }(this, function(global, exports){
 	"use strict";
