@@ -5,7 +5,7 @@
 			? global
 			: window
 			,
-		_isCommonJS = false
+		_isCommonJS = false,
 		_exports
 		;
 
