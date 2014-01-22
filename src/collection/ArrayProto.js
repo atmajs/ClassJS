@@ -309,6 +309,17 @@ var ArrayProto = (function(){
 			}
 			
 			return -1;
+		},
+		
+		map: function(fn){
+			
+			var arr = [],
+				imax = this.length,
+				i = -1;
+			while( ++i < imax ){
+				arr[i] = fn(this[i]);
+			}
+			return arr;
 		}
 	};
 	
