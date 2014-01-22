@@ -101,7 +101,7 @@ Class.Remote = (function(){
 		return function(error, response, xhr){
 				
 				var header = xhr.getResponseHeader(str_CONTENT_TYPE),
-					isJSON = header != null &&  header.indexOf(str_JSON) !== -1
+					isJSON = header != null &&  header.toLowerCase().indexOf(str_JSON) !== -1
 					;
 					
 				if (isJSON) {
@@ -121,8 +121,23 @@ Class.Remote = (function(){
 				if (error) 
 					return reject(self, response, xhr);
 				
-				if ('save' === action) {
-					self.deserialize(response);
+				if ('save' === action && is_Object(response)) {
+					
+					if (is_Array(self)) {
+						
+						var imax = self.length,
+							jmax = response.length,
+							i = -1
+							;
+						
+						while ( ++i < imax && i < jmax){
+							
+							Serializable.deserialize(self[i], response[i]);
+						}
+						
+					} else {
+						self.deserialize(response);
+					}
 					
 					return self.resolve(self);
 				}
