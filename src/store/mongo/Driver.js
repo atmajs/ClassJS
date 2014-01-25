@@ -11,7 +11,10 @@ var db_getDb,
     db_patchSingle,
     db_ensureIndex,
     
-    db_getMongo
+    db_getMongo,
+    
+    db_resolveCollection,
+    db_resolveDb
     ;
 
 (function(){
@@ -31,11 +34,37 @@ var db_getDb,
         callback(null, coll);
     };
     
+    db_resolveCollection = function(name){
+        var dfr = new Class.Deferred();
+                
+        db_getCollection(name, function(err, coll) {
+            if (err) 
+                return dfr.reject(err);
+            
+            dfr.resolve(coll)
+        });
+        
+        return dfr;  
+    };
+    
     db_getDb = function(callback){
         if (db == null) 
             return connect(createDbDelegate(db_getDb, callback));
         
         callback(null, db);
+    };
+    
+    db_resolveDb = function(name){
+        var dfr = new Deferred();
+            
+        db_getDb(function(error, db){
+            if (error) 
+                return dfr.reject(error);
+            
+            dfr.resolve(db);
+        })
+        
+        return dfr;
     };
     
     db_findSingle = function(coll, query, callback){

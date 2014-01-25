@@ -79,20 +79,13 @@ var MongoStoreSingle = (function() {
         
         Static: {
             fetch: function(data) {
+                
                 return new this().fetch(data);
             },
             
             resolveCollection: function(){
-                var dfr = new Class.Deferred();
                 
-                db_getCollection(new this()._coll, function(err, coll) {
-                    if (err) 
-                        return dfr.reject(err);
-                    
-                    dfr.resolve(coll)
-                });
-                
-                return dfr;
+                return db_resolveCollection(new this()._coll);
             }
         },
 

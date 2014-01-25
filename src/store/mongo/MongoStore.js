@@ -13,18 +13,8 @@ Class.MongoStore = (function(){
         Collection: MongoStoreCollection,
         settings: Settings,
         
-        resolveDb: function(){
-            var dfr = new Deferred();
-            
-            db_getDb(function(error, db){
-                if (error) 
-                    return dfr.reject(error);
-                
-                dfr.resolve(db);
-            })
-            
-            return dfr;
-        },
+        resolveDb: db_resolveDb,
+        resolveCollection: db_resolveCollection,
         
         createId: function(id){
             return db_ensureObjectID(id);
