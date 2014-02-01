@@ -5,14 +5,14 @@
  **/
 
 
-global.config = {
-	'settings': {
-		io: {
-			extensions: {
-				js: ['condcomments:read', 'importer:read']
-			}
-		}
-	},
+module.exports = {
+	////'settings': {
+	////	io: {
+	////		extensions: {
+	////			js: ['condcomments:read', 'importer:read']
+	////		}
+	////	}
+	////},
 	'add-handlers': {
 		action: 'custom',
 		script: 'tools/license-handler.js'

@@ -52,6 +52,10 @@ function Deferred(){}
 			return fn_proxy(this.reject, this);
 		},
 		
+		then: function(onSuccess, onError){
+			return this.done(onSuccess).fail(onError);
+		},
+		
 		done: function(callback) {
 			
 			return dfr_bind(

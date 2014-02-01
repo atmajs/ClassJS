@@ -1,14 +1,24 @@
 ClassJS
 -----
-
 [![Build Status](https://travis-ci.org/atmajs/ClassJS.png?branch=master)](https://travis-ci.org/atmajs/ClassJS)
 
 
 Perfomant and Powerful Class-Model Implementation for browsers or nodejs
 
-
 [Documentation](http://atmajs.com/class)
 
+###### Install
+
+- Standalone: ``` $ npm install atma-class ```
+- [AtmaPackage](https://github.com/atmajs/Atma.Libs): ``` $ npm install atma-libs ```
+
+-----
+
+- [Persistence](#store)
+- [Collections](#collections)
+- Embedded Classes
+    - [Deferred](#deferred)
+    - [EventEmitter](#eventemitter)
 
 ```javascript
 Class({
@@ -38,7 +48,10 @@ Class({
 	/*
 	 * RESTfull/LocalStorage/MongoDB serialization/deserialization
 	 */
-	Store: < Class.Remote | Class.LocalStore >
+	Store: <| Class.Remote('/user/:id')
+            | Class.LocalStore('user')
+            | Class.Mongo.Single('users')
+            | Class.Mongo.Collection('users') |>
 
     /*
 	 * Override any Base or Extended Function
@@ -62,7 +75,14 @@ Class({
 		 * Functions, that are always bound to the instance of the class
 		 * e.g. setTimeout(this.foo, 1000);
 		foo: function(){}
-	 }
+	 },
+     
+     Validate: {
+        user: function(val){
+            if (val == null)
+                return 'Username must be defined';
+        }
+     }
 
 	/* 
 	 * Other class functions / properties you need
@@ -79,7 +99,7 @@ Class({
 Store
 -----
 
-Storage interface is the same for all types, so you can easily switch between localStorage, AJAX or MongoDB.
+Storage Interface is same for all types, so you can easily switch between localStorage, AJAX or MongoDB.
 
 **Remote**
 _async - extends Class.Deferred_
@@ -125,7 +145,7 @@ user
 More route samples can be found from tests [Route Tests](test/route.test)
 
 **LocalStore**
-_same as remote, as localStorage is sync - class doesnt extend Class.Deferred_
+_as localStorage is sync - class doesnt extend Class.Deferred_
 ```javascript
 var Settings = Class({
 	Store: Class.LocalStore('app/settings'),

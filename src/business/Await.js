@@ -6,7 +6,7 @@ var Await = (function(){
 		_wait: 0,
 		_timeout: null,
 		_result: null,
-		_resolved: true,
+		_resolved: [],
 		
 		delegate: function(name, errorable) {
 			return await_createDelegate(this, name, errorable);
