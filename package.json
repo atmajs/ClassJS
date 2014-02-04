@@ -5,7 +5,7 @@
         "name": "Alexander Kit",
         "email": "alex.kit@atmajs.com"
     },
-    "version": "1.0.46",
+    "version": "1.0.47",
     "main": "./lib/class.node.js",
     "repository": {
         "type": "git",

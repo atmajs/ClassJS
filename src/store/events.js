@@ -53,7 +53,7 @@ var storageEvents_onBefore,
 	
 	function listenerDelegate(sender, type) {
 		return function(){
-			var isSuccess = sender._rejected === void 0,
+			var isSuccess = sender._rejected == null,
 				arguments_ = isSuccess 
 					? sender._resolved
 					: sender._rejected
