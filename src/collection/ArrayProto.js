@@ -68,8 +68,10 @@ var ArrayProto = (function(){
 
 	var ArrayProto = {
 		length: 0,
-		push: function(/*mix*/) { 
-			for (var i = 0, imax = arguments.length; i < imax; i++){
+		push: function(/*mix*/) {
+			var imax = arguments.length,
+				i = -1;
+			while ( ++i < imax ) {
 				
 				this[this.length++] = create(this._ctor, arguments[i]);
 			}
@@ -199,16 +201,8 @@ var ArrayProto = (function(){
 			return _Array_slice.call(this, 0).toString()
 		},
 		
-		each: function(fn, ctx){
-			var imax = this.length,
-				i = -1
-				;
-			while( ++i < imax ) {
-				
-				fn.call(ctx || this, this[i], i);
-			}
-            return this;
-		},
+		each: forEach,
+		forEach: forEach,
 		
 		
 		where: function(mix){
@@ -320,8 +314,33 @@ var ArrayProto = (function(){
 				arr[i] = fn(this[i]);
 			}
 			return arr;
+		},
+		
+		filter: function(fn, ctx){
+			var coll = new this.constructor(),
+				imax = this.length,
+				i = -1;
+			while ( ++i < imax ){
+				if (fn.call(ctx || this, this[i])) {
+					coll.push(this[i]);
+				}
+			}
+			return coll;
 		}
 	};
+	
+	
+	function forEach(fn, ctx){
+		
+		var imax = this.length,
+			i = -1
+			;
+		while( ++i < imax ) {
+			
+			fn.call(ctx || this, this[i], i);
+		}
+		return this;
+	}
 	
 	
 	return ArrayProto;

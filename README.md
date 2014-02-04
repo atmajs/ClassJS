@@ -74,6 +74,7 @@ Class({
 		/*
 		 * Functions, that are always bound to the instance of the class
 		 * e.g. setTimeout(this.foo, 1000);
+         */
 		foo: function(){}
 	 },
      
