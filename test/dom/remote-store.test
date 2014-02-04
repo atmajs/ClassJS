@@ -1,23 +1,19 @@
 	
 UTest({
 	
-	'data fetch': function(done){
-		
+	'test-fetch': function(done){
 		
 		var Foo = Class({
 			Store: Class.Remote('test/dom/data/{number}.json')
 		});
 		
-		
 		var foo = Foo.fetch({number: 1});
-		
-		assert.equal(typeof foo.done, 'function');
+		eq(typeof foo.done, 'function');
 
-		
 		
 		foo.done(assert.callback(function(){
 			
-			assert.equal(foo.name, 'A');
+			eq(foo.name, 'A');
 
 			foo.number = 5;			
 			foo
@@ -28,7 +24,25 @@ UTest({
 				;
 			
 		}));
+	},
+	
+	'test-fetch-listeners': function(done){
 		
+		var Remote = Class.Remote;
+		
+		Remote.onBefore(assert.callback(function(class_, type){
+			eq(type, 'fetch');
+		}));
+		
+		Remote.onAfter(assert.callback(function(class_){
+			
+			eq(class_.name, 'A');
+		}), assert.callback(function(class_){
+			
+			eq(class_.number, '5');
+		}));
+		
+		this['test-fetch'](done);
 	}
 	
 });

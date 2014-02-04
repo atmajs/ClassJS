@@ -3,5 +3,5 @@ module.exports = {
 		'lib/class.js::Class'
 	],
 	
-	tests: 'test/**test'
+	tests: 'test/**.test'
 };

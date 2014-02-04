@@ -10,6 +10,8 @@ Class.Remote = (function(){
 	
 	obj_inherit(XHRRemote, StoreProto, Serializable, Deferred, {
 		
+		defer: storageEvents_overridenDefer,
+		
 		serialize: function(){
 			
 			return is_Array(this)
@@ -23,29 +25,30 @@ Class.Remote = (function(){
 		},
 		
 		fetch: function(data){
+			this.defer('fetch');
+			
 			XHR.get(this._route.create(data || this), this);
 			return this;
 		},
 		
 		save: function(callback){
+			this.defer('save');
 			
-			var self = this,
-				json = self.serialize(),
-				path = self._route.create(self),
-				method = self._route.hasAliases(self)
+			var json = this.serialize(),
+				path = this._route.create(this),
+				method = this._route.hasAliases(this)
 					? 'put'
 					: 'post'
 				;
 			
-			self.defer();
-			XHR[method](path, json, resolveDelegate(self, callback, 'save'));
-			return self;
+			XHR[method](path, json, resolveDelegate(this, callback, 'save'));
+			return this;
 		},
 		
 		patch: function(json){
-			obj_patch(this, json);
+			this.defer('patch');
 			
-			this.defer();
+			obj_patch(this, json);
 			
 			XHR.patch(
 				this._route.create(this),
@@ -56,14 +59,14 @@ Class.Remote = (function(){
 		},
 		
 		del: function(callback){
-			var self = this,
-				json = self.serialize(),
-				path = self._route.create(self)
+			this.defer('del');
+			
+			var json = this.serialize(),
+				path = this._route.create(this)
 				;
-				
-			self.defer();
-			XHR.del(path, json, resolveDelegate(self, callback));
-			return self;
+			
+			XHR.del(path, json, resolveDelegate(this, callback));
+			return this;
 		},
 		
 		onSuccess: function(response){
@@ -146,10 +149,13 @@ Class.Remote = (function(){
 		};
 	}
 	
-	return function(route){
+	function Remote(route){
 		
 		return new XHRRemote(route);
-		
 	};
 	
+	Remote.onBefore = storageEvents_onBefore;
+	Remote.onAfter = storageEvents_onAfter;
+	
+	return Remote;
 }());
