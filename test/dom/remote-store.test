@@ -11,16 +11,16 @@ UTest({
 		eq(typeof foo.done, 'function');
 
 		
-		foo.done(assert.callback(function(){
+		foo.done(assert.await(function(){
 			
 			eq(foo.name, 'A');
 
+			
 			foo.number = 5;			
 			foo
 				.fetch()
-				.fail(assert.callback(function(){
-					done();	
-				}))
+				.fail(assert.await())
+				.always(done)
 				;
 			
 		}));
@@ -30,14 +30,14 @@ UTest({
 		
 		var Remote = Class.Remote;
 		
-		Remote.onBefore(assert.callback(function(class_, type){
+		Remote.onBefore(assert.await(2, function(class_, type){
 			eq(type, 'fetch');
 		}));
 		
-		Remote.onAfter(assert.callback(function(class_){
+		Remote.onAfter(assert.await(function(class_){
 			
 			eq(class_.name, 'A');
-		}), assert.callback(function(class_){
+		}), assert.await(function(class_){
 			
 			eq(class_.number, '5');
 		}));

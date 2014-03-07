@@ -157,5 +157,23 @@ Class.Remote = (function(){
 	Remote.onBefore = storageEvents_onBefore;
 	Remote.onAfter = storageEvents_onAfter;
 	
+	arr_each(['get', 'post', 'put', 'delete'], function(method){
+		
+		Remote[method] = function(url, obj){
+			
+			var json = obj;
+			if (obj.serialize != null) 
+				json = obj.serialize();
+			
+			if (json == null && obj.toJSON) 
+				json = obj.toJSON();
+			
+			var dfr = new Deferred();
+			XHR[method](url, json, resolveDelegate(dfr));
+			
+			return dfr;
+		};
+	});
+	
 	return Remote;
 }());

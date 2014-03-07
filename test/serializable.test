@@ -79,7 +79,7 @@
 		},
 		
 		
-		'!class-repository': function(){
+		'class-repository': function(){
 			
 			var Foo = Class('Foo', {
 				Base: Class.Serializable,

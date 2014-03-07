@@ -38,6 +38,7 @@ var storageEvents_onBefore,
 	};
 	
 	storageEvents_overridenDefer = function(type){
+		
 		Deferred.prototype.defer.call(this);
 		
 		if (hasBeforeListeners_) 
@@ -62,7 +63,6 @@ var storageEvents_onBefore,
 					? event_SUCCESS
 					: event_FAIL
 				;
-			
 			emit([event, sender, type].concat(arguments_));
 		};
 	}

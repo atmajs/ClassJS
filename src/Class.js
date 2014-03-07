@@ -91,7 +91,7 @@ var Class = function(mix) {
 		
 		//// consider to remove 
 		////if (this instanceof _class === false) 
-		////	return new (_class.bind.apply(_class, [null].concat(arguments)));
+		////	return new (_class.bind.apply(_class, [null].concat(_Array_slice.call(arguments))));
 		
 	
 		if (_extends != null) {

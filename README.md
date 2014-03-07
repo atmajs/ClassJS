@@ -13,41 +13,51 @@ Perfomant and Powerful Class-Model Implementation for browsers or nodejs
 - [AtmaPackage](https://github.com/atmajs/Atma.Libs): ``` $ npm install atma-libs ```
 
 -----
-
+- [Overview](#overview)
 - [Persistence](#store)
+	- [RESTful](#remote)
+	- [Local Storage](#localstore)
+	- [MongoDB](#mongodb)
+	- MySQL _in progress_
 - [Collections](#collections)
-- Embedded Classes
+- [Repository](#repository)
+- [Embedded Classes](#classes)
     - [Deferred](#deferred)
     - [EventEmitter](#eventemitter)
+
+
+##### Overview
+
+Design the business logic layer of your application with proper inheritance chain and all other OOP paterns.
 
 ```javascript
 Class({
 	/*
 	 * instanceof also works on deep inheritances
-	 */
+	 \*/
 	Base: < Function > BaseConstructor,
 
 	/* 
 	 * Same as base, but instanceof wont work, 
 	 * as instanceof allows linear inheritance only
-	 */
+	\*/
 	Extends: < Function | Object | Array > Mixins
 
 	/*
 	 * constructor of a class - if has inheritance, 
 	 * also all constructors will be called
-	 */
+	\*/
 	Construct: < Function > function(){}
 
 	/*
 	 * Static functions of a created Class
 	 * User.key()
-	 */
+	\*/
 	Static: < Object > { key: function(){} }
 
 	/*
 	 * RESTfull/LocalStorage/MongoDB serialization/deserialization
-	 */
+	\*/
 	Store: <| Class.Remote('/user/:id')
             | Class.LocalStore('user')
             | Class.Mongo.Single('users')
@@ -55,11 +65,10 @@ Class({
 
     /*
 	 * Override any Base or Extended Function
-	 *
-	 *  Using this object, there will be access to overriden function
-     *  via this.super();
-     */
-	 Override: < Object > {
+	 * Using this object, there will be access to overriden function
+     * via this.super();
+    \*/
+	Override: < Object > {
 		some: function(){
 			
 			// default arguments
@@ -68,42 +77,53 @@ Class({
 			// overriden arguments
 			this.super(arg1, arg2);
 		}
-	 },
+	},
 	 
-	 Self: {
+	Self: {
 		/*
 		 * Functions, that are always bound to the instance of the class
 		 * e.g. setTimeout(this.foo, 1000);
-         */
+        \*/
 		foo: function(){}
-	 },
+	},
      
-     Validate: {
+    Validate: {
         user: function(val){
             if (val == null)
                 return 'Username must be defined';
         }
-     }
+    },
 
-	/* 
-	 * Other class functions / properties you need
+	/*
+	 * Private properties with the underscore contract.
+	 * Such properties wont be serialized
+	\*/
+	
+	'_property': null,
+	
+	
+	
+	/*
+	 * Other class functions/properties
 	 * This Object is then transformed into prototype object of
 	 * a class.
-	 */
+	\*/
 
-	// ..
+	...
 });
 
 ```
 
+#### Store
 
-Store
------
+Storage Interface is same for all types, so you can easily switch between local storage, Ajax or MongoDB.
+All Models implement ISerializable interface:` .serialize()/.deserialize(json) `
+For the serialization default implementation extracts all public properties to the new json object. It also perform deep object serialization.
+For the deserialization constructor hints are used to restore Date, RegExp and other Classes.
 
-Storage Interface is same for all types, so you can easily switch between localStorage, AJAX or MongoDB.
+##### Remote
 
-**Remote**
-_async - extends Class.Deferred_
+_async - extends [Class.Deferred](#deferred)_
 
 ```javascript
 var User = Class({
@@ -139,14 +159,27 @@ user
 	.patch({
 		$inc: { 'visits': 1 },
 		$set: { 'current.date' : new Date }
+	});
+	
+// override the endpoint and the method
+var user = new User({
+	username: 'baz'
+	age: 40
+});
+
+Class
+	.Remote
+	.send('/user/publish', 'put', user)
+	.done(function(responseJSON){
+		
 	})
 	
 ```
 
 More route samples can be found from tests [Route Tests](test/route.test)
 
-**LocalStore**
-_as localStorage is sync - class doesnt extend Class.Deferred_
+##### LocalStore
+_as localStorage is synchronous - class doesnt extend [Class.Deferred](#deferred)_
 ```javascript
 var Settings = Class({
 	Store: Class.LocalStore('app/settings'),
@@ -171,7 +204,7 @@ setts.patch({
 });
 ```
 
-**MongoDB**
+##### MongoDB
 
 ```javascript
 // settings:
@@ -198,7 +231,7 @@ var _user = User
 	
 	})
 
-// To perform more complex queries, use $query of MongoDB
+// To perform more complex queries, use $query from MongoDB API
 User
 	.fetch({
 		$query:{
@@ -261,7 +294,7 @@ User
 All work with the database is encapsulated, so you do not need even to connect to the database,
 just apply settings and with the first query the connection will be established.
 
-Connection to a Replicaset:
+Advanced connections and settings:
 ```javascript
 Class
 	.MongoStore
@@ -278,10 +311,9 @@ Class
 ```
 
 
-Collections
-----
+#### Collections
 
-Creates Array-alike Object with store/query features
+Creates Array-like Object with store/query features
 
 ```javascript
 
@@ -294,9 +326,7 @@ var list = Users.fetch({country: 'DE'});
 list.done(function(obj){
 	
 	list === obj 
-
 	list.length
-
 	list[0]
 
 	// user instance
@@ -320,9 +350,27 @@ list.done(function(obj){
 
 ```
 
-Deferred
-------
+#### Repository
+When declaring a Class it can be stored in the repository object for simpler access.
+This feature is used by the [MaskJS.Node](https://github.com/atmajs/mask-node) to serialize and deserialize the class instances.
+```javascript
 
+var User = Class('User', ClassDefinition);
+
+User === Class('User') === Class.Model.User;
+
+// redefine the repository object
+Class.cfg('ModelHost', window.Model = {});
+
+User === Class('User') === Model.User;
+```
+
+
+#### Classes
+
+##### Deferred
+
+_Simple `Promise` implementation_
 ```javascript
 var X = Class({
 	Extends: Class.Deferred
@@ -335,13 +383,14 @@ new X()
 
 	.done   ( callback )
 	.fail   ( callback )
-	.always ( callback )
+	.always ( callback ),
+	.then   ( onSuccess, onFailure )
 	;
 	
 ```
 
-EventEmitter
-------
+##### EventEmitter
+
 
 ```javascript
 var X = Class({
