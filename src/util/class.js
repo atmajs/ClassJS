@@ -4,7 +4,8 @@ var class_register,
 	class_patch,
 	
 	class_stringify,
-	class_parse
+	class_parse,
+	class_keys
 	
 	;
 
@@ -59,6 +60,9 @@ var class_register,
 		return JSON.parse(str, parse);
 	};
 	
+	class_keys = function(Ctor) {
+		return getKeys(Ctor);
+	};
 	
 	// private
 	
@@ -109,5 +113,26 @@ var class_register,
 		
 		return val;
 	}
+	
+	function getKeys(proto, out){
+		if (typeof proto === 'function')
+			proto = proto.prototype;
+		
+		if (out == null) 
+			out = {};
+		
+		var type,
+			key
+        for(key in proto){
+            type = typeof proto[key];
+            if (type !== 'function') 
+                out[key] = type;
+        }
+        
+        if (proto.__proto__) 
+            getKeys(proto.__proto__, out);
+        
+        return out;
+    }
 	
 }());

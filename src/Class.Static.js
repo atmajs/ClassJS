@@ -49,3 +49,4 @@ Class.validate = Validation.validate;
 Class.stringify = class_stringify;
 Class.parse = class_parse;
 Class.patch = class_patch;
+Class.keys = class_keys;
