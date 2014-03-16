@@ -5,7 +5,7 @@ var class_register,
 	
 	class_stringify,
 	class_parse,
-	class_keys
+	class_properties
 	
 	;
 
@@ -60,8 +60,8 @@ var class_register,
 		return JSON.parse(str, parse);
 	};
 	
-	class_keys = function(Ctor) {
-		return getKeys(Ctor);
+	class_properties = function(Ctor) {
+		return getProperties(Ctor);
 	};
 	
 	// private
@@ -114,7 +114,7 @@ var class_register,
 		return val;
 	}
 	
-	function getKeys(proto, out){
+	function getProperties(proto, out){
 		if (typeof proto === 'function')
 			proto = proto.prototype;
 		
@@ -130,7 +130,7 @@ var class_register,
         }
         
         if (proto.__proto__) 
-            getKeys(proto.__proto__, out);
+            getProperties(proto.__proto__, out);
         
         return out;
     }

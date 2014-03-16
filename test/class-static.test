@@ -1,0 +1,19 @@
+UTest({
+	'keys': function(){
+		var Foo = Class({
+			foo: ''
+		});
+		
+		var Bar = Class({
+			Base: Foo,
+			bar: ''
+		});
+		
+		
+		deepEq_(Class.properties(Bar), {
+			bar: 'string',
+			foo: 'string'
+		})
+	}
+	
+})

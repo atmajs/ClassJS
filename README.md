@@ -3,7 +3,7 @@ ClassJS
 [![Build Status](https://travis-ci.org/atmajs/ClassJS.png?branch=master)](https://travis-ci.org/atmajs/ClassJS)
 
 
-Perfomant and Powerful Class-Model Implementation for browsers or nodejs
+Business and Data Access layers for browsers or nodejs
 
 [Documentation](http://atmajs.com/class)
 
@@ -25,10 +25,13 @@ Perfomant and Powerful Class-Model Implementation for browsers or nodejs
     - [Deferred](#deferred)
     - [EventEmitter](#eventemitter)
 
+- [Static Functions](#static)
+
+
 
 ##### Overview
 
-Design the business logic layer of your application with proper inheritance chain and all other OOP paterns.
+Design the business logic layer of your application with proper inheritance chain and some other OOP paterns.
 
 ```javascript
 Class({
@@ -418,5 +421,43 @@ y.on('y-event', x.pipe('x-event'));
 	
 y.trigger('y-event', '1.2.3');
 // logs > "x-event 1.2.3!"
-
 ```
+
+#### Static
+
+- `Class.validate(instance)`
+	
+	return string if the instance is invalid or nothing (`void 0`) if is ok.
+
+- `Class.properties(Ctor | instance)`
+
+	return hash of all properties with types
+
+- `Class.stringify(instance)`
+
+	Serialize the instance. If class has name, the name is included, for later deserialization and initialization
+
+- `Class.parse(string)`
+
+	Deserialize instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.
+
+	
+	```javascript
+	var User = Class('User', {
+		Base: Class.Serializable,
+		name: '',
+		log: function(){ console.log(this.name) };
+	});
+	var user = new User({name: 'baz'});
+	user.log(); //> 'baz'
+	
+	var str = Class.stringify(user) //> {"name":"baz","__$class__":"User"}
+	...
+	
+	var user = Class.parse(str);
+	user.log() //> 'baz'
+	```
+
+
+----
+(c) 2014 MIT
