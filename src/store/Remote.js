@@ -96,24 +96,36 @@ Class.Remote = (function(){
 	}
 	
 	function reject(self, response, xhr){
-		self.reject(response);
+		var obj;
+		if (typeof response === 'string' && is_JsonResponse(xhr)) {
+			try {
+				obj = JSON.parse(response);
+			} catch (error) {
+				obj = error;
+			}
+		}
+		
+		self.reject(obj || response);
+	}
+	
+	function is_JsonResponse(xhr){
+		var header = xhr.getResponseHeader(str_CONTENT_TYPE);
+		
+		return header != null
+			&&  header.toLowerCase().indexOf(str_JSON) !== -1;
 	}
 	
 	function resolveDelegate(self, callback, action){
 		
 		return function(error, response, xhr){
 				
-				var header = xhr.getResponseHeader(str_CONTENT_TYPE),
-					isJSON = header != null &&  header.toLowerCase().indexOf(str_JSON) !== -1
-					;
-					
-				if (isJSON) {
+				if (is_JsonResponse(xhr)) {
 					try {
 						response = JSON.parse(response);
 					} catch(error){
 						console.error('<XHR> invalid json response', response);
 						
-						return reject(self, response, xhr);
+						return reject(self, error, xhr);
 					}
 				}
 				
