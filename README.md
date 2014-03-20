@@ -297,7 +297,35 @@ User
 All work with the database is encapsulated, so you do not need even to connect to the database,
 just apply settings and with the first query the connection will be established.
 
-Advanced connections and settings:
+###### Indexes
+```javascript
+var User = Class({
+	Base: Class.Serializable,
+	Store: Class.MongoStore.Single({
+		collection: 'users',
+		indexes: [
+			{
+				username: 1
+			},
+			{
+				bar: 1,
+				baz: 1
+			}
+		]
+	})
+});
+
+// ensure indexes
+Class
+	.MongoStore
+	.ensureIndexes(User)
+	.done(onComplete)
+	.fail(onError)
+	;
+
+```
+
+###### Advanced connections and settings:
 ```javascript
 Class
 	.MongoStore
