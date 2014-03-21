@@ -304,13 +304,13 @@ var User = Class({
 	Store: Class.MongoStore.Single({
 		collection: 'users',
 		indexes: [
-			{
-				username: 1
-			},
+			// simple indexes
 			{
 				bar: 1,
 				baz: 1
-			}
+			},
+			// with options
+			[{ username: 1 }, { unique: true }]
 		]
 	})
 });

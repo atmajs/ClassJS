@@ -1,14 +1,23 @@
 var MongoStoreSingle = (function() {
 
     function MongoStoreSingle(mix) {
-        var coll, indexes;
+        var primaryKey = '_id',
+            indexes = [],
+            coll
+            ;
         
         if (is_String(mix)) {
             coll = mix;
         }
         else if (is_Object(mix)) {
             coll = mix.collection;
-            indexes = mix.indexes;
+            indexes = mix.indexes || indexes;
+            primaryKey = mix.primaryKey || primaryKey;
+            
+            var index = {};
+            index[primaryKey] = 1;
+            
+            indexes.push([index, { unique: true }]);
         }
         
         // if DEBUG
@@ -17,6 +26,7 @@ var MongoStoreSingle = (function() {
         
         this._coll = coll;
         this._indexes = indexes;
+        this._primaryKey = primaryKey;
     }
 
     /**

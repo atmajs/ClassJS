@@ -3,36 +3,45 @@ include
     .inject('../lib/class.node.js')
     .done(function(){
         
-        var User = Class({
-            Base: Class.Serializable,
-            Store: Class.MongoStore.Single('user'),
-            username: '',
-            timestamp: 0
-        });
+        var timestamp = Date.now(),
+            User = Class({
+                Base: Class.Serializable,
+                Store: Class.MongoStore.Single('user'),
+                username: '',
+                timestamp: 0
+            }),
+            Users = Class.Collection(User, {
+                Store: Class.MongoStore.Collection('user')
+            });
+            
         
+        '> deserialization check'
         eq(new User({name: 'x'}).name, 'x');
         
-        var Users = Class.Collection(User, {
-            Store: Class.MongoStore.Collection('user')
-        });
-        
-        var timestamp = Date.now();
         
         UTest({
             $before: function(){
                 
-                Class.MongoStore.settings({
-                    db: 'test'
-                });
+                Class
+                    .MongoStore
+                    .settings({
+                        db: 'test'
+                    });
             },
-            $after: function(){
+            $after: function(done){
                 
                 Class
                     .MongoStore
                     .resolveDb()
                     .done(function(db){
-                        db.close(true);
+                        
+                        db.dropDatabase(function(){
+                            db.close(true);
+                            done();
+                        });
                     });
+                    
+                
             },
             'ensure-no-foo': function(done){
                 
@@ -170,6 +179,51 @@ include
                                 done();
                             });
                     })
+            },
+            
+            'indexes': function(done){
+                var User = Class({
+                    Base: Class.Serializable,
+                    Store: Class.MongoStore.Single({
+                        collection: 'user-index',
+                        primaryKey: 'username',
+                        indexes: [
+                            { timestamp: 1 }
+                        ]
+                    }),
+                    username: '',
+                    timestamp: 0
+                });
+                
+                Class
+                    .MongoStore
+                    .ensureIndexes(User)
+                    .done(checkIndexes)
+                    .fail(assert.avoid(done));
+                    
+                function checkIndexes(args) {
+                    Class
+                        .MongoStore
+                        .resolveCollection('user-index')
+                        .done(indexInformation)
+                        ;
+                }
+                
+                function indexInformation(coll) {
+                     coll.indexInformation(function(err, info){
+                                
+                        has_(info, {
+                            username_1: [
+                                ['username', 1]
+                            ],
+                            timestamp_1: [
+                                ['timestamp', 1]
+                            ]
+                        });
+                        
+                        done();
+                    });
+                }
             }
         })
     })

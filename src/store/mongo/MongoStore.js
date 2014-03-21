@@ -23,18 +23,15 @@ Class.MongoStore = (function(){
         ensureIndexes: function(Ctor) {
             var proto = Ctor.prototype,
                 indexes = proto._indexes,
-                coll = proto._coll
+                coll = proto._coll,
+                dfr = new Deferred()
                 ;
-            if (indexes == null) {
-                // if DEBUG
-                console.error('<class:mongodb> No indexes>', Ctor);
-                // endif
-                return;
-            }
+                
+            if (indexes == null) 
+                return dfr.reject('<No indexes> ' + coll);
             
             var i = -1,
                 imax = indexes.length,
-                dfr = new Deferred(),
                 listener = cb_createListener(imax - 1, complete)
                 ;
             
@@ -48,6 +45,8 @@ Class.MongoStore = (function(){
                 
                 dfr.resolve();
             }
+            
+            return dfr;
         }
     };
 }());

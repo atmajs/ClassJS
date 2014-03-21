@@ -178,10 +178,14 @@ var db_getDb,
         if (db == null) 
             return connect(createDbDelegate(db_ensureIndex, collection, index, callback));
         
-        db
-            .collection(collection)
-            .ensureIndex(index, callback)
-            ;
+        var coll = db.collection(collection);
+        if (Array.isArray(index)) {
+            index.push(callback);
+            coll.ensureIndex.apply(coll, index);
+            return;
+        }
+        coll.ensureIndex(index, callback);
+        
     };
     
     db_ensureObjectID = function(value){
