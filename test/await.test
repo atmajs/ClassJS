@@ -112,5 +112,21 @@ include
 				done();
 			});
 		},
+		
+		'promises': function(done){
+			var dfr_1 = new Class.Deferred,
+				dfr_2 = new Class.Deferred;
+			
+			var await = new Class.Await(
+				dfr_1.defer(),
+				dfr_2.defer()
+			);
+			
+			setTimeout(dfr_1.resolveDelegate(), 100);
+			setTimeout(dfr_2.resolveDelegate(), 50);
+			
+			await
+				.done(done);
+		}
 	})
 })

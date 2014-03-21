@@ -8,30 +8,25 @@ var Await = (function(){
 		_result: null,
 		_resolved: [],
 		
+		Construct: function(/* promises <optional> */){
+			var imax = arguments.length,
+				i = -1
+				;
+			while ( ++i < imax ){
+				await_deferredDelegate(this, null, arguments[i]);
+			}
+		},
+		
 		delegate: function(name, errorable) {
 			return await_createDelegate(this, name, errorable);
 		},
 	
 		deferred: function(name) {
 			
-			var dfr = new Deferred,
-				delegate = await_createDelegate(this, name, true),
-				
-				args
-				;
-			
-			return dfr
-				.done(function(){
-					args = _Array_slice.call(arguments);
-					args.unshift(null);
-					
-					delegate.apply(null, args);
-				})
-				.fail(function(error){
-					
-					delegate(error);
-				})
-				;
+			return await_deferredDelegate(
+				this,
+				name,
+				new Deferred);
 		},
 	
 		Static: {
@@ -40,6 +35,23 @@ var Await = (function(){
 		}
 	});
 
+	function await_deferredDelegate(await, name, dfr){
+		var delegate = await_createDelegate(await, name, true),
+			args
+		;
+		return dfr
+			.done(function(){
+				args = _Array_slice.call(arguments);
+				args.unshift(null);
+				
+				delegate.apply(null, args);
+			})
+			.fail(function(error){
+				
+				delegate(error);
+			})
+			;
+	}
 	
 	function await_createDelegate(await, name, errorable){
 		if (errorable == null) 
