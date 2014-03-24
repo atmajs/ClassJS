@@ -10,10 +10,13 @@ var Await = (function(){
 		
 		Construct: function(/* promises <optional> */){
 			var imax = arguments.length,
-				i = -1
+				i = -1,
+				dfr
 				;
 			while ( ++i < imax ){
-				await_deferredDelegate(this, null, arguments[i]);
+				dfr = arguments[i];
+				if (dfr != null && typeof dfr.done === 'function') 
+					await_deferredDelegate(this, null, dfr);
 			}
 		},
 		
