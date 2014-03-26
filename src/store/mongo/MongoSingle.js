@@ -134,7 +134,17 @@ var MongoStoreSingle = (function() {
                 ;
         },
         _fetched: function(error, json) {
-            this.deserialize(json);
+            if (error == null) {
+                if (json == null) {
+                    error = {
+                        message: 'Not Found',
+                        code: 404
+                    };
+                }
+                else {
+                    this.deserialize(json);
+                }
+            }
             
             this._completed(error);
         },
