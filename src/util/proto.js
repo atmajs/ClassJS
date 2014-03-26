@@ -24,7 +24,7 @@ var class_inherit,
 		
 		if (is_Function(mix)) {
 			for (var key in mix) {
-				if (is_Function(mix[key]) && mix.hasOwnProperty(key) && _class[key] == null) {
+				if (mix.hasOwnProperty(key) && _class[key] == null) {
 					_class[key] = mix[key];
 				}
 			}

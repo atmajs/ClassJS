@@ -100,14 +100,16 @@ UTest({
 	'static inheritance': function() {
 		  var foo = Class({
 			  Static: {
-				  foo: function(){}
+				  foo: function(){},
+				  fooRgx: /foo/
 			  }
 		  });
 		  
 		  var bar = Class({
 			  Base: foo,
 			  Static: {
-				  bar: function(){}
+				  bar: function(){},
+				  barRgx: /bar/
 			  }
 		  });
 		  
@@ -118,11 +120,13 @@ UTest({
 			  }
 		  });
 		  
-		  eq(typeof bar.foo, 'function');
-		  eq(typeof bar.bar, 'function');
+		  is_(bar.foo, 'Function');
+		  is_(bar.bar, 'Function');
+		  is_(bar.fooRgx, 'RegExp');
+		  is_(bar.barRgx, 'RegExp');
 		  
-		  eq(typeof baz.foo, 'function');
-		  eq(typeof baz.bar, 'function');
-		  eq(typeof baz.baz, 'function');
+		  is_(baz.foo, 'Function');
+		  is_(baz.bar, 'Function');
+		  is_(baz.baz, 'Function');
 	}
 });
