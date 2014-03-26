@@ -124,7 +124,8 @@ var obj_inherit,
 					case 63:
 						// ? (optional)
 						aVal = a[key.substring(1)]
-						if (aVal == null) 
+						//! accept falsy value
+						if (!aVal) 
 							continue;
 						
 						error = checkProperty(aVal, b[key], ctx);
