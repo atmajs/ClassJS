@@ -26,6 +26,7 @@ Business and Data Access layers for browsers or nodejs
     - [EventEmitter](#eventemitter)
 
 - [Static Functions](#static)
+- [Validations](#validation)
 
 
 
@@ -453,7 +454,7 @@ y.trigger('y-event', '1.2.3');
 
 #### Static
 
-- `Class.validate(instance)`
+- `Class.validate(instance [, ?validationModel])`
 	
 	return string if the instance is invalid or nothing (`void 0`) if is ok.
 
@@ -486,6 +487,57 @@ y.trigger('y-event', '1.2.3');
 	user.log() //> 'baz'
 	```
 
+#### Validation
+
+Validation Model
+```javascript
+{
+	// required, not empty string
+	foo: 'string',
+	
+	// required, of type number
+	foo: 'string',
+	
+	// required, validate with regexp
+	age: /^\d+$/,
+	
+	// required, custom check function (return 'nothing' if ok)
+	number: function(value){
+		if (value % 2 !== 0)
+			return 'Only even numbers';
+	}
+	
+	
+	// optional. Same value types as by 'required'
+	'?baz': 'number',
+	
+	// unexpect. Same value types as by 'required'
+	'-quz': null,
+	
+	// validate subobject
+	jokers: {
+		left: 'number',
+		right: 'number'
+	},
+	
+	// validate arrays
+	collection: [ {_id: 'string', username: 'string'} ]
+}
+```
+
+- Class Validation
+	```javascript
+	var Foo = Class({
+		Validate: ValidationModel
+	});
+	var foo = new Foo;
+	var error = Class.validate(foo);
+	```
+- Simple object validation
+	```javascript
+	var user = { username: 'foo' }
+	var error = Class.validate(user, ValidationModel);
+	```
 
 ----
 (c) 2014 MIT

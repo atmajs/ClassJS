@@ -1,0 +1,163 @@
+include
+	.inject(
+		'/src/util/object.js'
+	)
+	.done(function(){
+				
+		UTest({
+					
+			'check object': function(){
+				
+				var error,
+					expect = {
+						username: 'string',
+						password: 'string',
+						'?age': 'number',
+						'?joker': {
+							'x_joker': 'number',
+							'?y_joker': 'number'
+						}
+					};
+				
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz'
+				}, expect);
+				eq_(error, null);
+				
+				'> miss property'
+				error = obj_validate({
+					username: 'foo'
+				}, expect);
+				has_(error, 'password');
+				
+				'> type missmatch'
+				error = obj_validate({
+					username: 20,
+					password: 'baz'
+				}, expect);
+				has_(error, 'username');
+				
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz',
+					age: 'qux'
+				}, expect);
+				has_(error, 'age');
+				
+				
+				'> miss subproperty'
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz',
+					joker: {} 
+				}, expect);
+				has_(error, 'x_joker');
+				
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz',
+					joker: {
+						x_joker: 'hello'
+					} 
+				}, expect);
+				has_(error, 'x_joker');
+				
+				'> invalid optional subproperty type'
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz',
+					joker: {
+						x_joker: 5,
+						y_joker: 'baz'
+					} 
+				}, expect);
+				has_(error, 'y_joker');
+				
+				'> valid'
+				error = obj_validate({
+					username: 'foo',
+					password: 'baz',
+					joker: {
+						x_joker: 5,
+						y_joker: 7
+					} 
+				}, expect);
+				eq_(error, null);
+				
+				'> array property: valid'
+				expect = {
+					collection: [ {_id: 'string'}]
+				}
+				error = obj_validate({
+					collection: [
+						{ _id: '4343' },
+						{ _id: '4343' },
+						{ _id: '4343' },
+					]
+				}, expect);
+				eq_(error, null);
+				
+				'> array property: invalid'
+				error = obj_validate({
+					collection: [
+						{ _id: '4343' },
+						{ _id: '4343' },
+						{ _id: 4343 },
+					]
+				}, expect);
+				has_(error, '_id');
+				
+				'> array'
+				expect = [ {_id: 'string' }]
+				error = obj_validate([
+					{ _id: '4343' },
+					{ _id: '4343' },
+				], expect);
+				eq_(error, null);
+				
+				
+				'> regexp - valid'
+				expect = { rgx: /^\w+$/ }
+				error = obj_validate({
+					rgx: 'asd92'
+				}, expect);
+				eq_(error, null);
+				
+				'> regexp - invalid'
+				expect = { rgx: /^\w+$/ }
+				error = obj_validate({
+					rgx: 'as-d92'
+				}, expect);
+				has_(error, 'rgx');
+				
+				
+				'> unexpected property'
+				expect = { '-_id': null }
+				error = obj_validate({
+					_id: 'baz'
+				}, expect);
+				has_(error, '_id');
+				
+				'> function validation'
+				expect = {
+					'username': function(value){
+						return value === 'baz'
+					}
+				}
+				'> fn valid'
+				error = obj_validate({
+					username: 'baz'
+				}, expect)
+				eq_(error, null);
+				
+				'> fn invalid'
+				error = obj_validate({
+					username: 'foo'
+				}, expect)
+				has_(error, 'username');
+			}
+			
+		})
+		
+	});

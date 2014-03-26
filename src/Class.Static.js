@@ -44,7 +44,7 @@ Class.Serializable = Serializable;
 Class.Deferred = Deferred;
 Class.EventEmitter = EventEmitter;
 Class.Await = Await;
-Class.validate = Validation.validate;
+Class.validate = obj_validate;
 
 Class.stringify = class_stringify;
 Class.parse = class_parse;

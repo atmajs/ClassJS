@@ -3,7 +3,9 @@ var obj_inherit,
 	obj_getProperty,
 	obj_setProperty,
 	obj_defaults,
-	obj_extend
+	obj_extend,
+	
+	obj_validate
 	;
 
 (function(){
@@ -93,4 +95,125 @@ var obj_inherit,
 		return target;
 	};
 	
+	(function(){
+		obj_validate = function(a, b) {
+			if (a == null) 
+				return 'Instance is undefined';
+			
+			if (b == null) 
+				b = a.Validate;
+			
+			if (b == null) 
+				return 'Validation object is undefined';
+			
+			
+			return checkObject(a, b, a);
+		};
+		
+		// private
+		// a** - payload
+		// b** - expect
+		
+		function checkObject(a, b, ctx) {
+			var error,
+				optional,
+				key, aVal;
+			for(key in b){
+				
+				switch(key.charCodeAt(0)) {
+					case 63:
+						// ? (optional)
+						aVal = a[key.substring(1)]
+						if (aVal == null) 
+							continue;
+						
+						error = checkProperty(aVal, b[key], ctx);
+						
+						if (error) 
+							return error + ': ' + key;
+						
+						continue;
+					case 45:
+						// - (unexpect)
+						if (a[key.substring(1)] != null) 
+							return 'Unexpected argument: ' + key;
+						
+						continue;
+				}
+					
+				aVal = a[key];
+				if (aVal == null) 
+					return 'Argument expected: ' + key;
+				
+				error = checkProperty(aVal, b[key], ctx);
+				if (error != null) 
+					return error + ': ' + key;
+			}
+		}
+		
+		function checkProperty(aVal, bVal, ctx) {
+			if (bVal == null) 
+				return null;
+			
+			if (typeof bVal === 'function') {
+				var error = bVal.call(ctx, aVal);
+				if (error == null || error === true) 
+					return;
+				
+				if (error === false) 
+					return 'Invalid argument';
+				
+				return error;
+			}
+			
+			if (aVal == null) 
+				return 'Expected argument is undefined';
+			
+			if (typeof bVal === 'string') {
+				switch(bVal) {
+					case 'string':
+						return typeof aVal !== 'string' || aVal.length === 0
+							? 'String expected'
+							: null;
+					case 'number':
+						return typeof aVal !== 'number'
+							? 'Number expected'
+							: null;
+				}
+			}
+			
+			if (bVal instanceof RegExp) {
+				return bVal.test(aVal) === false
+					? 'Invalid argument'
+					: null;
+			}
+			
+			if (Array.isArray(bVal)) {
+				if (Array.isArray(aVal) === false) 
+					return 'Array expected';
+				
+				var i = -1,
+					imax = aVal.length,
+					error;
+				while ( ++i < imax ){
+					error = checkObject(aVal[i], bVal[0])
+					
+					if (error) 
+						return 'Invalid item <' + i + '> ' + error;
+				}
+				
+				return null;
+			}
+			
+			if (typeof aVal !== typeof bVal) 
+				return 'Type missmatch';
+			
+			
+			if (typeof aVal === 'object') 
+				return checkObject(aVal, bVal);
+			
+			
+			return null;
+		}
+	}());
 }());
