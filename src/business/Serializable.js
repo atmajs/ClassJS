@@ -6,10 +6,7 @@ function Serializable(data) {
 			Serializable.call(this, data);
 		};
 		
-		Ctor.prototype._props = data;
-		
-		//- 
-		//obj_extend(Ctor.prototype, Serializable.prototype);
+		Ctor.prototype.__props = data;
 		
 		return Ctor;
 	}
@@ -31,7 +28,7 @@ Serializable.serialize = function(instance) {
 		return instance.toJSON();
 	
 	
-	return json_proto_toJSON.call(instance);
+	return json_proto_toJSON.call(instance, instance.__props);
 };
 
 Serializable.deserialize = function(instance, json) {
@@ -53,41 +50,60 @@ Serializable.deserialize = function(instance, json) {
 		return instance;
 	}
 	
-	var props = instance._props,
+	var props = instance.__props,
+		asKeys, asKey,
 		key,
 		val,
 		Mix;
 	
+	
+	if (props != null) {
+		var pname = '__desAsKeys';
+		
+		asKeys = props[pname];
+		if (asKeys == null) {
+			asKeys = props[pname] = {};
+			for (key in props) {
+				if (key !== '__desAsKeys' && props[key].hasOwnProperty('key') === true) 
+					asKeys[props[key].key] = key;
+			}
+		}
+	}
+	
 	for (key in json) {
 		
 		val = json[key];
+		asKey = key;
 		
 		if (props != null) {
 			Mix = props.hasOwnProperty(key) 
 				? props[key]
 				: null
 				;
+			if (asKeys[key]) {
+				asKey = asKeys[key];
+			}
+				
 			if (Mix != null) {
 				
 				if (is_Function(Mix)) {
-					instance[key] = val instanceof Mix
+					instance[asKey] = val instanceof Mix
 						? val
 						: new Mix(val)
 						;
 					continue;
 				}
 				
-				var deserialize = Mix.deserialize;
-				
-				if (is_Function(deserialize)) {
-					instance[key] = deserialize(val);
+				var Deserialize = Mix.deserialize;
+				if (is_Function(Deserialize)) {
+					instance[asKey] = new Deserialize(val);
 					continue;
 				}
 				
 			}
 		}
 		
-		instance[key] = val;
+		instance[asKey] = val;
 	}
 	
 	return instance;

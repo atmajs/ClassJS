@@ -14,6 +14,7 @@ Business and Data Access layers for browsers or nodejs
 
 -----
 - [Overview](#overview)
+- [Serialization](#serialization)
 - [Persistence](#store)
 	- [RESTful](#remote)
 	- [Local Storage](#localstore)
@@ -115,8 +116,50 @@ Class({
 
 	...
 });
-
 ```
+
+#### Serialization
+
+A `Class` instance can be serialized to or deserialiazed from a string or simple JSON object. For this to happen, the instance schould be inherited from a `Serialization` class.
+```javascript
+var Foo = Class({
+	Base: Class.Serializable,
+	...
+});
+var foo = new Foo({baz: 'Baz'});
+foo.baz === 'Baz';
+```
+There could be also some meta specified
+```javascript
+var Foo = Class({
+	Base: Class.Serializable({
+		// constructor deserialization, e.g.:
+		'date': Date,
+		// or
+		'user': {
+			deserialize: User
+		},
+		
+		// skip property
+		'none': {
+			serialize: null
+		},
+		
+		// rename property when de-/serializing
+		'myKey': {
+			key: 'yourKey'
+		}
+	})
+});
+
+var jsonStr = '{"date":"2014-03-27T23:33:45.594Z","user":{"name":"baz"},"yourKey":5}';
+var foo = new Foo(jsonStr);
+
+foo.date instanceof Date //> true
+foo.user instanceof User //> true
+foo.myKey === 5 //> true
+```
+
 
 #### Store
 

@@ -6,14 +6,40 @@ var json_proto_toJSON,
 	
 (function(){
 	
-	json_proto_toJSON = function(){
+	json_proto_toJSON = function(serialization){
 		
 		var object = this,
 			json = {},
 			
-			key, val;
+			key, val, s;
+			
+		if (serialization == null) 
+			serialization = object.__props;
 		
-		for (key in object){
+		
+		var asKey;
+		
+		for(key in object){
+			asKey = key;
+			
+			if (serialization != null && serialization.hasOwnProperty(key)) {
+				s = serialization[key];
+				if (s != null && typeof s === 'object') {
+					
+					if (s.key) 
+						asKey = s.key;
+						
+					if (s.hasOwnProperty('serialize')) {
+						if (s.serialize == null) 
+							continue;
+						
+						json[asKey] = s.serialize(object[key]);
+						continue;
+					}
+					
+				}
+			}
+			
 			// _ (private)
 			if (key.charCodeAt(0) === 95)
 				continue;
@@ -25,6 +51,11 @@ var json_proto_toJSON,
 
 			if (val == null)
 				continue;
+			
+			if ('_id' === key) {
+				json[asKey] = val;
+				continue;
+			}
 
 			switch (typeof val) {
 				case 'function':
@@ -36,14 +67,14 @@ var json_proto_toJSON,
 						break;
 					
 					if (toJSON === json_proto_toJSON || toJSON === json_proto_arrayToJSON) {
-						json[key] = val.toJSON();
+						json[asKey] = val.toJSON();
 						continue;
 					}
 					
 					break;
 			}
 
-			json[key] = val;
+			json[asKey] = val;
 		}
 		
 		// make mongodb's _id property not private

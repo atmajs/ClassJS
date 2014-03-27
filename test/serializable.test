@@ -120,6 +120,67 @@
 			eq(foos.length, 1);
 			eq(foos[0].number, 3);
 			eq(foos[0].add(2), 5);
+		},
+		
+		'serialization with meta': function(){
+			var A = Class({
+				Base: Class.Serializable({
+					'a': {
+						key: 'A'
+					},
+					'c': {
+						serialize: null
+					}
+				}),
+				
+				a: '',
+				c: ''
+			});
+			
+			var B = Class({
+				Base: Class.Serializable({
+					'a': A,
+					'b': {
+						key: 'B'
+					},
+					'd': {
+						serialize: null
+					}
+				})
+			})
+			
+			var a = new A({A: '/a', c: '/c', b: '/b'});
+			eq_(a.a, '/a');
+			eq_(a.A, null);
+			deepEq_(a.toJSON(), {
+				A: '/a',
+				b: '/b'
+			});
+			
+			var b = new B({
+				a: {
+					A: '/a',
+					c: '/c'
+				},
+				b: '/b',
+				d: '/d'
+			});
+			eq_(b.a.a, '/a');
+			eq_(b.a.A, null);
+			deepEq_(b.toJSON(), {
+				a: {
+					A: '/a'
+				},
+				B: '/b'
+			});
+			
+			var str_b = JSON.stringify(b);
+			has_(new B(str_b), {
+				a: {
+					a: '/a'
+				},
+				b: '/b'
+			});
 		}
 	});
 
