@@ -2,6 +2,7 @@ services:
   mongodb
 
 before_script:
+  - cd
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - sleep 5
@@ -9,7 +10,7 @@ before_script:
   - node_modules/.bin/atma server &
   - sleep 5
   - firefox http://localhost:5777/utest/ &
-  - sleep 5
+  - sleep 7
  
 script:
   - "npm test"
