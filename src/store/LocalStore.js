@@ -24,20 +24,18 @@ Class.LocalStore = (function(){
 				object = localStorage.getItem(path);
 			
 			if (object == null) {
-				this.resolve(this);
-				return this;
+				return this.resolve(this);
 			}
 			
 			if (is_String(object)){
 				try {
 					object = JSON.parse(object);
 				} catch(e) {
-					this.onError(e);
+					return this.reject(e);
 				}
 			}
 			
 			this.deserialize(object);
-			
 			return this.resolve(this);
 		},
 		
@@ -47,20 +45,19 @@ Class.LocalStore = (function(){
 			
 			localStorage.setItem(path, store);
 			callback && callback();
-			return this;
+			return this.resolve(this);
 		},
 		
 		del: function(mix){
 			
 			if (mix == null && arguments.length !== 0) {
-				console.error('<localStore:del> - selector is specified, but is undefined');
-				return this;
+				return this.reject('<localStore:del> - selector is specified, but is undefined');
 			}
 			
 			// Single
 			if (arr_isArray(this) === false) {
 				store_del(this._route, mix || this);
-				return this;
+				return this.resolve();
 			}
 			
 			// Collection
@@ -72,13 +69,13 @@ Class.LocalStore = (function(){
 				this.length = 0;
 				
 				store_del(this._route, this);
-				return this;
+				return this.resolve();
 			}
 			
 			var array = this.remove(mix);
 			if (array.length === 0) {
 				// was nothing removed
-				return this;
+				return this.resolve();
 			}
 			
 			return this.save();

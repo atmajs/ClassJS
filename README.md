@@ -2,18 +2,17 @@ ClassJS
 -----
 [![Build Status](https://travis-ci.org/atmajs/ClassJS.png?branch=master)](https://travis-ci.org/atmajs/ClassJS)
 
-
 Business and Data Access layers for browsers or nodejs
 
 [Documentation](http://atmajs.com/class)
 
-###### Install
+##### Install
 
 - Standalone: ``` $ npm install atma-class ```
 - [AtmaPackage](https://github.com/atmajs/Atma.Libs): ``` $ npm install atma-libs ```
 
 -----
-- [Overview](#overview)
+- [Attributes Overview](#overview)
 - [Serialization](#serialization)
 - [Persistence](#store)
 	- [RESTful](#remote)
@@ -31,15 +30,15 @@ Business and Data Access layers for browsers or nodejs
 
 
 
-##### Overview
+#### Attributes
 
-Design the business logic layer of your application with proper inheritance chain and some other OOP paterns.
+Class definition object is a simple `prototype` object, but with `Attributes` it is possible to add or change some functionality of the resulted class, like inheritance, overrides, persistance, validation and some more. 
 
 ```javascript
 Class({
 	/*
 	 * instanceof also works on deep inheritances
-	 \*/
+	\*/
 	Base: < Function > BaseConstructor,
 
 	/* 
@@ -226,25 +225,20 @@ Class
 More route samples can be found from tests [Route Tests](test/route.test)
 
 ##### LocalStore
-_as localStorage is synchronous - class doesnt extend [Class.Deferred](#deferred)_
+_sync, as localStorage is synchronous - but also inherits from [Class.Deferred](#deferred)_
 ```javascript
 var Settings = Class({
 	Store: Class.LocalStore('app/settings'),
 	points: 5
 });
-
 var setts = new Settings;
-
 // get
 setts.fetch();
-
 // save or update
 setts.points = 10;
 setts.save();
-
 // remove
 setts.del();
-
 // patch
 setts.patch({
 	$inc: { points: 1 }
@@ -569,6 +563,7 @@ Validation Model
 ```
 
 - Class Validation
+
 	```javascript
 	var Foo = Class({
 		Validate: ValidationModel
@@ -577,6 +572,7 @@ Validation Model
 	var error = Class.validate(foo);
 	```
 - Simple object validation
+
 	```javascript
 	var user = { username: 'foo' }
 	var error = Class.validate(user, ValidationModel);
