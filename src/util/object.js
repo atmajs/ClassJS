@@ -180,6 +180,10 @@ var obj_inherit,
 						return typeof aVal !== 'number'
 							? 'Number expected'
 							: null;
+					case 'boolean':
+						return typeof aVal !== 'boolean'
+							? 'Boolean expected'
+							: null;
 				}
 			}
 			
