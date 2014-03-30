@@ -1,18 +1,12 @@
 /**
- *	IncludeJSBuild
+ *	AtmJSBuilder:
  *
- *	``` $ includejs build.js ```
+ *	``` $ npm install -g atma
+ *	``` $ atma ```
  **/
 
 
 module.exports = {
-	////'settings': {
-	////	io: {
-	////		extensions: {
-	////			js: ['condcomments:read', 'importer:read']
-	////		}
-	////	}
-	////},
 	'add-handlers': {
 		action: 'custom',
 		script: 'tools/license-handler.js'
@@ -31,16 +25,15 @@ module.exports = {
 
 	'watch': {
 		files: 'src/**',
-		config: '#[import]'
+		actions: [ 'import' ]
 	},
 	
-	// `> atma bump`
-	'bump': {
-		action: 'custom',
-		script: 'tools/bump.js'
-	},
-
-	'defaults': ['add-handlers', 'import', 'jshint', 'uglify']
+	'defaults': [
+		'add-handlers',
+		'import',
+		'jshint',
+		'uglify'
+	]
 };
 
 
