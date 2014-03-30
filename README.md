@@ -524,5 +524,16 @@ new X()
 	.pipe(event);
 ```
 
+#### Run tests and build
+```bash
+$ npm install -g atma
+$ cd class
+
+# tests
+$ atma test
+
+# build
+$ atma
+```
 ----
 (c) 2014 MIT
