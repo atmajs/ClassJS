@@ -1,5 +1,5 @@
 UTest({
-	'keys': function(){
+	'properties': function(){
 		var Foo = Class({
 			foo: ''
 		});
@@ -14,6 +14,24 @@ UTest({
 			bar: 'string',
 			foo: 'string'
 		})
+	},
+	
+	'properties - nested': function(){
+		var Foo = Class({
+			date: new Date,
+			rgx: /x/,
+			jokers: {
+				sub: ''
+			}
+		});
+		
+		deepEq_(Class.properties(Foo), {
+			date: 'Date',
+			rgx: 'RegExp',
+			jokers: {
+				sub: 'string'
+			}
+		});
 	}
 	
 })

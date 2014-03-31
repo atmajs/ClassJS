@@ -122,11 +122,13 @@ var class_register,
 			out = {};
 		
 		var type,
-			key
+			key,
+			val;
         for(key in proto){
-            type = proto[key] == null
+			val = proto[key];
+            type = val == null
 				? null
-				: typeof proto[key]
+				: typeof val
 				;
 				
             if (type === 'function')
@@ -140,6 +142,21 @@ var class_register,
 			if (c >= 65 && c <= 90)
 				// A-Z
 				continue;
+			
+			if (type === 'object') {
+				var ctor = val.constructor,
+					ctor_name = ctor && ctor.name
+					;
+				
+				if (ctor_name !== 'Object' && ctor_name && global[ctor_name] === ctor) {
+					// built-in objects
+					out[key] = ctor_name;
+					continue;
+				}
+				
+				out[key] = getProperties(val);
+				continue;
+			}
 			
             out[key] = type;
         }
