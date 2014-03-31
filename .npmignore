@@ -1,7 +1,7 @@
 .gitignore
 .komodotools
 .travis.yml
-.komodoproject
+*.komodoproject
 build.js
 node_modules/
 tools/
