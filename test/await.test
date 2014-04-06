@@ -40,9 +40,20 @@ include
 			var await = new Await;
 			
 			delegate([], 20, await.delegate());
-			delegate([], 40, await.delegate());
+			eq_(await._wait, 1);
 			
-			await.done(done);
+			delegate([], 40, await.delegate());
+			eq_(await._wait, 2);
+			
+			var x = 1;
+			await.always(function(){
+				x = 0;
+				eq_(await._wait, 0);
+				done();
+			});
+			
+			eq_(await._wait, 2);
+			eq_(x, 1);
 		},
 		
 		'delegate - args': function(done) {

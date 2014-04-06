@@ -103,8 +103,9 @@ var obj_inherit,
 			if (b == null) 
 				b = a.Validate;
 			
-			if (b == null) 
-				return 'Validation object is undefined';
+			if (b == null)
+				// if no validation object - except any.
+				return;
 			
 			
 			return checkObject(a, b, a);
