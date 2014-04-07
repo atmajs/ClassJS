@@ -32,7 +32,7 @@ Class.MongoStore = (function(){
             
             var i = -1,
                 imax = indexes.length,
-                listener = cb_createListener(imax - 1, complete)
+                listener = cb_createListener(imax, complete)
                 ;
             
             while(++i < imax){
