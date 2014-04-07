@@ -3,6 +3,7 @@ var db_getDb,
     db_getCollection,
     db_findSingle,
     db_findMany,
+    db_count,
     db_insert,
     db_updateSingle,
     db_updateMany,
@@ -100,6 +101,15 @@ var db_getDb,
                 
             });
     };
+    
+    db_count = function(coll, query, callback){
+        if (db == null) 
+            return connect(createDbDelegate(db_count, coll, query, callback));
+        
+        db
+            .collection(coll)
+            .count(query, callback);
+    }
     
     db_insert = function(coll, data, callback){
         if (db == null)

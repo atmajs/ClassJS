@@ -110,7 +110,18 @@ var MongoStoreCollection = (function(){
         Static: {
             fetch: function(data){
                 return new this().fetch(data);
-            }
+            },
+			count: function(query){
+				var dfr = new Deferred;
+				db_count(this.prototype._coll, query, function(error, count){
+					if (error != null) {
+						dfr.reject(count);
+						return;
+					}
+					dfr.resolve(count);
+				});
+				return dfr;
+			}
         },
         
         /* -- private -- */

@@ -6,17 +6,17 @@ include
         var timestamp = Date.now(),
             User = Class({
                 Base: Class.Serializable,
-                Store: Class.MongoStore.Single('user'),
+                Store: Class.MongoStore.Single('users'),
                 username: '',
                 timestamp: 0
             }),
             Users = Class.Collection(User, {
-                Store: Class.MongoStore.Collection('user')
+                Store: Class.MongoStore.Collection('users')
             });
             
         
         '> deserialization check'
-        eq(new User({name: 'x'}).name, 'x');
+        eq_(new User({name: 'x'}).name, 'x');
         
         
         UTest({
@@ -25,7 +25,7 @@ include
                 Class
                     .MongoStore
                     .settings({
-                        db: 'test'
+                        db: 'test-class'
                     });
             },
             $after: function(done){
@@ -62,7 +62,7 @@ include
                                 Users
                                     .fetch({ username: 'foo' })
                                     .done(function(users){
-                                        eq(users.length, 0, 'Not removed');
+                                        eq_(users.length, 0, 'Not removed');
                                         done();
                                     })
                             });
@@ -78,10 +78,10 @@ include
                 
                 user
                     .save()
-                    .always(function(){
-                        eq(user._rejected, null);  
-                        done();
-                    });
+                    .fail(assert.avoid())
+                    .done(done)
+                    ;
+                    
             },
             
             'read': function(done){
@@ -89,18 +89,18 @@ include
                 User
                     .fetch({ username: 'foo' })
                     .done(function(x){
-                        eq(x.timestamp, timestamp);
+                        eq_(x.timestamp, timestamp);
                         
                         
                         User
                             .fetch({$query: {username: 'foo'}})
                             .done(function(){
-                                eq(x.timestamp, timestamp);
+                                eq_(x.timestamp, timestamp);
                                 
                                 User
                                     .fetch({timestamp: timestamp})
                                     .done(function(x){
-                                        eq(x.username, 'foo');
+                                        eq_(x.username, 'foo');
                                         
                                         done();
                                     })
@@ -113,7 +113,7 @@ include
                     .fetch({ timestamp: '>' + (timestamp - 20) })
                     .done(function(x){
                         assert(x._id != null);
-                        eq(x.username, 'foo');
+                        eq_(x.username, 'foo');
                         
                         done();
                         
@@ -123,17 +123,28 @@ include
                 User
                     .fetch({ timestamp: '>=' + timestamp })
                     .done(function(x){
-                        eq(x.username, 'foo');
-                        
+                        eq_(x.username, 'foo');
                         done();
-                        
                     })
             },
             'find-none-gt': function(done){
                 User
                     .fetch({ timestamp: '>' + (timestamp + 20) })
-                    .done(function(x){
-                        assert.notEqual(x.username, 'foo');
+                    .done(assert.avoid())
+                    .fail(function(error){
+                        deepEq_(error, {
+                            code: 404,
+                            message: 'Not Found'
+                        });
+                        done();
+                    })
+            },
+            'count': function(done){
+                Users
+                    .count()
+                    .fail(assert.avoid())
+                    .done(function(count){
+                        eq_(count, 1);
                         done();
                     })
             },
@@ -147,9 +158,9 @@ include
                                 
                                 User
                                     .fetch({ username: 'foo' })
-                                    .done(function(x){
-                                        eq(x._id, null);
-                                        
+                                    .done(assert.avoid())
+                                    .fail(function(error){
+                                        eq_(error.code, 404);
                                         done();
                                     })
                             })
@@ -175,7 +186,7 @@ include
                         Users
                             .fetch({timestamp: '>=150'})
                             .done(function(users){
-                                eq(users.length, 150);
+                                eq_(users.length, 150);
                                 done();
                             });
                     })
