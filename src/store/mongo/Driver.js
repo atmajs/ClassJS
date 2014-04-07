@@ -83,17 +83,19 @@ var db_getDb,
         
     };
     
-    db_findMany = function(coll, query, callback){
+    db_findMany = function(coll, query, options, callback){
         if (db == null) 
-            return connect(createDbDelegate(db_findMany, coll, query, callback));
+            return connect(createDbDelegate(db_findMany, coll, query, options, callback));
         
+        if (options == null) 
+            options = {};
+            
         query = queryToMongo(query);
         db
             .collection(coll)
-            .find(query, function(error, cursor){
+            .find(query, options, function(error, cursor){
                 if (error) 
                     return callback(error);
-                
                 
                 cursor.toArray(function(error, items){
                     callback(error, items);

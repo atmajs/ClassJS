@@ -22,11 +22,11 @@ var MongoStoreCollection = (function(){
         
     obj_inherit(MongoStoreCollection, Deferred, {
         
-        fetch: function(data){
+        fetch: function(query, options){
             if (this._ensureFree() === false)
                 return this;
             
-            db_findMany(this._coll, data, fn_proxy(this._fetched, this));
+            db_findMany(this._coll, query, options, fn_proxy(this._fetched, this));
             return this;
         },
         save: function(){
@@ -108,8 +108,8 @@ var MongoStoreCollection = (function(){
         
         
         Static: {
-            fetch: function(data){
-                return new this().fetch(data);
+            fetch: function(query, options){
+                return new this().fetch(query, options);
             },
 			count: function(query){
 				var dfr = new Deferred;
