@@ -1,110 +1,114 @@
-function Serializable(data) {
+var Serializable;
+
+(function(){
 	
-	if (this === Class || this == null || this === global) {
+	Serializable = function($serialization) {
 		
-		var Ctor = function(data){
-			Serializable.call(this, data);
-		};
+		if (this === Class || this == null || this === global) {
+			
+			var Ctor = function(data){
+				this[json_key_SER] = obj_extend(this[json_key_SER], $serialization);
+				
+				Serializable.call(this, data);
+			};
+			
+			return Ctor;
+		}
 		
-		Ctor.prototype.__props = data;
+		if ($serialization != null) {
+			
+			if (this.deserialize) 
+				this.deserialize($serialization);
+			else
+				Serializable.deserialize(this, $serialization);
+			
+		}
 		
-		return Ctor;
 	}
 	
-	if (data != null) {
+	Serializable.serialize = function(instance) {
+			
+		if (is_Function(instance.toJSON)) 
+			return instance.toJSON();
 		
-		if (this.deserialize) 
-			this.deserialize(data);
-		else
-			Serializable.deserialize(this, data);
 		
-	}
+		return json_proto_toJSON.call(instance, instance[json_key_SER]);
+	};
 	
-}
-
-Serializable.serialize = function(instance) {
+	Serializable.deserialize = function(instance, json) {
+			
+		if (is_String(json)) {
+			try {
+				json = JSON.parse(json);
+			}catch(error){
+				console.error('<json:deserialize>', json);
+				return instance;
+			}
+		}
 		
-	if (is_Function(instance.toJSON)) 
-		return instance.toJSON();
-	
-	
-	return json_proto_toJSON.call(instance, instance.__props);
-};
-
-Serializable.deserialize = function(instance, json) {
-		
-	if (is_String(json)) {
-		try {
-			json = JSON.parse(json);
-		}catch(error){
-			console.error('<json:deserialize>', json);
+		if (is_Array(json) && is_Function(instance.push)) {
+			instance.length = 0;
+			for (var i = 0, imax = json.length; i < imax; i++){
+				instance.push(json[i]);
+			}
 			return instance;
 		}
-	}
-	
-	if (is_Array(json) && is_Function(instance.push)) {
-		instance.length = 0;
-		for (var i = 0, imax = json.length; i < imax; i++){
-			instance.push(json[i]);
-		}
-		return instance;
-	}
-	
-	var props = instance.__props,
-		asKeys, asKey,
-		key,
-		val,
-		Mix;
-	
-	
-	if (props != null) {
-		var pname = '__desAsKeys';
 		
-		asKeys = props[pname];
-		if (asKeys == null) {
-			asKeys = props[pname] = {};
-			for (key in props) {
-				if (key !== '__desAsKeys' && props[key].hasOwnProperty('key') === true) 
-					asKeys[props[key].key] = key;
-			}
-		}
-	}
-	
-	for (key in json) {
+		var props = instance[json_key_SER],
+			asKeys, asKey,
+			key,
+			val,
+			Mix;
 		
-		val = json[key];
-		asKey = key;
 		
 		if (props != null) {
-			Mix = props.hasOwnProperty(key) 
-				? props[key]
-				: null
-				;
-			if (asKeys[key]) {
-				asKey = asKeys[key];
-			}
+			var pname = '__desAsKeys';
 			
-			if (Mix != null) {
-				if (is_Object(Mix)) 
-					Mix = Mix.deserialize;
-				
-				if (is_String(Mix)) 
-					Mix = class_get(Mix);
-				
-				if (is_Function(Mix)) {
-					instance[asKey] = val instanceof Mix
-						? val
-						: new Mix(val)
-						;
-					continue;
+			asKeys = props[pname];
+			if (asKeys == null) {
+				asKeys = props[pname] = {};
+				for (key in props) {
+					if (key !== '__desAsKeys' && props[key].hasOwnProperty('key') === true) 
+						asKeys[props[key].key] = key;
 				}
 			}
 		}
 		
-		instance[asKey] = val;
-	}
+		for (key in json) {
+			
+			val = json[key];
+			asKey = key;
+			
+			if (props != null) {
+				Mix = props.hasOwnProperty(key) 
+					? props[key]
+					: null
+					;
+				if (asKeys[key]) {
+					asKey = asKeys[key];
+				}
+				
+				if (Mix != null) {
+					if (is_Object(Mix)) 
+						Mix = Mix.deserialize;
+					
+					if (is_String(Mix)) 
+						Mix = class_get(Mix);
+					
+					if (is_Function(Mix)) {
+						instance[asKey] = val instanceof Mix
+							? val
+							: new Mix(val)
+							;
+						continue;
+					}
+				}
+			}
+			
+			instance[asKey] = val;
+		}
+		
+		return instance;
+	}	
 	
-	return instance;
-}
-
-
+}());

@@ -88,9 +88,17 @@ var obj_inherit,
 	};
 	
 	obj_extend = function(target, source) {
-		for (var key in source) {
-			if (source[key] != null) 
-				target[key] = source[key];
+		if (target == null) 
+			target = {};
+		if (source == null) 
+			return target;
+		
+		var val,
+			key;
+		for(key in source) {
+			val = source[key];
+			if (val != null) 
+				target[key] = val;
 		}
 		return target;
 	};

@@ -1,11 +1,11 @@
 {
     "name": "atma-class",
-    "description": "ClassJS - Complex but Fast Class Implementation For Browsers and Node.JS",
+    "description": "Business Logic and Data Access Layers",
     "author": {
         "name": "Alexander Kit",
         "email": "alex.kit@atmajs.com"
     },
-    "version": "1.0.58",
+    "version": "1.0.59",
     "main": "./lib/class.node.js",
     "repository": {
         "type": "git",

@@ -183,7 +183,7 @@
 			});
 		},
 		
-		'!serialize by IoC repo': function(){
+		'serialize by IoC repo': function(){
 			var Foo = Class('Foo', {
 				Base: Class.Serializable,
 				
@@ -202,11 +202,37 @@
 				foo: { a: 10 }
 			});
 			
-			logger.log(bar.toJSON());
 			is_(bar.foo.val, 'Function');
 			eq_(bar.foo.a, 10);
 			eq_(bar.foo.b, 3);
 			eq_(bar.foo.val(), 13);
+		},
+		
+		'mixed inheritance': function(){
+			var Foo = Class({
+				Base: Class.Serializable({
+					foo: Date
+				})
+			});
+			var Baz = Class({
+				Base: Foo,
+				Extends: Class.Serializable({
+					baz: Date,
+				})
+			});
+			
+			var date_foo = new Date(2014, 1, 1),
+				date_baz = new Date(2014, 2, 1);
+			
+			var baz = new Baz({
+				foo: date_foo.toString(),
+				baz: date_baz.toString()
+			});
+			
+			is_(baz.foo, 'Date');
+			is_(baz.baz, 'Date');
+			deepEq_(baz.foo, date_foo);
+			deepEq_(baz.baz, date_baz);
 		}
 	});
 

@@ -1,6 +1,7 @@
 // Create from Complex Class Instance a lightweight json object
 
-var json_proto_toJSON,
+var json_key_SER = '__$serialization',
+	json_proto_toJSON,
 	json_proto_arrayToJSON
 	;
 	
@@ -14,7 +15,7 @@ var json_proto_toJSON,
 			key, val, s;
 			
 		if (serialization == null) 
-			serialization = object.__props;
+			serialization = object[json_key_SER];
 		
 		
 		var asKey;
