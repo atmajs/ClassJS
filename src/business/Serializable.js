@@ -83,8 +83,13 @@ Serializable.deserialize = function(instance, json) {
 			if (asKeys[key]) {
 				asKey = asKeys[key];
 			}
-				
+			
 			if (Mix != null) {
+				if (is_Object(Mix)) 
+					Mix = Mix.deserialize;
+				
+				if (is_String(Mix)) 
+					Mix = class_get(Mix);
 				
 				if (is_Function(Mix)) {
 					instance[asKey] = val instanceof Mix
@@ -93,13 +98,6 @@ Serializable.deserialize = function(instance, json) {
 						;
 					continue;
 				}
-				
-				var Deserialize = Mix.deserialize;
-				if (is_Function(Deserialize)) {
-					instance[asKey] = new Deserialize(val);
-					continue;
-				}
-				
 			}
 		}
 		

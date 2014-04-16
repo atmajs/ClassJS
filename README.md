@@ -121,7 +121,11 @@ var Foo = Class({
 	Base: Class.Serializable({
 		// constructor deserialization, e.g.:
 		'date': Date,
-		// or
+		
+		// use entity from ClassJS IoC Repository
+		'article': 'Article',
+		
+		// same
 		'user': {
 			deserialize: User
 		},

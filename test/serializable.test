@@ -181,6 +181,32 @@
 				},
 				b: '/b'
 			});
+		},
+		
+		'!serialize by IoC repo': function(){
+			var Foo = Class('Foo', {
+				Base: Class.Serializable,
+				
+				a: 1,
+				b: 3,
+				val: function(){ return this.a + this.b; }
+			});
+			
+			var Bar = Class({
+				Base: Class.Serializable({
+					foo: 'Foo'
+				})
+			});
+			
+			var bar = new Bar({
+				foo: { a: 10 }
+			});
+			
+			logger.log(bar.toJSON());
+			is_(bar.foo.val, 'Function');
+			eq_(bar.foo.a, 10);
+			eq_(bar.foo.b, 3);
+			eq_(bar.foo.val(), 13);
 		}
 	});
 
