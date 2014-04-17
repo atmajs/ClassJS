@@ -8,8 +8,11 @@ Business and Data Access layers for browsers or nodejs
 
 ##### Install
 
-- Standalone: ``` $ npm install atma-class ```
-- [AtmaPackage](https://github.com/atmajs/Atma.Libs): ``` $ npm install atma-libs ```
+- NodeJS
+	- Standalone: ``` $ npm install atma-class ``` ``` var Class = require('atma-class') ```
+	- [AtmaPackage](https://github.com/atmajs/Atma.Libs)
+- Browser
+	- ``` <script src='/lib/class.js'></script> ```
 
 -----
 - [Attributes Overview](#attributes)
