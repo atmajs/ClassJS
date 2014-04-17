@@ -24,8 +24,8 @@ Business and Data Access layers for browsers or nodejs
 	- [MongoDB](#mongodb)
 	- MySQL _in progress_
 - [Repository](#repository)
-- [Static Functions](#static)
-- [Validations](#validation)
+- [Static Functions](#static-functions)
+- [Validation](#validation)
 - [Classes](#classes)
 	- [Deferred](#deferred)
 	- [EventEmitter](#eventemitter)
@@ -62,8 +62,8 @@ Class({
 	\*/
 	Store: <| Class.Remote('/user/:id')
             | Class.LocalStore('user')
-            | Class.Mongo.Single('users')
-            | Class.Mongo.Collection('users') |>
+            | Class.MongoStore.Single('users')
+            | Class.MongoStore.Collection('users') /* use in Class.Collection */ |>
     /*
 	 * Override any Base or Extended Function
 	 * Using this object, there will be access to overriden function
@@ -412,23 +412,23 @@ Class.cfg('ModelHost', window.Model = {});
 User === Class('User') === Model.User;
 ```
 
-#### Statics
+### Static Functions
 
-- `Class.validate(instance [, ?validationModel])`
-	
-	return string if the instance is invalid or nothing (`void 0`) if is ok.
+##### `Class.validate(instance [, ?validationModel])`
+	@see [Validation](#validation). `validationModel` is not required, instance has `Validate` Attribute. 
+	returns error if the instance is invalid or nothing (`void 0`) if is ok.
 
-- `Class.properties(Ctor | instance)`
+##### `Class.properties(Ctor | instance)`
 
-	return hash of all properties with types
+	returns hash of all properties with types if known.
 
-- `Class.stringify(instance)`
+##### `Class.stringify(instance)`
 
-	Serialize the instance. If class has name, the name is included, for later deserialization and initialization
+	Serializes the instance. If class has name, the name is included, for later deserialization and initialization
 
-- `Class.parse(string)`
+##### `Class.parse(string)`
 
-	Deserialize instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.
+	Deserializes instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.
 
 	
 	```javascript
