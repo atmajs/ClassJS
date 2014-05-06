@@ -2,6 +2,23 @@ var obj_patch;
 
 (function(){
 	
+	obj_patch = function(obj, patch){
+		
+		for(var key in patch){
+			
+			var patcher = patches[key];
+			
+			if (patcher) 
+				patcher[fn_WALKER](obj, patch[key], patcher[fn_MODIFIER]);
+			else
+				console.error('Unknown or not implemented patcher', key);
+			
+		}
+		return obj;
+	};
+	
+	// === private
+	
 	function walk_mutator(obj, data, fn) {
 		for (var key in data) 
 			fn(obj_getProperty(obj, key), data[key], key);
@@ -51,9 +68,6 @@ var obj_patch;
 		 val[mix > 0 ? 'pop' : 'shift']();
 	}
 	function arr_pull(val, mix, prop) {
-		return console
-			.error('<patch> pull Not Implemented');
-	
 		arr_remove(val, function(item){
 			return query_match(item, mix);
 		});
@@ -79,34 +93,34 @@ var obj_patch;
 		return val;
 	}
 	
+	var query_match;
+	(function(){
+		/** @TODO improve object matcher */
+		query_match = function(obj, mix){
+			for (var key in mix) {
+				if (obj[key] !== mix[key]) 
+					return false;
+			}
+			return true;
+		};
+	}());
+	
+	
 	var fn_WALKER = 0,
 		fn_MODIFIER = 1
 		;
 		
 	var patches = {
 		'$push': [walk_mutator, fn_IoC(arr_checkArray, arr_push)],
-		'$pop': [walk_mutator, fn_IoC(arr_checkArray, arr_pop)],
+		'$pop':  [walk_mutator, fn_IoC(arr_checkArray, arr_pop)],
 		'$pull': [walk_mutator, fn_IoC(arr_checkArray, arr_pull)],
 		
-		'$inc': [walk_modifier, val_inc],
-		'$set': [walk_modifier, val_set],
+		'$inc':   [walk_modifier, val_inc],
+		'$set':   [walk_modifier, val_set],
 		'$unset': [walk_modifier, val_unset],
-		'$bit': [walk_modifier, val_unset],
+		'$bit':   [walk_modifier, val_unset],
 	};
 	
-	obj_patch = function(obj, patch){
-		
-		for(var key in patch){
-			
-			var patcher = patches[key];
-			
-			if (patcher) 
-				patcher[fn_WALKER](obj, patch[key], patcher[fn_MODIFIER]);
-			else
-				console.error('Unknown or not implemented patcher', key);
-			
-		}
-		return obj;
-	};
+	
 	
 }());
