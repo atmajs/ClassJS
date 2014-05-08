@@ -1,11 +1,7 @@
 var MongoStoreCollection = (function(){
     
-    function MongoStoreCollection(collection){
-        if (!collection) {
-            console.error('<MongoStore> should define a collection name');
-        }
-        
-        this._coll = collection;
+    function MongoStoreCollection(mix){
+        MongoStoreCtor.call(this, mix);
     }
     
     function collection_push(collection, json){
@@ -18,8 +14,7 @@ var MongoStoreCollection = (function(){
         
         collection[collection.length++] = instance;
     }
-        
-        
+    
     obj_inherit(MongoStoreCollection, Deferred, {
         
         fetch: function(query, options){
@@ -126,6 +121,11 @@ var MongoStoreCollection = (function(){
         
         /* -- private -- */
         _busy: false,
+		
+		_coll: null,
+		_indexes: null,
+		_primaryKey: null,
+		
         _ensureFree: function(){
             if (this._busy) {
 				console.warn('<mongo:collection> requested transport, but is busy by the same instance.');

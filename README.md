@@ -289,12 +289,13 @@ var Users = Class.Collection(User, {
 var user = User
 	.fetch({ username: 'bar' })
 //  .fetch({ age: '>10' })
+//  .fetch({ age: { $gt: 10 }})
 	.done(function(user_){
-		user === user_ //> true
+		user === user_
 	})
 	.fail(function(error){})
 
-// Complex queries. (Use $query from MongoDB API)
+// Complex queries with options. (Use $query from MongoDB API)
 User
 	.fetch({
 		$query:{
@@ -305,8 +306,11 @@ User
 		},
 		$orderby:{
 			surname: -1
-		}, 
-		$maxScan: 1, 
+		}
+	}, {
+		fields: { name: 1 },
+		skip: 0,
+		limit: 10
 	})
 	.done(function(users){});
 
@@ -374,10 +378,13 @@ var User = Class({
 // ensure indexes
 Class
 	.MongoStore
-	.ensureIndexes(User)
-	.done(onComplete)
-	.fail(onError)
-	;
+	.ensureIndexes(User) //=> Deferred
+	
+// as all indexes being tracked, you can apply all indexes at once
+Class
+	.MongoStore
+	.ensureIndexesAll() //=> Deferred
+	
 ```
 
 ##### Advanced connections and settings:
@@ -395,6 +402,38 @@ Class
 		}
 	})
 ```
+
+##### Profiler
+Enable profiler to catch all slow, unindexed queries and updates.
+```javascript
+Class
+	.MongoStore
+	.profiler
+	.toggle(true, {
+		slowLimit: 200,
+		onDetect: function(QueryInfo),
+		
+		// add additional slow query detector,
+		// return `true` if this should be added to collection
+		detector: function(MongoDB_Plan):Boolean
+	});
+	
+QueryInfo = {
+	coll: '`current name`',
+	query: '`query wich was performed`',
+	params: {
+		reason: '`slow|unindexed`'
+	},
+	plan: MongoDB_Plan
+};
+
+// get all slow queries
+Class
+	.MongoStore
+	.profiler
+	.getData(): Array<QueryInfo>
+```
+
 
 ### Repository
 _Namespaces_ When declaring a Class, it can be stored in the repository object for simpler access.

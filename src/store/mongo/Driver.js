@@ -15,15 +15,22 @@ var db_getDb,
     db_getMongo,
     
     db_resolveCollection,
-    db_resolveDb
+    db_resolveDb,
+    
+    db_profiler_toggle,
+    db_profiler_getData
     ;
 
 (function(){
+    // import DriverCore.js
+    // import DriverProfiler.js
+    
+    db_profiler_getData = core_profiler_getData;
+    db_profiler_toggle = core_profiler_toggle;
     
     var db,
         mongo;
         
-    
     db_getCollection = function(name, callback){
         if (db == null) 
             return connect(createDbDelegate(db_getCollection, name, callback));
@@ -37,90 +44,57 @@ var db_getDb,
     
     db_resolveCollection = function(name){
         var dfr = new Class.Deferred();
-                
         db_getCollection(name, function(err, coll) {
             if (err) 
                 return dfr.reject(err);
-            
             dfr.resolve(coll)
         });
-        
         return dfr;  
     };
     
     db_getDb = function(callback){
         if (db == null) 
             return connect(createDbDelegate(db_getDb, callback));
-        
         callback(null, db);
     };
     
     db_resolveDb = function(name){
         var dfr = new Deferred();
-            
         db_getDb(function(error, db){
             if (error) 
                 return dfr.reject(error);
-            
             dfr.resolve(db);
         })
-        
         return dfr;
     };
     
     db_findSingle = function(coll, query, callback){
-        
         if (db == null) 
             return connect(createDbDelegate(db_findSingle, coll, query, callback));
-            
-        query = queryToMongo(query);
-        db
-            .collection(coll)
-            .findOne(query, function(error, item){
-                
-                callback(error, item);
-            });
-        
+        core_findSingle(coll, queryToMongo(query), null, callback);
     };
     
     db_findMany = function(coll, query, options, callback){
         if (db == null) 
             return connect(createDbDelegate(db_findMany, coll, query, options, callback));
-        
         if (options == null) 
             options = {};
-            
-        query = queryToMongo(query);
-        db
-            .collection(coll)
-            .find(query, options, function(error, cursor){
-                if (error) 
-                    return callback(error);
-                
-                cursor.toArray(function(error, items){
-                    callback(error, items);
-                });
-                
-            });
+        core_findMany(coll, queryToMongo(query), options, callback);
     };
     
     db_count = function(coll, query, callback){
         if (db == null) 
             return connect(createDbDelegate(db_count, coll, query, callback));
-        
-        db
-            .collection(coll)
-            .count(query, callback);
-    }
+        core_count(coll, query, callback);
+    };
     
     db_insert = function(coll, data, callback){
         if (db == null)
             return connect(createDbDelegate(db_insert, coll, data, callback));
-        
         db
             .collection(coll)
             .insert(data, { safe: true }, callback);
-    }
+    };
     
     db_updateSingle = function(coll, data, callback){
         if (db == null) 
@@ -129,61 +103,41 @@ var db_getDb,
         if (data._id == null) 
             return callback('<mongo:update> invalid ID');
         
-        db
-            .collection(coll)
-            .update({
-                _id: db_ensureObjectID(data._id)
-            }, data, {
-                upsert: true,
-                multi: false,
-            }, function(error){
-                
-                callback(error);
-            });
+        var query = {
+            _id: db_ensureObjectID(data._id)
+        };
+        core_updateSingle(coll, query, data, callback);
     };
     
     db_updateMany = function(coll, array, callback){
-        
-        db_updateSingle(coll, array.shift(), function(error){
-            if (error)
-                return callback(error);
-            
-            if (array.length === 0) 
-                return callback();
-            
-            db_updateMany(coll, array, callback); 
+        var batch = array.map(function(x){
+            return [
+                {_id: db_ensureObjectID(x._id) },
+                x
+            ];
         });
+        core_updateMany(coll, batch, callback);
     };
     
     db_patchSingle = function(coll, id, patch, callback){
         if (db == null) 
             return connect(createDbDelegate(db_patchSingle, coll, id, patch, callback));
         
-        db
-            .collection(coll)
-            .update({
-                _id: db_ensureObjectID(id)
-            }, patch, function(error){
-                
-                callback(error);
-            })
+        var query = { _id: db_ensureObjectID(id) };
+        core_updateSingle(coll, query, patch, callback);
     };
     
-    
-    
-    db_remove = function(collection, query, isSingle, callback){
+    db_remove = function(coll, query, isSingle, callback){
         if (db == null) 
-            return connect(db_remove.bind(null, collection, query, callback));
+            return connect(db_remove.bind(null, coll, query, callback));
         
         query = queryToMongo(query);
-        db
-            .collection(collection)
-            .remove(query, {
-                justOne: isSingle
-            }, function(error, count){
-                
-                callback(error);
-            });
+        
+        var fn = isSingle
+            ? core_removeSingle
+            : core_removeMany
+            ;
+        fn(coll, query, callback);
     };
     
     db_ensureIndex = function(collection, index, callback){
@@ -197,24 +151,17 @@ var db_getDb,
             return;
         }
         coll.ensureIndex(index, callback);
-        
     };
     
     db_ensureObjectID = function(value){
         if (is_String(value) && value.length === 24) 
             return db_getMongo().ObjectID(value);
-        
         return value;
     };
     
     db_getMongo = function(){
-        db_getMongo = function() {
-            return mongo;
-        };
-        
-        mongo = require('mongodb');
-        
-        return db_getMongo();
+        db_getMongo = function() { return mongo; };
+        return (mongo = require('mongodb'));
     };
     
     var connect = (function(){
@@ -223,7 +170,6 @@ var db_getDb,
             connecting = false,
             connection;
         
-        
         return function(callback){
             if (db) 
                 return callback();
@@ -231,9 +177,7 @@ var db_getDb,
             if (__db == null) 
                 return callback('Database is not set. Call Class.MongoStore.settings({db:"myDbName"})');
             
-            
             listeners.push(callback);
-            
             if (connecting) 
                 return;
             
@@ -269,8 +213,6 @@ var db_getDb,
             }
         };
     }());
-    
-    
     
     var queryToMongo = function(query){
         if (query == null) 
@@ -329,7 +271,6 @@ var db_getDb,
         return query;
     };
     
-    
     var createDbDelegate = function(fn){
         var args = _Array_slice.call(arguments, 1),
             callback = args[args.length - 1]
@@ -343,5 +284,5 @@ var db_getDb,
             
             return fn_apply(fn, null, args);
         };
-    }
+    };
 }());

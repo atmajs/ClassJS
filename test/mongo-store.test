@@ -134,7 +134,7 @@ include
                     .fail(function(error){
                         deepEq_(error, {
                             code: 404,
-                            message: 'Not Found'
+                            message: 'Entry Not Found'
                         });
                         done();
                     })
@@ -235,6 +235,32 @@ include
                         done();
                     });
                 }
+            },
+            
+            'profiler': function(done){
+                
+                Class
+                    .MongoStore
+                    .profiler
+                    .toggle(true, {
+                        onDetect: assert.await(function(info){
+                            has_(info, {
+                                params: {
+                                    reason: 'unindexed'
+                                },
+                                coll: 'users',
+                                plan: {
+                                    cursor: 'BasicCursor'
+                                }
+                            });
+                            
+                            done()
+                        })
+                    });
+                    
+                
+                User
+                    .fetch({ username: 'baz' });
             }
         })
     })
