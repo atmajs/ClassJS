@@ -224,7 +224,7 @@ include
                      coll.indexInformation(function(err, info){
                                 
                         has_(info, {
-                            username_1: [
+                            username_1_unique_true: [
                                 ['username', 1]
                             ],
                             timestamp_1: [

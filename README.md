@@ -296,7 +296,7 @@ var user = User
 	.fail(function(error){})
 
 // Complex queries with options. (Use $query from MongoDB API)
-User
+Users
 	.fetch({
 		$query:{
 			name: 'Smith'
@@ -419,8 +419,8 @@ Class
 	});
 	
 QueryInfo = {
-	coll: '`current name`',
-	query: '`query wich was performed`',
+	coll: 'String `current name`',
+	query: 'Object `query wich was performed`',
 	params: {
 		reason: '`slow|unindexed`'
 	},
