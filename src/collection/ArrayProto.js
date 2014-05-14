@@ -329,14 +329,30 @@ var ArrayProto = (function(){
 		}
 	};
 	
+	// ES6 iterator
+	if (typeof Symbol !== 'undefined' && Symbol.iterator) {
+		ArrayProto.prototype[Symbol.iterator] = function(){
+			var arr = this,
+				i = -1;
+			return {
+				next: function(){
+					return {
+						value: arr[++i],
+						done: i > arr.length - 1
+					};
+				},
+				hasNext: function(){
+					return i < arr.length;
+				}
+			}
+		};
+	}
 	
 	function forEach(fn, ctx){
-		
 		var imax = this.length,
 			i = -1
 			;
 		while( ++i < imax ) {
-			
 			fn.call(ctx || this, this[i], i);
 		}
 		return this;
