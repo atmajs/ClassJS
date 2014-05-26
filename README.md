@@ -453,21 +453,22 @@ User === Class('User') === Model.User;
 
 ### Static Functions
 
-- `Class.validate(instance [, ?validationModel])`
+- `Class.validate(object [, ?validationModel, ?isStrict])`
 
-	@see [Validation](#validation). `validationModel` is not required, instance has `Validate` Attribute. 
-	returns error if the instance is invalid or nothing (`void 0`) if is ok.
+	- `validationModel` - @see [Validation](#validation) - is not required, if instance/object has `Validate` attribute.
+	- `isStrict` - Boolean - return error if object contains property, which is not defined in `validationModel`
+	returns error object if the instance is invalid or nothing (`void 0`) if is ok.
 
 - `Class.properties(Ctor | instance)`
-
-	returns hash of all properties with types if known.
+	return hash of all properties with types if known.
+	
+- `Class.keys(instance)`
+	return array of properties (_without methods and private props_)
 
 - `Class.stringify(instance)`
-
 	Serializes the instance. If class has name, the name is included, for later deserialization and initialization
 
 - `Class.parse(string)`
-
 	Deserializes instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.
 
 	

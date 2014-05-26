@@ -29,22 +29,27 @@ include
 				error = obj_validate({
 					username: 'foo'
 				}, expect);
-				has_(error, 'password');
+				has_(error, {
+					property: 'password'
+				});
 				
 				'> type missmatch'
 				error = obj_validate({
 					username: 20,
 					password: 'baz'
 				}, expect);
-				has_(error, 'username');
+				has_(error, {
+					property: 'username'
+				});
 				
 				error = obj_validate({
 					username: 'foo',
 					password: 'baz',
 					age: 'qux'
 				}, expect);
-				has_(error, 'age');
-				
+				has_(error, {
+					property: 'age'
+				});
 				
 				'> miss subproperty'
 				error = obj_validate({
@@ -52,7 +57,9 @@ include
 					password: 'baz',
 					joker: {} 
 				}, expect);
-				has_(error, 'x_joker');
+				has_(error, {
+					property: 'joker.x_joker'
+				});
 				
 				error = obj_validate({
 					username: 'foo',
@@ -61,7 +68,9 @@ include
 						x_joker: 'hello'
 					} 
 				}, expect);
-				has_(error, 'x_joker');
+				has_(error, {
+					property: 'joker.x_joker'
+				});
 				
 				'> invalid optional subproperty type'
 				error = obj_validate({
@@ -72,7 +81,9 @@ include
 						y_joker: 'baz'
 					} 
 				}, expect);
-				has_(error, 'y_joker');
+				has_(error, {
+					property: 'joker.y_joker'
+				});
 				
 				'> valid'
 				error = obj_validate({
@@ -106,7 +117,9 @@ include
 						{ _id: 4343 },
 					]
 				}, expect);
-				has_(error, '_id');
+				has_(error, {
+					property: 'collection.2._id'
+				});
 				
 				'> array'
 				expect = [ {_id: 'string' }]
@@ -129,7 +142,9 @@ include
 				error = obj_validate({
 					rgx: 'as-d92'
 				}, expect);
-				has_(error, 'rgx');
+				has_(error, {
+					property: 'rgx'
+				});
 				
 				
 				'> unexpected property'
@@ -137,7 +152,9 @@ include
 				error = obj_validate({
 					_id: 'baz'
 				}, expect);
-				has_(error, '_id');
+				has_(error, {
+					property: '_id'
+				});
 				
 				'> function validation'
 				expect = {
@@ -155,9 +172,55 @@ include
 				error = obj_validate({
 					username: 'foo'
 				}, expect)
-				has_(error, 'username');
-			}
+				has_(error, {
+					property: 'username'
+				});
+			},
 			
+			'!strict': function(){
+				var error,
+					expect = {
+						'?foo': 'string',
+						'?joker': {
+							'x': 'number'
+						}
+					};
+				
+				error = obj_validate({ baz: null}, expect, true);
+				has_(error, {
+					property: 'baz'
+				});
+				
+				//> invalid subproperty `x`
+				error = obj_validate({
+					joker: {
+						y: 5
+					}
+				}, expect, true);
+				has_(error, {
+					property: 'joker.x'
+				});
+				
+				//> unexpected subproperty `y`
+				error = obj_validate({
+					joker: {
+						x: 1,
+						y: 2
+					}
+				}, expect, true);
+				has_(error, {
+					property: 'joker.y'
+				});
+				
+				//> ok
+				error = obj_validate({
+					foo: 'foo_string',
+					joker: {
+						x: 1
+					}
+				}, expect, true);
+				eq_(error, null);
+			}
 		})
 		
 	});
