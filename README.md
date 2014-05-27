@@ -455,8 +455,9 @@ User === Class('User') === Model.User;
 
 - `Class.validate(object [, ?validationModel, ?isStrict])`
 
-	- `validationModel` - @see [Validation](#validation) - is not required, if instance/object has `Validate` attribute.
+	- `validationModel` - _(@see [Validation](#validation))_ - is not required, if instance/object has `Validate` attribute.
 	- `isStrict` - Boolean - return error if object contains property, which is not defined in `validationModel`
+	
 	returns error object if the instance is invalid or nothing (`void 0`) if is ok.
 
 - `Class.properties(Ctor | instance)`

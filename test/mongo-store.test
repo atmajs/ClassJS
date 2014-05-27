@@ -237,6 +237,32 @@ include
                 }
             },
             
+            'direct collection patching': function(done){
+                new User({ timestamp: 5 })
+                    .save()
+                    .fail(assert.avoid())
+                    .done(function(user){
+                        
+                        User
+                            .resolveCollection()
+                            .done(function(coll){
+                                
+                                coll.update({
+                                    _id: user._id
+                                }, {
+                                    $inc: {
+                                        timestamp: 3
+                                    }
+                                }, function(error, count){
+                                    eq_(error, null);
+                                    eq_(count, 1);
+                                    done();
+                                })
+                            })
+                        
+                    })
+            },
+            
             'profiler': function(done){
                 
                 Class
