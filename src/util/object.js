@@ -298,7 +298,7 @@ var obj_inherit,
 				},
 				{
 					toString: function(){
-						return 'Expected property'
+						return 'Unexpected property'
 							+ (this.property
 							   ? '`' + this.property + '`'
 							   : '')
