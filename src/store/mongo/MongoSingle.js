@@ -50,6 +50,10 @@ var MongoStoreSingle = (function() {
 			if (this._id == null)
 				return this._completed('<class:patch> `_id` is not defined');
 			
+			var error = obj_patchValidate(patch);
+			if (error != null) 
+				return this._completed(error)
+			
 			obj_patch(this, patch);
 			db_patchSingle(
 				this._coll,

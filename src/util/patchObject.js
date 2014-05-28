@@ -1,4 +1,5 @@
-var obj_patch;
+var obj_patch,
+	obj_patchValidate;
 
 (function(){
 	
@@ -16,6 +17,23 @@ var obj_patch;
 		}
 		return obj;
 	};
+	
+	obj_patchValidate = function(patch){
+		if (patch == null) 
+			return 'Undefined';
+		
+		var has = false;
+		for(var key in patch){
+			has = true;
+			
+			if (patches[key] == null) 
+				return 'Unsupported patcher: ' + key;
+		}
+		if (has === false) 
+			return 'No data';
+		
+		return null;
+	}
 	
 	// === private
 	
