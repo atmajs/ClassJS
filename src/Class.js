@@ -60,11 +60,10 @@ var Class = function(mix) {
 	if (_overrides != null) 
 		delete data.Override;
 	
-	if (data.toJSON === void 0) 
-		data.toJSON = json_proto_toJSON;
-	
-
 	if (_base == null && _extends == null && _self == null) {
+	
+		if (data.toJSON === void 0) 
+			data.toJSON = json_proto_toJSON;
 		
 		_class = _construct == null
 			? function() {}
@@ -153,6 +152,8 @@ var Class = function(mix) {
 	class_extendProtoObjects(data, _base, _extends);
 	class_inherit(_class, _base, _extends, data, _overrides);
 
+	if (_class.prototype.toJSON === void 0) 
+		_class.prototype.toJSON = json_proto_toJSON;
 
 	data = null;
 	_static = null;

@@ -67,10 +67,13 @@ var json_key_SER = '__$serialization',
 					if (toJSON == null) 
 						break;
 					
-					if (toJSON === json_proto_toJSON || toJSON === json_proto_arrayToJSON) {
-						json[asKey] = val.toJSON();
-						continue;
-					}
+					json[asKey] = val.toJSON();
+					continue;
+					//@removed - serialize any if toJSON is implemented
+					//if (toJSON === json_proto_toJSON || toJSON === json_proto_arrayToJSON) {
+					//	json[asKey] = val.toJSON();
+					//	continue;
+					//}
 					
 					break;
 			}
