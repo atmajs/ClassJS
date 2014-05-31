@@ -8,12 +8,10 @@ var obj_patch,
 		for(var key in patch){
 			
 			var patcher = patches[key];
-			
 			if (patcher) 
 				patcher[fn_WALKER](obj, patch[key], patcher[fn_MODIFIER]);
 			else
 				console.error('Unknown or not implemented patcher', key);
-			
 		}
 		return obj;
 	};
@@ -33,7 +31,7 @@ var obj_patch,
 			return 'No data';
 		
 		return null;
-	}
+	};
 	
 	// === private
 	

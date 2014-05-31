@@ -85,6 +85,33 @@ function Deferred(){}
 				callback
 			);
 		},
+		
+		pipe: function(dfr /* ..methods */){
+			var imax = arguments.length,
+				done = imax === 1,
+				fail = imax === 1,
+				i = 0, x;
+			while( ++i < imax ){
+				x = arguments[i];
+				switch(x){
+					case 'done':
+						done = true;
+						break;
+					case 'fail':
+						fail = true;
+						break;
+					default:
+						console.error('Unsupported pipe channel', arguments[i])
+						break;
+				}
+			}
+			done && this.done(pipe('resolve'));
+			fail && this.fail(pipe('reject'));
+			function pipe(method) {
+				dfr[method].apply(dfr, arguments);
+			}
+			return this;
+		}
 	};
 
 	// PRIVATE
