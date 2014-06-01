@@ -1,0 +1,55 @@
+UTest({
+	'generic': function(){
+		var X = Class({
+			x: 'x',
+			
+			_x: 'x',
+			$x: function(){},
+			Static: {
+				x_static: 'x'
+			}
+		});
+		var Y = Class({
+			Base: X,
+			y: 'y'
+		});
+		
+		deepEq_(new Y().toJSON(), {
+			x: 'x',
+			y: 'y'
+		});
+	},
+	'override': function(){
+		var X = Class({
+			Base: Class.Serializable,
+			Override: {
+				toJSON: function(){
+					return this.super().x + '-foo';
+				}
+			},
+			x: 'x'
+		});
+		
+		eq_(new X().toJSON(), 'x-foo');
+	},
+	'override inherited': function(){
+		var X = Class({
+			Base: Class.Serializable,
+			Override: {
+				toJSON: function(){
+					return this.super().x + '-foo';
+				}
+			},
+			x: 'x'
+		});
+		var Y = Class({
+			Base: X,
+			Override: {
+				toJSON: function(){
+					return this.super() + '-y';
+				}
+			}
+		});
+		eq_(new Y().toJSON(), 'x-foo-y');
+	}
+})

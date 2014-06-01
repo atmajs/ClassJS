@@ -125,8 +125,7 @@ var class_inherit,
         };
     }
 
-	function inherit(_class, _base, _extends, original, _overrides) {
-		
+	function inherit(_class, _base, _extends, original, _overrides, defaults) {
 		var prototype = original,
 			proto = original;
 
@@ -144,18 +143,21 @@ var class_inherit,
 		if (_base != null) 
 			proto[PROTO] = _base.prototype;
 		
-		if (_overrides != null) {
-			for (var key in _overrides) {
-				prototype[key] = proto_override(prototype[key], _overrides[key]);
-			}
+		for (var key in defaults) {
+			if (prototype[key] == null) 
+				prototype[key] = defaults[key];
 		}
+		for (var key in _overrides) {
+			prototype[key] = proto_override(prototype[key], _overrides[key]);
+		}
+		
 		
 		_class.prototype = prototype;
 	}
 
 
 	// browser that doesnt support __proto__ 
-	function inherit_protoLess(_class, _base, _extends, original, _overrides) {
+	function inherit_protoLess(_class, _base, _extends, original, _overrides, defaults) {
 		
 		if (_base != null) {
 			var tmp = function() {};
@@ -174,14 +176,12 @@ var class_inherit,
 			});
 		}
 		
-		if (_overrides != null) {
-			var prototype = _class.prototype;
-			for (var key in _overrides) {
-				prototype[key] = proto_override(prototype[key], _overrides[key]);
-			}
+		var prototype = _class.prototype;
+		obj_defaults(prototype, defaults);
+		
+		for (var key in _overrides) {
+			prototype[key] = proto_override(prototype[key], _overrides[key]);
 		}
-		
-		
 		proto_extend(_class, original); 
 	}
 	
