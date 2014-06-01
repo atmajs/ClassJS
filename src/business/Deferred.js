@@ -108,7 +108,9 @@ function Deferred(){}
 			done && this.done(pipe('resolve'));
 			fail && this.fail(pipe('reject'));
 			function pipe(method) {
-				dfr[method].apply(dfr, arguments);
+				return function(){
+					dfr[method].apply(dfr, arguments);
+				};
 			}
 			return this;
 		}

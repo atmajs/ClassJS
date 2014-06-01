@@ -150,13 +150,13 @@ var Class = function(mix) {
 	
 
 	class_extendProtoObjects(data, _base, _extends);
+	if (data.toJSON === void 0) 
+		data.toJSON = json_proto_toJSON;
+		
 	class_inherit(_class, _base, _extends, data, _overrides);
 
-	if (_class.prototype.toJSON === void 0) 
-		_class.prototype.toJSON = json_proto_toJSON;
 
 	data = null;
 	_static = null;
-
 	return _class;
 };
