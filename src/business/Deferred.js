@@ -57,7 +57,8 @@ function Deferred(){}
 		},
 		
 		done: function(callback) {
-			
+			if (this._rejected != null) 
+				return this;
 			return dfr_bind(
 				this,
 				this._resolved,
@@ -67,7 +68,8 @@ function Deferred(){}
 		},
 		
 		fail: function(callback) {
-			
+			if (this._resolved != null) 
+				return this;
 			return dfr_bind(
 				this,
 				this._rejected,
