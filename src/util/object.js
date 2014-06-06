@@ -102,25 +102,49 @@ var obj_inherit,
 	
 	(function(){
 		
-		obj_validate = function(a, b, isStrict) {
+		obj_validate = function(a /*, b , ?isStrict, ?property, ... */) {
 			if (a == null) 
 				return Err_Invalid('object');
 			
-			if (b == null) 
-				b = a.Validate;
+			_props = null;
+			_strict = false;
 			
-			if (b == null)
+			var i = arguments.length,
+				validator, x;
+			while (--i > 0) {
+				x = arguments[i];
+				switch(typeof x){
+					case 'string':
+						if (_props == null) 
+							_props = {};
+						_props[x] = 1;
+						continue;
+					case 'boolean':
+						_strict = x;
+						continue;
+					default:
+						if (i !== 1) {
+							return Err_Invalid('validation argument at ' + i)
+						}
+						validator = x;
+						continue;
+				}
+			}
+			if (validator == null) 
+				validator = a.Validate;
+			if (validator == null)
 				// if no validation object - accept any.
 				return null;
 			
-			_strict = isStrict;
-			return checkObject(a, b, a);
+			return checkObject(a, validator, a);
 		};
 		
 		// private
 		
-		// unexpect in `a` if not in `b`
-		var _strict = false;
+			// unexpect in `a` if not in `b`
+		var _strict = false,
+			// validate only specified properties
+			_props = null;
 		
 		// a** - payload
 		// b** - expect
@@ -130,6 +154,10 @@ var obj_inherit,
 				optional,
 				key, aVal, aKey;
 			for(key in b){
+				
+				if (_props != null && a === ctx && _props.hasOwnProperty(key) === false) {
+					continue;
+				}
 				
 				switch(key.charCodeAt(0)) {
 					case 63:
