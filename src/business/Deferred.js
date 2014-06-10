@@ -88,7 +88,24 @@ function Deferred(){}
 			);
 		},
 		
-		pipe: function(dfr /* ..methods */){
+		pipe: function(mix /* ..methods */){
+			var dfr;
+			if (typeof mix === 'function') {
+				dfr = new Deferred;
+				var done_ = mix,
+					fail_ = arguments.length > 1
+						? arguments[1]
+						: null;
+				
+				this.then(
+					delegate(dfr, 'resolve', done_),
+					delegate(dfr, 'reject', fail_)
+				);
+				
+				return dfr;
+			}
+			
+			dfr = mix;
 			var imax = arguments.length,
 				done = imax === 1,
 				fail = imax === 1,
@@ -107,13 +124,33 @@ function Deferred(){}
 						break;
 				}
 			}
-			done && this.done(pipe('resolve'));
-			fail && this.fail(pipe('reject'));
-			function pipe(method) {
+			done && this.done(pipe(dfr, 'resolve'));
+			fail && this.fail(pipe(dfr, 'reject'));
+			
+			function pipe(dfr, method) {
 				return function(){
 					dfr[method].apply(dfr, arguments);
 				};
 			}
+			function delegate(dfr, name, fn) {
+				if (fn == null) 
+					return dfr[name + 'Delegate']();
+				
+				return function(){
+					var override = fn.apply(this, arguments);
+					if (override != null) {
+						if (override instanceof Deferred) {
+							override.pipe(dfr);
+							return;
+						}
+						
+						dfr[name](override)
+						return;
+					}
+					dfr[name].apply(dfr, arguments);
+				};
+			}
+			
 			return this;
 		}
 	};

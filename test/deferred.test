@@ -1,0 +1,69 @@
+
+include
+	.inject(
+		'/src/vars.js',
+		'/src/util/function.js',
+		'/src/util/array.js',
+		'/src/business/Deferred.js::Deferred',
+		'/src/business/Await.js::Await'
+	)
+	.done(function() {
+
+	function createDfr(doneResult, failResult) {
+		var dfr = new Deferred;
+		setTimeout(function(){
+			if (failResult != null) {
+				dfr.reject(failResult);
+				return;
+			}
+			dfr.resolve(doneResult);
+		});
+		return dfr;
+	}
+
+	UTest({
+		'pipe': function(done) {
+			function getBase(){
+				return createDfr('base_');
+			}
+			function getFoo(base) {
+				return createDfr(base + 'foo');
+			}
+			function getFooBar(foo){
+				return foo + 'bar';
+			}
+			
+			getBase()
+				.pipe(getFoo)
+				.pipe(getFooBar)
+				.done(function(base_foobar){
+					eq_(base_foobar, 'base_foobar');
+				})
+				.fail(assert.avoid())
+				.always(done);
+		},
+		'pipe errored': function(done) {
+			function getBase(){
+				return createDfr(null, 'base_');
+			}
+			function getFoo(base) {
+				return createDfr(base + 'foo');
+			}
+			function getFooBar(foo){
+				return foo + 'bar';
+			}
+			function getFooBarError(base_) {
+				return createDfr(null, base_ + 'barerror');
+			}
+			
+			getBase()
+				.pipe(getFoo)
+				.pipe(getFooBar, getFooBarError)
+				.fail(function(base_){
+					eq_(base_, 'base_barerror');
+				})
+				.done(assert.avoid())
+				.always(done);
+		}
+	})
+})
