@@ -540,19 +540,52 @@ Validation Model
 There are some classes you can start to use.
 
 #### Deferred
-_Simple `Promise` implementation_
+_`Promise`/`Defer` implementation_
 ```javascript
 var X = Class({
-	Extends: Class.Deferred
+	Base: Class.Deferred,
+	// ... class properties
 });
-new X()
-	.resolve ( arg )
-	.reject  ( arg )
-	.done   ( callback )
-	.fail   ( callback )
-	.always ( callback ),
-	.then   ( onSuccess, onFailure )
-	;
+var x = new X;
+
+// or simple deferred object
+var x = new Class.Deferred;
+
+/*
+ * Listeners
+\*/
+x
+	.done   ( callback ): Self
+	.fail   ( callback ): Self
+	.always ( callback ): Self
+	.then   ( onSuccess, onFailure ): Self
+/*
+ * Resolve / Reject
+\*/
+x
+	.resolve ( ..args ): Self
+	.reject  ( ..args ): Self
+
+/*
+ * Move to unresolved state
+\*/
+x.defer():Self;
+
+	
+/*
+ * Pipe result to another deferred object
+\*/
+x.pipe(y:Deferred):Self
+
+
+/*
+ * Create deferred pipeline to modify/extend the result
+\*/
+x.pipe(
+	function resolveTransformer(..args):Any|Deferred,
+	?function rejectTransformaer(..args):Any|Deferred
+):Deferred
+
 ```
 
 #### EventEmitter
@@ -561,16 +594,20 @@ var X = Class({
 	Extends: Class.EventEmitter
 });
 
-new X()
+var x = new X();
 
+x
 	.trigger( ..args )
 	.on(event, callback)
-	// function is detached after one call
+	// listener is detached after one call
 	.once(event, callback)
 	.off(event, callback)
-	// creates function that can be bound to other event emitter
-	// and transmits the event with new eventName to current listeners
-	.pipe(event);
+	
+// creates function that can be bound to other event emitter
+// and transmits the event with new eventName to current listeners
+var fn = x.pipe(event);
+
+fn(..args) ~ x.trigger(event, ..args)
 ```
 
 #### Run tests and build
