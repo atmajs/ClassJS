@@ -364,8 +364,10 @@ var User = Class({
 	Base: Class.Serializable,
 	Store: Class.MongoStore.Single({
 		collection: 'users',
-		indexes: [
-			// simple indexes
+		indexes: [ 
+			// simple index
+			{ qux: 1}
+			// compound index
 			{
 				bar: 1,
 				baz: 1

@@ -140,14 +140,21 @@ var db_getDb,
         fn(coll, query, callback);
     };
     
+    /**
+     * index:
+     *    - Object { foo: 1}
+     *    - Array<Object, Options> [{foo:1}, {unique: true }]
+     */
     db_ensureIndex = function(collection, index, callback){
         if (db == null) 
             return connect(createDbDelegate(db_ensureIndex, collection, index, callback));
         
-        db
-            .collection(collection)
-            .ensureIndex(index, callback)
-            ;
+        var coll = db.collection(collection);
+        if (Array.isArray(index)) {
+            coll.ensureIndex(index[0], index[1], callback);
+            return;
+        }
+        coll.ensureIndex(index, callback);
     };
     
     db_ensureObjectID = function(value){

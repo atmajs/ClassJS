@@ -221,16 +221,21 @@ include
                 }
                 
                 function indexInformation(coll) {
-                     coll.indexInformation(function(err, info){
-                                
-                        has_(info, {
-                            username_1_unique_true: [
-                                ['username', 1]
-                            ],
-                            timestamp_1: [
-                                ['timestamp', 1]
-                            ]
-                        });
+                     coll.indexInformation({ full: true }, function(err, info){
+                        
+                        has_(info, [
+                            {
+                                key: {
+                                    username: 1,
+                                },
+                                unique: true
+                            },
+                            {
+                                key: {
+                                    timestamp: 1
+                                }
+                            }
+                        ]);
                         
                         done();
                     });
