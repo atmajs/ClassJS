@@ -331,7 +331,7 @@ var ArrayProto = (function(){
 	
 	// ES6 iterator
 	if (typeof Symbol !== 'undefined' && Symbol.iterator) {
-		ArrayProto.prototype[Symbol.iterator] = function(){
+		ArrayProto[Symbol.iterator] = function(){
 			var arr = this,
 				i = -1;
 			return {
