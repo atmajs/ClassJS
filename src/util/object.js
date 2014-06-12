@@ -122,6 +122,8 @@ var obj_inherit,
 					case 'boolean':
 						_strict = x;
 						continue;
+					case 'undefined':
+						continue;
 					default:
 						if (i !== 1) {
 							return Err_Invalid('validation argument at ' + i)

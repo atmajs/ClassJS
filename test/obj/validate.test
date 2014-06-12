@@ -25,6 +25,13 @@ include
 				}, expect);
 				eq_(error, null);
 				
+				error = obj_validate({
+					bazValue: 'bazzy'
+				}, {
+					bazValue: 'string'
+				});
+				eq_(error, null);
+				
 				'> miss property'
 				error = obj_validate({
 					username: 'foo'
@@ -177,7 +184,7 @@ include
 				});
 			},
 			
-			'!strict': function(){
+			'strict': function(){
 				var error,
 					expect = {
 						'?foo': 'string',
