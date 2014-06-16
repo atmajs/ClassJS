@@ -582,6 +582,8 @@ x.pipe(y:Deferred):Self
 
 /*
  * Create deferred pipeline to modify/extend the result
+ *
+ * Caution: Creates new Deferred instance!
 \*/
 x.pipe(
 	function resolveTransformer(..args):Any|Deferred,
