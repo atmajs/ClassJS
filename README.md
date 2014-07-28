@@ -12,7 +12,7 @@ Business and Data Access layers for browsers or nodejs
 	- Standalone: ``` $ npm install atma-class ``` ``` var Class = require('atma-class') ```
 	- [AtmaPackage](https://github.com/atmajs/Atma.Libs)
 - Browser
-	- ``` <script src='/lib/class.js'></script> ```
+	- ``` <script src='//cdn.jsdelivr.net/classjs/1.0.66/class.min.js'></script> ```
 
 -----
 - [Attributes Overview](#attributes)
@@ -87,6 +87,13 @@ Class({
 		foo: function(){}
 	},
     Validate: {
+		/*
+		 * @see `validation` section
+		 * e.g.
+		 * var foo = new Foo();
+		 * foo.user = null;
+		 * var error = Class.validate(foo);
+		\*/
         user: function(val){
             if (val == null)
                 return 'Username is not defined';
@@ -455,26 +462,28 @@ User === Class('User') === Model.User;
 
 ### Static Functions
 
-- `Class.validate(object [, ?validationModel, ?isStrict])`
+- **`Class.validate(object [, ?validationModel, ?isStrict])`** <a name='static-validate'>#</a>
 
 	- `validationModel` - _(@see [Validation](#validation))_ - is not required, if instance/object has `Validate` attribute.
 	- `isStrict` - Boolean - return error if object contains property, which is not defined in `validationModel`
 	
 	returns error object if the instance is invalid or nothing (`void 0`) if is ok.
 
-- `Class.properties(Ctor | instance)`
+- **`Class.properties(Ctor | instance)`** <a name='static-properties'>#</a>
+
 	return hash of all properties with types if known.
 	
-- `Class.keys(instance)`
+- **`Class.keys(instance)`** <a name='static-keys'>#</a>
+
 	return array of properties (_without methods and private props_)
 
-- `Class.stringify(instance)`
+- **`Class.stringify(instance)`** <a name='static-stringify'>#</a>
+
 	Serializes the instance. If class has name, the name is included, for later deserialization and initialization
 
-- `Class.parse(string)`
-	Deserializes instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.
+- **`Class.parse(string)`** <a name='static-parse'>#</a>
 
-	
+	Deserializes instance. e.g - serialize models on NodeJS, pass them to the front-end and restore the models there.	
 	```javascript
 	var User = Class('User', {
 		Base: Class.Serializable,
