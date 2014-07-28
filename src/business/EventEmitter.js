@@ -1,14 +1,12 @@
-var EventEmitter = (function(){
+var EventEmitter;
+(function(){
  
-	function Emitter() {
+	EventEmitter = function() {
 		this._listeners = {};
-	}
- 
-	
-    Emitter.prototype = {
-        constructor: Emitter,
-		
-        on: function(event, callback) {
+	};
+    EventEmitter.prototype = {
+        constructor: EventEmitter,
+		on: function(event, callback) {
             if (callback != null){
 				(this._listeners[event] || (this._listeners[event] = [])).push(callback);
 			}
@@ -35,28 +33,9 @@ var EventEmitter = (function(){
 			};
 		},
         
-        trigger: function() {
-            var args = _Array_slice.call(arguments),
-                event = args.shift(),
-                fns = this._listeners[event],
-                fn, imax, i = 0;
-                
-            if (fns == null)
-				return this;
-			
-			for (imax = fns.length; i < imax; i++) {
-				fn = fns[i];
-				fn_apply(fn, this, args);
-				
-				if (fn._once === true){
-					fns.splice(i, 1);
-					i--;
-					imax--;
-				}
-			}
+		emit: event_trigger,
+        trigger: event_trigger,
 		
-            return this;
-        },
         off: function(event, callback) {
 			var listeners = this._listeners[event];
             if (listeners == null)
@@ -69,22 +48,39 @@ var EventEmitter = (function(){
 			
 			var imax = listeners.length,
 				i = -1;
-				
 			while (++i < imax) {
 				
 				if (listeners[i] === callback) {
-					
 					listeners.splice(i, 1);
 					i--;
 					imax--;
 				}
 				
 			}
-		
             return this;
 		}
     };
     
-    return Emitter;
-    
+	function event_trigger() {
+		var args = _Array_slice.call(arguments),
+			event = args.shift(),
+			fns = this._listeners[event],
+			fn, imax, i = 0;
+			
+		if (fns == null)
+			return this;
+		
+		for (imax = fns.length; i < imax; i++) {
+			fn = fns[i];
+			fn_apply(fn, this, args);
+			
+			if (fn._once === true){
+				fns.splice(i, 1);
+				i--;
+				imax--;
+			}
+		}
+	
+		return this;
+	}
 }());

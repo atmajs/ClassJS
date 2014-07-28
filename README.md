@@ -553,74 +553,69 @@ var x = new X;
 // or simple deferred object
 var x = new Class.Deferred;
 
-/*
- * Listeners
-\*/
-x
-	.done   ( callback ): Self
-	.fail   ( callback ): Self
-	.always ( callback ): Self
-	.then   ( onSuccess, onFailure ): Self
-/*
- * Resolve / Reject
-\*/
-x
-	.resolve ( ..args ): Self
-	.reject  ( ..args ): Self
-
-/*
- * Move to unresolved state
-\*/
-x.defer():Self;
-
+Deferred __proto__ {
+	// callbacks are called once
+	done  : function(callback):Self,
+	fail  : function(callback):Self,
+	always: function(callback):Self,
 	
-/*
- * Pipe result to another deferred object
-\*/
-x.pipe(y:Deferred):Self
+	resolve: function(...args):Self,
+	reject : function(...args):Self
+	
+	// reset deferred object and move to unresolved state
+	defer  : function():Self
+	
+	pipe   : Function
+		// pipe Self states to this deferred instance
+		= function(Deferred):Self
+		
+		// Returns new Deferred which depends on Filter functions
+		// @see Filter meta
+		= function(doneFilter, failFilter): new Deferred
+	
+	// alias to .pipe(function, function)
+	then   : function(doneFilter, dailFilter):new Deferred
+}
 
-
-/*
- * Create deferred pipeline to modify/extend the result
- *
- * Caution: Creates new Deferred instance!
-\*/
-x.pipe(
-	function resolveTransformer(..args):Any|Deferred,
-	?function rejectTransformaer(..args):Any|Deferred
-):Deferred
-
+[done/fail]Filter : Function
+	// modify or override
+	// `pipe` and `then` deferreds are resolved then with this modified values
+	= function(): Any
+	
+	// return another Deferred array to listen for
+	// `pipe` and `then` deferreds are bound to this deferred return value
+	= function(): Deferred
 ```
 
 #### EventEmitter
 ```javascript
 var X = Class({
-	Extends: Class.EventEmitter
+	Extends: Class.EventEmitter,
+	//...
 });
+new X();
+new Class.EventEmitter;
 
-var x = new X();
-
-x
-	.trigger( ..args )
-	.on(event, callback)
-	// listener is detached after one call
-	.once(event, callback)
-	.off(event, callback)
+EventEmitter __proto__ {
+	emit:		function(...args):Self,
+	// alias to `emit` fn
+	trigger: 	function(...args):Self,
 	
-// creates function that can be bound to other event emitter
-// and transmits the event with new eventName to current listeners
-var fn = x.pipe(event);
-
-fn(..args) ~ x.trigger(event, ..args)
+	on: function(event, callback):Self,
+	once: function(event, callback):Self,
+	off: function(event, callback):Self,
+	
+	// create Function which trigger specific event when is called
+	// fn(...args) ~~ x.trigger(event, ...args);
+	pipe: function(event): function
+	
+}
 ```
 
 #### Run tests and build
 ```bash
-$ npm install -g atma
-$ cd class
-
-# tests
-$ atma test
+$ npm install
+$ npm test
 
 # build
 $ atma

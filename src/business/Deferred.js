@@ -1,6 +1,7 @@
-function Deferred(){}
+var Deferred;
 
 (function(){
+	Deferred = function(){}
 	
 	Deferred.prototype = {
 		_isAsync: true,
@@ -14,6 +15,16 @@ function Deferred(){}
 		defer: function(){
 			this._rejected = null;
 			this._resolved = null;
+		},
+		
+		isResolved: function(){
+			return this._resolved != null;
+		},
+		isRejected: function(){
+			return this._rejected != null;
+		},
+		isBusy: function(){
+			return this._resolved == null && this._rejected == null;
 		},
 		
 		resolve: function() {
@@ -52,8 +63,8 @@ function Deferred(){}
 			return fn_proxy(this.reject, this);
 		},
 		
-		then: function(onSuccess, onError){
-			return this.done(onSuccess).fail(onError);
+		then: function(filterSuccess, filterError){
+			return this.pipe(filterSuccess, filterError);
 		},
 		
 		done: function(callback) {
@@ -79,7 +90,6 @@ function Deferred(){}
 		},
 		
 		always: function(callback) {
-			
 			return dfr_bind(
 				this,
 				this._rejected || this._resolved,
@@ -96,12 +106,11 @@ function Deferred(){}
 					fail_ = arguments.length > 1
 						? arguments[1]
 						: null;
-				
-				this.then(
-					delegate(dfr, 'resolve', done_),
-					delegate(dfr, 'reject', fail_)
-				);
-				
+					
+				this
+					.done(delegate(dfr, 'resolve', done_))
+					.fail(delegate(dfr, 'reject',  fail_))
+					;
 				return dfr;
 			}
 			
@@ -124,8 +133,8 @@ function Deferred(){}
 						break;
 				}
 			}
-			done && this.done(pipe(dfr, 'resolve'));
-			fail && this.fail(pipe(dfr, 'reject'));
+			done && this.done(dfr.resolveDelegate());
+			fail && this.fail(dfr.rejectDelegate());
 			
 			function pipe(dfr, method) {
 				return function(){
@@ -133,13 +142,10 @@ function Deferred(){}
 				};
 			}
 			function delegate(dfr, name, fn) {
-				if (fn == null) 
-					return dfr[name + 'Delegate']();
-				
 				return function(){
 					var override = fn.apply(this, arguments);
 					if (override != null) {
-						if (override instanceof Deferred) {
+						if (isDeferred(override) === true) {
 							override.pipe(dfr);
 							return;
 						}
@@ -153,6 +159,15 @@ function Deferred(){}
 			
 			return this;
 		}
+	};
+	
+	Deferred.run = function(fn, ctx){
+		var dfr = new Deferred();
+		if (ctx == null) 
+			ctx = dfr;
+		
+		fn.call(ctx, dfr.resolveDelegate(), dfr.rejectDelegate(), dfr);
+		return dfr;
 	};
 
 	// PRIVATE
@@ -189,6 +204,17 @@ function Deferred(){}
 				fn_apply(fn, ctx, args);
 		}
 		arr.length = 0;
+	}
+	function isDeferred(x){
+		if (x == null || typeof x !== 'object') 
+			return false;
+		
+		if (x instanceof Deferred) 
+			return true;
+		
+		return typeof x.done === 'function'
+			&& typeof x.fail === 'function'
+			;
 	}
 	
 }());

@@ -1,7 +1,9 @@
-var Await = (function(){
+var Await;
+
+(function(){
 	
-	return Class({
-		Base: Deferred,
+	Await = Class({
+		Extends: Deferred.prototype,
 	
 		_wait: 0,
 		_timeout: null,
