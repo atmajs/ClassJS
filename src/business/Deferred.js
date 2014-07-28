@@ -142,16 +142,19 @@ var Deferred;
 				};
 			}
 			function delegate(dfr, name, fn) {
+				
 				return function(){
-					var override = fn.apply(this, arguments);
-					if (override != null) {
-						if (isDeferred(override) === true) {
-							override.pipe(dfr);
+					if (fn != null) {
+						var override = fn.apply(this, arguments);
+						if (override != null) {
+							if (isDeferred(override) === true) {
+								override.pipe(dfr);
+								return;
+							}
+							
+							dfr[name](override)
 							return;
 						}
-						
-						dfr[name](override)
-						return;
 					}
 					dfr[name].apply(dfr, arguments);
 				};

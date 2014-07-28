@@ -57,12 +57,12 @@ include
 			}
 			
 			getBase()
-				.pipe(getFoo)
+				.pipe(assert.avoid('should fail'), getFoo)
 				.pipe(getFooBar, getFooBarError)
-				.fail(function(base_){
-					eq_(base_, 'base_barerror');
+				.done(function(base_){
+					eq_(base_, 'base_foobar');
 				})
-				.done(assert.avoid())
+				.fail(assert.avoid())
 				.always(done);
 		},
 		'pipe dfrs many': function(done){
