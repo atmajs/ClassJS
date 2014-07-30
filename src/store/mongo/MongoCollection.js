@@ -8,7 +8,7 @@ var MongoStoreCollection = (function(){
         var Constructor = collection._ctor,
             instance = new Constructor(json);
             
-        if (instance._id == null && fn_isFunction(instance.deserialize)) {
+        if (instance._id == null && is_Function(instance.deserialize)) {
             instance.deserialize(json);
         }
         

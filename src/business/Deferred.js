@@ -172,6 +172,45 @@ var Deferred;
 		fn.call(ctx, dfr.resolveDelegate(), dfr.rejectDelegate(), dfr);
 		return dfr;
 	};
+	/**
+	 * Create function wich gets deferred object with first argument.
+	 * Created function returns always that deferred object
+	 */
+	Deferred.create = function(fn){
+		return function(){
+			var args = _Array_slice.call(this),
+				dfr = new Deferred;
+			args.unshift(dfr);
+			
+			fn_apply(fn, this, args);
+			return dfr;
+		};
+	};
+	/**
+	 * Similar as `create` it will also cache the deferred object,
+	 *  sothat the target function is called once pro specific arguments
+	 *
+	 * var fn = Deferred.memoize((dfr, name) => dfr.resolve(name));
+	 * fn('foo');
+	 * fn('baz');
+	 * fn('foo');
+	 *  - is called only once for `foo`, and once for `baz`
+	 */
+	Deferred.memoize = function(fn){
+		var dfrs = {}, args_store = [];
+		return function(){
+			var args = _Array_slice.call(this),
+				id = fn_argsId(args_store, args);
+			if (dfrs[id] != null) 
+				return dfrs[id];
+			
+			var dfr = dfrs[id] = new Deferred;
+			args.unshift(dfr);
+			
+			fn_apply(fn, this, args);
+			return dfr;
+		};
+	};
 
 	// PRIVATE
 	
