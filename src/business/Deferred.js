@@ -1,8 +1,7 @@
 var Deferred;
 
 (function(){
-	Deferred = function(){}
-	
+	Deferred = function(){};
 	Deferred.prototype = {
 		_isAsync: true,
 			
@@ -161,6 +160,17 @@ var Deferred;
 			}
 			
 			return this;
+		},
+		pipeCallback: function(){
+			var self = this;
+			return function(error){
+				if (error != null) {
+					self.reject(error);
+					return;
+				}
+				var args = _Array_slice.call(arguments, 1);
+				fn_apply(self.resolve, self, args);
+			};
 		}
 	};
 	
@@ -178,7 +188,7 @@ var Deferred;
 	 */
 	Deferred.create = function(fn){
 		return function(){
-			var args = _Array_slice.call(this),
+			var args = _Array_slice.call(arguments),
 				dfr = new Deferred;
 			args.unshift(dfr);
 			
@@ -199,7 +209,7 @@ var Deferred;
 	Deferred.memoize = function(fn){
 		var dfrs = {}, args_store = [];
 		return function(){
-			var args = _Array_slice.call(this),
+			var args = _Array_slice.call(arguments),
 				id = fn_argsId(args_store, args);
 			if (dfrs[id] != null) 
 				return dfrs[id];
