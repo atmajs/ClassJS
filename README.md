@@ -1,6 +1,9 @@
 ClassJS
 -----
 [![Build Status](https://travis-ci.org/atmajs/ClassJS.png?branch=master)](https://travis-ci.org/atmajs/ClassJS)
+[![NPM version](https://badge.fury.io/js/atma-class.svg)](http://badge.fury.io/js/atma-class)
+[![Bower version](https://badge.fury.io/bo/atma-class.svg)](http://badge.fury.io/bo/atma-class)
+
 
 Business and Data Access layers for browsers or nodejs
 
@@ -551,16 +554,43 @@ Validation Model
 There are some classes you can start to use.
 
 #### Deferred
-_`Promise`/`Defer` implementation_
+`Promise`/`Defer` implementation
+
+Usage example
 ```javascript
+// 1) Create deferrable class
 var X = Class({
 	Base: Class.Deferred,
 	// ... class properties
 });
-var x = new X;
+var dfr = new X;
 
-// or simple deferred object
-var x = new Class.Deferred;
+// 2) Create simple deferrable object
+var dfr = new Class.Deferred;
+
+// 3) Create simple deferrable object with factory function
+var dfr = Class.Deferred.run(function(dfr){
+	// perform async operations
+});
+
+// 3) Create deferrable delegate
+var fn = Class.Deferred.create(function(dfr, foo){
+	// ...
+	dfr.resolve(foo);
+}));
+
+var dfr = fn('foo');
+
+// 4) Memoize deferrable delegate (with same arguments function is called only once)
+var fn = Class.Deferred.memoize(function(dfr, foo){
+	// ...
+	dfr.resolve(foo);
+}));
+
+var dfr1 = fn('foo');
+var dfr2 = fn('foo');
+dfr1 === dfr2; //> true
+
 
 Deferred __proto__ {
 	// callbacks are called once
@@ -582,11 +612,20 @@ Deferred __proto__ {
 		// @see Filter meta
 		= function(doneFilter, failFilter): new Deferred
 	
+	// create the delegate function, which will resolve or reject the deferred object when called,
+	// first argument
+	pipeCallback: function(): function
+		
 	// alias to .pipe(function, function)
-	then   : function(doneFilter, dailFilter):new Deferred
-}
+	then   : function(doneFilter, dailFilter):new Deferred,
+	
+	// check state
+	isResolved: function():Boolean,
+	isRejected: function():Boolean
+	isBusy    : function():Boolean
+};
 
-[done/fail]Filter : Function
+doneFilter/failFilter : Function
 	// modify or override
 	// `pipe` and `then` deferreds are resolved then with this modified values
 	= function(): Any
@@ -594,6 +633,13 @@ Deferred __proto__ {
 	// return another Deferred array to listen for
 	// `pipe` and `then` deferreds are bound to this deferred return value
 	= function(): Deferred
+	
+	
+Deferred __static__ {
+	create: function(fn:function):Function,
+	run: function(fn:function):Deferred,
+	memoize: function(fn:function):Deferred
+};
 ```
 
 #### EventEmitter
