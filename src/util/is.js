@@ -1,6 +1,7 @@
 var is_Function,
 	is_Object,
 	is_Array,
+	is_ArrayLike,
 	is_String,
 	is_notEmptyString,
 	is_rawObject,
@@ -18,6 +19,8 @@ var is_Function,
 			&& typeof x.length === 'number'
 			&& typeof x.slice === 'function';
 	};
+	is_ArrayLike = is_Array;
+	
 	is_String = function(x) {
 		return typeof x === 'string';
 	};

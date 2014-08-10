@@ -4,7 +4,7 @@ var obj_inherit,
 	obj_setProperty,
 	obj_defaults,
 	obj_extend,
-	
+	obj_extendDescriptors,
 	obj_validate
 	;
 
@@ -99,6 +99,39 @@ var obj_inherit,
 		}
 		return target;
 	};
+	
+	(function(){
+		var getDescr = Object.getOwnPropertyDescriptor,
+			define = Object.defineProperty;
+		
+		if (getDescr == null) {
+			obj_extendDescriptors = obj_extend;
+			return;
+		}
+		obj_extendDescriptors = function(target, source){
+			if (target == null) 
+				return {};
+			if (source == null) 
+				return source;
+			
+			var descr,
+				key;
+			for(key in source){
+				descr = getDescr(source, key);
+				if (descr == null) {
+					obj_extendDescriptors(target, source['__proto__']);
+					continue;
+				}
+				if (descr.value !== void 0) {
+					target[key] = descr.value;
+					continue;
+				}
+				define(target, key, descr);
+			}
+			return target;
+		};
+	}());
+	
 	
 	(function(){
 		

@@ -22,35 +22,27 @@ var class_inherit,
 		if (mix == null) 
 			return;
 		
-		if (is_Function(mix)) {
-			for (var key in mix) {
-				if (mix.hasOwnProperty(key) && _class[key] == null) {
-					_class[key] = mix[key];
-				}
-			}
-			return;
-		}
-		
-		if (Array.isArray(mix)) {
+		if (is_ArrayLike(mix)) {
 			var imax = mix.length,
 				i = -1;
-			
-			
 			while ( ++i < imax ) {
 				class_inheritStatics(_class, mix[i]);
 			}
 			return;
 		}
 		
-		if (mix.Static) {
-			mix = mix.Static;
-			for (var key in mix) {
-				if (mix.hasOwnProperty(key) && _class[key] == null) {
-					_class[key] = mix[key];
-				}
-			}
+		
+		var Static;
+		if (is_Function(mix)) 
+			Static = mix;
+		else if (is_Object(mix.Static)) 
+			Static = mix.Static;
+		
+		
+		if (Static == null)
 			return;
-		}
+		
+		obj_extendDescriptors(_class, Static);
 	};
 	
 	

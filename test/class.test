@@ -1,16 +1,14 @@
 UTest({
 
-	'inheritance': function() {
+	'inheritance' () {
 	  
 		function Animal() {
 			this.type = 'animal';
 			this.types = [1];
 		}
-
 		function Pet() {
 			this.home = true;
 		}
-
 		var Tiger = Class({
 			Base: Animal,
 			Construct: function(nick) {
@@ -48,41 +46,36 @@ UTest({
 		var tiger = new Tiger();
 		var angry = new AngryTiger('Zlostik');
 
-
-		eq(tiger instanceof Tiger, true, 'Error: Tiger not Tiger');
-		eq(tiger instanceof Animal, true, 'Error: Tiger not Animal');
-		eq(tiger instanceof Object, true, 'Error: Tiger not Object');
-
-		eq(tiger.type == 'animal', true, 'Error: Type not Animal');
-		eq(tiger.name == 'Tiger', true, 'Error: Tiger name is not Tiger!');
-
-
-		eq(angry instanceof Tiger, true, 'Error: Angry not Tiger');
-		eq(angry instanceof Animal, true, 'Error: Angry not Animal');
-		eq(tiger instanceof Object, true, 'Error: Angry not Object');
-
-		eq(angry.feature == 'angry', true, 'Error: Feature not angry');
-		eq(angry.name == 'Tiger', true, 'Error: AngryTiger"s name is not Tiger!');
-		eq(angry.region == 'Africa', true, 'Error: AngryTiger is not from Africa!');
+		is_(tiger, Tiger);
+		is_(tiger, Animal);
+		is_(tiger, Object);
+		
+		eq_(tiger.type, 'animal', 'Error: Type not Animal');
+		eq_(tiger.name, 'Tiger', 'Error: Tiger name is not Tiger!');
 
 
+		is_(angry, Tiger);
+		is_(angry, Animal);
+		is_(angry, Object);
+		
 
-		eq(angry.nick == 'Zlostik', true, 'Error: Nick not Zlostik');
-		eq(angry.getType != null, true, 'Error: getType is not Tiger');
+		eq_(angry.feature , 'angry',  'Error: Feature not angry');
+		eq_(angry.name , 'Tiger',  'Error: AngryTiger"s name is not Tiger!');
+		eq_(angry.region , 'Africa',  'Error: AngryTiger is not from Africa!');
+
+		eq_(angry.nick, 'Zlostik', 'Error: Nick not Zlostik');
+		is_(angry.getType, 'Function', 'Error: getType is not Tiger');
 
 
 
-		eq(tiger.constructor === Tiger, true, 'Error: Tigers constructor is not Tiger');
-
-		eq(angry.constructor === AngryTiger, true, 'Error: AngryTigers constructor is not AngryTiger');
+		eq_(tiger.constructor, Tiger, 'Error: Tigers constructor is not Tiger');
+		eq_(angry.constructor, AngryTiger, 'Error: AngryTigers constructor is not AngryTiger');
 
 
 		var A = Class({});
-
 		var B = Class({
 			Base: A
 		});
-
 		var C = Class({
 			Base: B,
 			toString: function() {}
@@ -91,13 +84,13 @@ UTest({
 		var a = new A();
 		var b = new B();
 		var c = new C();
-		eq(a.constructor === A, true, 'Error: A constructor is not A');
-		eq(b.constructor === B, true, 'Error: B constructor is not B');
-		eq(c.constructor === C, true, 'Error: C constructor is not C');
+		eq_(a.constructor , A,  'Error: A constructor is not A');
+		eq_(b.constructor , B,  'Error: B constructor is not B');
+		eq_(c.constructor , C,  'Error: C constructor is not C');
 
 	},
 
-	'static inheritance': function() {
+	'static inheritance' () {
 		  var foo = Class({
 			  Static: {
 				  foo: function(){},
@@ -128,5 +121,33 @@ UTest({
 		  is_(baz.foo, 'Function');
 		  is_(baz.bar, 'Function');
 		  is_(baz.baz, 'Function');
+	},
+	'!static getters' () {
+		var name = 'avoid';
+		var Foo = Class({
+			Static: {
+				get Name () {
+					return name;
+				}
+			}
+		});
+		var Baz = Class({
+			Base: Foo,
+			Static: {
+				get BazName () {
+					return 'baz' + name
+				}
+			}
+		});
+		
+		name = 'Foo';
+		eq_(Foo.Name, 'Foo');
+		eq_(Baz.Name, 'Foo');
+		eq_(Baz.BazName, 'bazFoo');
+		
+		name = 'Baz';
+		eq_(Foo.Name, 'Baz');
+		eq_(Baz.Name, 'Baz');
+		eq_(Baz.BazName, 'bazBaz');
 	}
 });

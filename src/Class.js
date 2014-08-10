@@ -73,9 +73,7 @@ var Class = function(mix) {
 		data.constructor = _class.prototype.constructor;
 
 		if (_static != null) {
-			for (key in _static) {
-				_class[key] = _static[key];
-			}
+			obj_extendDescriptors(_class, _static);
 		}
 
 		_class.prototype = data;
@@ -137,9 +135,7 @@ var Class = function(mix) {
 		class_register(namespace, _class);
 
 	if (_static != null) {
-		for (key in _static) {
-			_class[key] = _static[key];
-		}
+		obj_extendDescriptors(_class, _static);
 	}
 	
 	if (_base != null) 
@@ -148,11 +144,8 @@ var Class = function(mix) {
 	if (_extends != null) 
 		class_inheritStatics(_class, _extends);
 	
-
 	class_extendProtoObjects(data, _base, _extends);
-	//if (data.toJSON === void 0) 
-	//	data.toJSON = json_proto_toJSON;
-		
+	
 	class_inherit(_class, _base, _extends, data, _overrides, {
 		toJSON: json_proto_toJSON
 	});

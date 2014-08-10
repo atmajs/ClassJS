@@ -18,5 +18,18 @@
     "scripts": {
         "test": "atma test"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "atma-loader-traceur": ">0.0.0"
+    },
+    "atma": {
+        "plugins": [
+            "atma-loader-traceur"
+        ],
+        "settings": {
+            "atma-loader-traceur": {
+                "extensions": "test"
+            }
+        }
+    }
 }
