@@ -91,38 +91,52 @@ UTest({
 	},
 
 	'static inheritance' () {
-		  var foo = Class({
-			  Static: {
-				  foo: function(){},
-				  fooRgx: /foo/
-			  }
-		  });
-		  
-		  var bar = Class({
-			  Base: foo,
-			  Static: {
-				  bar: function(){},
-				  barRgx: /bar/
-			  }
-		  });
-		  
-		  var baz = Class({
-			  Extends: [foo, bar],
-			  Static: {
-				  baz: function(){}
-			  }
-		  });
-		  
-		  is_(bar.foo, 'Function');
-		  is_(bar.bar, 'Function');
-		  is_(bar.fooRgx, 'RegExp');
-		  is_(bar.barRgx, 'RegExp');
-		  
-		  is_(baz.foo, 'Function');
-		  is_(baz.bar, 'Function');
-		  is_(baz.baz, 'Function');
+		var foo = Class({
+			Static: {
+				foo: function(){},
+				fooRgx: /foo/,
+				get: function(){
+					return 'foo';
+				}
+			}
+		});
+		
+		var bar = Class({
+			Base: foo,
+			Static: {
+				bar: function(){},
+				barRgx: /bar/,
+				get: function(){
+					return 'bar';
+				}
+			}
+		});
+		
+		var baz = Class({
+			Extends: [foo, bar],
+			Static: {
+				baz: function(){},
+				get: function(){
+					return 'baz';
+				}
+			}
+		});
+		
+		is_(bar.foo, 'Function');
+		is_(bar.bar, 'Function');
+		is_(bar.fooRgx, 'RegExp');
+		is_(bar.barRgx, 'RegExp');
+		
+		is_(baz.foo, 'Function');
+		is_(baz.bar, 'Function');
+		is_(baz.baz, 'Function');
+		
+		eq_(foo.get(), 'foo');
+		eq_(bar.get(), 'bar');
+		eq_(baz.get(), 'baz');
+		
 	},
-	'!static getters' () {
+	'static getters' () {
 		var name = 'avoid';
 		var Foo = Class({
 			Static: {

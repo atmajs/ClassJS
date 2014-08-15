@@ -3,6 +3,7 @@ var is_Function,
 	is_Array,
 	is_ArrayLike,
 	is_String,
+	is_Date,
 	is_notEmptyString,
 	is_rawObject,
 	is_NullOrGlobal;
@@ -12,7 +13,13 @@ var is_Function,
 		return typeof x === 'function';
 	};
 	is_Object = function(x) {
-		return x != null &&  typeof x === 'object';
+		return x != null
+			&&  typeof x === 'object';
+	};
+	is_Date = function(x){
+		return x != null
+			&& x.constructor.name === 'Date'
+			&& x instanceof Date;
 	};
 	is_Array = function(x) {
 		return x != null
@@ -24,9 +31,12 @@ var is_Function,
 	is_String = function(x) {
 		return typeof x === 'string';
 	};
+	
 	is_notEmptyString = function(x) {
-		return typeof x === 'string' && x !== '';
+		return typeof x === 'string'
+			&& x !== '';
 	};
+	
 	is_rawObject = function(obj) {
 		if (obj == null) 
 			return false;

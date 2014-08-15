@@ -5,6 +5,7 @@ var obj_inherit,
 	obj_defaults,
 	obj_extend,
 	obj_extendDescriptors,
+	obj_extendDescriptorsDefaults,
 	obj_validate
 	;
 
@@ -106,9 +107,16 @@ var obj_inherit,
 		
 		if (getDescr == null) {
 			obj_extendDescriptors = obj_extend;
+			obj_extendDescriptorsDefaults = obj_defaults;
 			return;
 		}
 		obj_extendDescriptors = function(target, source){
+			return _extendDescriptors(target, source, false);
+		};
+		obj_extendDescriptorsDefaults = function(target, source){
+			return _extendDescriptors(target, source, true);
+		};
+		function _extendDescriptors (target, source, defaultsOnly) {
 			if (target == null) 
 				return {};
 			if (source == null) 
@@ -117,6 +125,9 @@ var obj_inherit,
 			var descr,
 				key;
 			for(key in source){
+				if (defaultsOnly === true && target[key] != null) 
+					continue;
+				
 				descr = getDescr(source, key);
 				if (descr == null) {
 					obj_extendDescriptors(target, source['__proto__']);

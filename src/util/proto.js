@@ -23,9 +23,8 @@ var class_inherit,
 			return;
 		
 		if (is_ArrayLike(mix)) {
-			var imax = mix.length,
-				i = -1;
-			while ( ++i < imax ) {
+			var i = mix.length;
+			while ( --i > -1 ) {
 				class_inheritStatics(_class, mix[i]);
 			}
 			return;
@@ -42,7 +41,7 @@ var class_inherit,
 		if (Static == null)
 			return;
 		
-		obj_extendDescriptors(_class, Static);
+		obj_extendDescriptorsDefaults(_class, Static);
 	};
 	
 	
