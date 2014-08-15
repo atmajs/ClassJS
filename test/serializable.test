@@ -17,23 +17,31 @@
 	UTest({
 		'serialize': function() {
 			
-			eq(JSON.stringify(new A()), '{"name":"A"}');
-			eq(JSON.stringify(new B()), '{"a":{"name":"A"}}');
+			eq_(JSON.stringify(new A()), '{"name":"A"}');
+			eq_(JSON.stringify(new B()), '{"a":{"name":"A"}}');
+			
+		},
+		
+		'toJSON should preserve datetime objects, though `toJSON` exists': function(){
+			var b = new B;
+			b.date = new Date;
+			
+			is_(b.toJSON().date, 'Date');
 		},
 		
 		'deserialize': function() {
 			
-			eq(Class.Serializable.deserialize({}, {name: 'raw'}).name, 'raw');
+			eq_(Class.Serializable.deserialize({}, {name: 'raw'}).name, 'raw');
 			
-			eq(Class.Serializable.deserialize(new A(), '{"name":"aX"}').name, 'aX');
-			eq((new A({name: 'aX'})).name, 'aX');
+			eq_(Class.Serializable.deserialize(new A(), '{"name":"aX"}').name, 'aX');
+			eq_((new A({name: 'aX'})).name, 'aX');
 			
 			
 			var b = Class.Serializable.deserialize(new B(), '{"a":{"name":"bX"}}');
 			
-			assert(b instanceof B);
-			assert(b.a instanceof A);
-			eq(b.a.name, 'bX');
+			is_(b, B);
+			is_(b.a, A);
+			eq_(b.a.name, 'bX');
 			
 		},
 		
@@ -64,7 +72,7 @@
 				roles: new RoleCollection
 			});
 			
-			eq(JSON.stringify(new Settings()), '{"roles":[]}');
+			eq_(JSON.stringify(new Settings()), '{"roles":[]}');
 			
 			var setts = new Settings('{ "roles":[{"name":"foo"}] }');
 			
@@ -75,7 +83,7 @@
 			
 			
 			setts.roles.push({name: "bar"});
-			eq(JSON.stringify(setts), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
+			eq_(JSON.stringify(setts), '{"roles":[{"name":"foo"},{"name":"bar"}]}')
 		},
 		
 		
@@ -92,14 +100,14 @@
 			var foo = new Foo({number: 5}),
 				str = Class.stringify(foo);
 			
-			eq(str, '{"json":{"number":5},"__$class__":"Foo"}');
+			eq_(str, '{"json":{"number":5},"__$class__":"Foo"}');
 			
 			foo = Class.parse(str);
 			
 			
-			eq(foo.number, 5)
-			eq(typeof foo.add, 'function');
-			eq(foo.add(5), 10);
+			eq_(foo.number, 5)
+			eq_(typeof foo.add, 'function');
+			eq_(foo.add(5), 10);
 			
 			
 			var Foos = Class.Collection('Foos', Foo, {
@@ -113,13 +121,13 @@
 			
 			
 			str = Class.stringify(foos);
-			eq(str, '{"json":[{"number":3}],"__$class__":"Foos"}');
+			eq_(str, '{"json":[{"number":3}],"__$class__":"Foos"}');
 			
 			foos = Class.parse(str);
 			
-			eq(foos.length, 1);
-			eq(foos[0].number, 3);
-			eq(foos[0].add(2), 5);
+			eq_(foos.length, 1);
+			eq_(foos[0].number, 3);
+			eq_(foos[0].add(2), 5);
 		},
 		
 		'serialization with meta': function(){

@@ -63,6 +63,9 @@ var json_key_SER = '__$serialization',
 					continue;
 				case 'object':
 					
+					if (is_Date(val)) 
+						break;
+					
 					var toJSON = val.toJSON;
 					if (toJSON == null) 
 						break;
