@@ -14,6 +14,7 @@ var class_inherit,
 	
 	
 	class_inherit = PROTO in Object.prototype
+		//? inherit_Object_create
 		? inherit
 		: inherit_protoLess
 		;
@@ -29,7 +30,6 @@ var class_inherit,
 			}
 			return;
 		}
-		
 		
 		var Static;
 		if (is_Function(mix)) 
@@ -84,6 +84,9 @@ var class_inherit,
 		
 		var key, val;
 		for (key in source) {
+			if (key === 'constructor') 
+				continue;
+			
 			val = source[key];
 			if (val != null) 
 				proto[key] = val;
@@ -104,7 +107,6 @@ var class_inherit,
 				return  fn_apply(super_, this, args);
 			}
 		} else{
-			
 			proxy = fn_doNothing;
 		}
 		
@@ -144,6 +146,29 @@ var class_inherit,
 		
 		
 		_class.prototype = prototype;
+	}
+	function inherit_Object_create(_class, _base, _extends, original, _overrides, defaults) {
+		
+		if (_base != null) {
+			_class.prototype = Object.create(_base.prototype);
+			obj_extendDescriptors(_class.prototype, original);
+		} else {
+			_class.prototype = Object.create(original);
+		}
+		
+		_class.prototype.constructor = _class;
+		
+		if (_extends != null) {
+			arr_each(_extends, function(x) {
+				obj_defaults(_class.prototype, x);
+			});
+		}
+		
+		var proto = _class.prototype;
+		obj_defaults(proto, defaults);
+		for (var key in _overrides) {
+			proto[key] = proto_override(proto[key], _overrides[key]);
+		}
 	}
 
 
