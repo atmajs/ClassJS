@@ -8,14 +8,11 @@
 		_exports
 		;
 
-    
 	_exports = root || _global;
     
-
     function construct(){
-
         return factory(_global, _exports);
-    };
+    }
 
     
     if (typeof define === 'function' && define.amd) {

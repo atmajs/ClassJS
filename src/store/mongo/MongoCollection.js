@@ -48,13 +48,13 @@ var MongoStoreCollection = (function(){
             if (insert.length && update.length) {
                 var listener = cb_createListener(2, onComplete);
                 
-                db_insert(coll, insert, this._insertedDelegate(this, listener, insertIndexes));
+                db_insertMany(coll, insert, this._insertedDelegate(this, listener, insertIndexes));
                 db_updateMany(coll, update, listener);
                 return this;
             }
             
             if (insert.length) {
-                db_insert(coll, insert, this._insertedDelegate(this, this._completed, insertIndexes));
+                db_insertMany(coll, insert, this._insertedDelegate(this, this._completed, insertIndexes));
                 return this;
             }
             
@@ -162,38 +162,34 @@ var MongoStoreCollection = (function(){
             this._completed(error);
         },
 		
-		_insertedDelegate: function(ctx, callback, indexes){
-			
+		_insertedDelegate: function(ctx, callback, indexes){			
 			/**
 			 *	@TODO make sure if mongodb returns an array of inserted documents
 			 *	in the same order as it was passed to insert method
-			 */
-			
-			function call() {
-				callback.call(ctx);
-			}
-			
-			return function(error, coll){
-				
-				if (is_Array(coll) === false) {
-					console.error('<mongo:bulk insert> array expected');
+			 */			
+			function call(error) {
+				callback.call(ctx, error);
+			}			
+			return function(error, result){
+				if (error == null) {
+					var coll = result.ops;
+					if (is_Array(coll) === false) {
+						console.error('<mongo:bulk insert> array expected');					
+						return call();
+					}
 					
-					return call();
-				}
-				
-				if (coll.length !== indexes.length) {
-					console.error('<mongo:bul insert> count missmatch', coll.length, indexes.length);
+					if (coll.length !== indexes.length) {
+						console.error('<mongo:bul insert> count missmatch', coll.length, indexes.length);
+						return call();
+					}
 					
-					return call();
+					for (var i = 0, index, imax = indexes.length; i < imax; i++){
+						index = indexes[i];
+						
+						ctx[index]._id = coll[i]._id;
+					}
 				}
-				
-				for (var i = 0, index, imax = indexes.length; i < imax; i++){
-					index = indexes[i];
-					
-					ctx[index]._id = coll[i]._id;
-				}
-				
-				call();
+				call(error);
 			};
 		}
     });    

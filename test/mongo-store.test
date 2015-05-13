@@ -79,7 +79,10 @@ include
                 user
                     .save()
                     .fail(assert.avoid())
-                    .done(done)
+                    .done(user => {
+                        is_(user._id, 'Object');
+                        done();
+                    })
                     ;
                     
             },
@@ -112,7 +115,7 @@ include
                 User
                     .fetch({ timestamp: '>' + (timestamp - 20) })
                     .done(function(x){
-                        assert(x._id != null);
+                        is_(x._id, 'Object');
                         eq_(x.username, 'foo');
                         
                         done();
@@ -123,6 +126,7 @@ include
                 User
                     .fetch({ timestamp: '>=' + timestamp })
                     .done(function(x){
+                        is_(x._id, 'Object');
                         eq_(x.username, 'foo');
                         done();
                     })
@@ -169,7 +173,7 @@ include
                     });
             },
             
-            'write-collection': function(done){
+            'write-collection' () {
                 var count = 300,
                     users = new Users();
                 
@@ -178,18 +182,17 @@ include
                         username: 'foo',
                         timestamp: count
                     });
-                }
-                
-                users
+                }                
+                return users
                     .save()
-                    .done(function(){
-                        Users
-                            .fetch({timestamp: '>=150'})
-                            .done(function(users){
-                                eq_(users.length, 150);
-                                done();
-                            });
-                    })
+                    .fail(assert.avoid())
+                    .pipe(() => Users
+                        .fetch({timestamp: '>=150'})
+                        .done(users => {
+                            eq_(users.length, 150);
+                            is_(users[0]._id, 'Object');
+                        })
+                    );
             },
             
             'indexes': function(done){
@@ -258,9 +261,9 @@ include
                                     $inc: {
                                         timestamp: 3
                                     }
-                                }, function(error, count){
+                                }, function(error, x){
                                     eq_(error, null);
-                                    eq_(count, 1);
+                                    eq_(x.result.ok, 1);
                                     done();
                                 })
                             })

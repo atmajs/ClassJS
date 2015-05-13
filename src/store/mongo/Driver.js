@@ -5,6 +5,8 @@ var db_getDb,
     db_findMany,
     db_count,
     db_insert,
+    db_insertSingle,
+    db_insertMany,
     db_updateSingle,
     db_updateMany,
     db_remove,
@@ -94,6 +96,20 @@ var db_getDb,
         db
             .collection(coll)
             .insert(data, { safe: true }, callback);
+    };
+    db_insertSingle = function(coll, data, callback){
+        if (db == null)
+            return connect(createDbDelegate(db_insertSingle, coll, data, callback));
+        db
+            .collection(coll)
+            .insertOne(data, { safe: true }, callback);
+    };
+    db_insertMany = function(coll, data, callback){
+        if (db == null)
+            return connect(createDbDelegate(db_insertMany, coll, data, callback));
+        db
+            .collection(coll)
+            .insertMany(data, { safe: true }, callback);
     };
     
     db_updateSingle = function(coll, data, callback){

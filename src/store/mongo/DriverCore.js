@@ -20,9 +20,9 @@ var core_findSingle,
 	
 	core_findSingle = function(coll, query, options, callback /*<error, item>*/){
 		var c = db.collection(coll);
-		if (options == null) 
+		if (options == null) {
 			return c.findOne(query, callback);
-		
+		}
 		c.findOne(query, options, callback);
 	};
 	
@@ -34,9 +34,9 @@ var core_findSingle,
 		c.find(query, options, onQuery);
 			
 		function onQuery(error, cursor){
-			if (error) 
+			if (error) {
 				return callback(error);
-			
+			}
 			cursor.toArray(callback);
 		}
 	};

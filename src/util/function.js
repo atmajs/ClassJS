@@ -42,7 +42,7 @@ var fn_proxy,
 					_arguments[3],
 					_arguments[4]
 					);
-		};
+		}
 		return fn.apply(ctx, _arguments);
 	};
 	

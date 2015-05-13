@@ -22,7 +22,7 @@ var MongoStoreSingle = (function() {
 			
 			var json = this.serialize(),
 				fn = json._id == null
-					? db_insert
+					? db_insertSingle
 					: db_updateSingle
 					;
 			
@@ -33,12 +33,14 @@ var MongoStoreSingle = (function() {
 			if (this._ensureFree() === false)
 				return this;
 			
-			if (this._id) 
+			if (this._id) {
 				db_remove(this._coll, {
 					_id: this._id
 				}, true, fn_proxy(this._completed, this));
-			else
+			}
+			else {
 				this._completed('<class:patch> `_id` is not defined');
+			}
 			
 			return this;
 		},
@@ -134,16 +136,18 @@ var MongoStoreSingle = (function() {
 			this._completed(error);
 		},
 		
-		_inserted: function(error, array){
-			
-			if (array != null && this._id == null) {
-				
-				if (is_Array(array) && array.length === 1) 
-					this._id = array[0]._id
-				else 
-					console.error('<mongo:insert-single> expected an array in callback');
+		_inserted: function(error, result){
+			if (error == null) {
+				var array = result.ops;
+				if (array != null && this._id == null) {
+					if (is_Array(array) && array.length === 1) {
+						this._id = array[0]._id
+					}
+					else {
+						console.error('<mongo:insert-single> expected an array in callback');
+					}
+				}
 			}
-			
 			this._completed(error);
 		}
 	});

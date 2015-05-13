@@ -14,7 +14,6 @@ var class_inherit,
 	
 	
 	class_inherit = PROTO in Object.prototype
-		//? inherit_Object_create
 		? inherit
 		: inherit_protoLess
 		;
@@ -61,17 +60,27 @@ var class_inherit,
 			}
 			
 			if (_extends != null) {
-				arr_each(_extends, function(x){
-					x = proto_getProto(x);
-					
-					if (is_rawObject(x[key])) 
-						obj_defaults(protoValue, x[key]);
-				});
+				arr_each(
+					_extends,
+					proto_extendDefaultsDelegate(protoValue, key)
+				);
 			}
 		}
 	}
 	
+	
 	// PRIVATE
+	
+	function proto_extendDefaultsDelegate(target, key) {
+		return function(source){
+			var proto = proto_getProto(source),
+				val = proto[key];
+			if (is_rawObject(val)) {
+				obj_defaults(target, val);
+			}
+		}
+	}
+	
 	function proto_extend(proto, source) {
 		if (source == null) 
 			return;

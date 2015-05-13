@@ -54,9 +54,11 @@ var ArrayProto = (function(){
 					}
 				}
 				
-				// eqeq to match by type diffs.
-				if (value != matcher) 
+				/*jshint eqeqeq: false*/
+				if (value != matcher) { 
 					return false;
+				}
+				/*jshint eqeqeq: true*/
 				
 			}
 			return true;

@@ -140,7 +140,7 @@ var obj_inherit,
 				define(target, key, descr);
 			}
 			return target;
-		};
+		}
 	}());
 	
 	

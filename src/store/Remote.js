@@ -161,10 +161,9 @@ Class.Remote = (function(){
 		};
 	}
 	
-	function Remote(route){
-		
+	function Remote(route){	
 		return new XHRRemote(route);
-	};
+	}
 	
 	Remote.onBefore = storageEvents_onBefore;
 	Remote.onAfter = storageEvents_onAfter;
