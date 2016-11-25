@@ -5,13 +5,21 @@ var fn_memoize,
 	fn_memoize = function(fn) {
 		var _cache = {},
 			_args = [];
-		return function() {
+
+		var Wrapper = function() {
 			var id = fn_argsId(arguments, _args);
-			
 			return _cache[id] == null
 				? (_cache[id] = fn_apply(fn, this, arguments))
 				: _cache[id];
 		};
+		Wrapper.clearArgs = function () {
+			var id = fn_argsId(arguments, _args);
+			_cache[id] = null;
+		};
+		Wrapper.clearAll = function () {
+			_cache = {};
+		};
+		return Wrapper;
 	};
 	
 	fn_memoizeAsync = function(fn) {
