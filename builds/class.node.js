@@ -30,6 +30,7 @@
 	
 
 	// import /src/Class.Static.js
+	// import /src/Class.deco.js
 	
 	// import /src/collection/Collection.js
 	

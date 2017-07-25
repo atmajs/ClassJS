@@ -1,0 +1,5 @@
+{
+    "name": "atma-class",
+    "main": "./types/global.d.ts",
+    "global": true
+}

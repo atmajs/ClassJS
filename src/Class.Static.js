@@ -36,6 +36,11 @@ Class.cfg = function(mix, value){
 		}
 	}
 };
+Class.mixin = function () {
+	return Class({
+		Extends: _Array_slice.call(arguments)
+	});
+}
 
 
 
