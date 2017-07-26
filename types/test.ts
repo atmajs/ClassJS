@@ -32,3 +32,4 @@ export class FooClass extends Mix {
 
 
 let f = new FooClass('1');
+f.

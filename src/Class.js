@@ -28,8 +28,10 @@ var Class = function(mix) {
 		
 		key;
 
-	if (_base != null) 
+	if (_base != null) {
+		_base = ensureCallableSingle(_base);
 		delete data.Base;
+	}
 	
 	if (_extends != null) 
 		delete data.Extends;
@@ -44,8 +46,7 @@ var Class = function(mix) {
 		delete data.Construct;
 	
 	
-	if (_store != null) {
-		
+	if (_store != null) {		
 		if (_extends == null) {
 			_extends = _store;
 		} else if (is_Array(_extends)) {
@@ -55,6 +56,10 @@ var Class = function(mix) {
 		}
 		
 		delete data.Store;
+	}
+	if (_extends != null) {
+		var wrap = is_Array(_extends) ? ensureCallable : ensureCallableSingle;
+		_extends = wrap(_extends);
 	}
 	
 	if (_overrides != null) 
@@ -154,3 +159,43 @@ var Class = function(mix) {
 	_static = null;
 	return _class;
 };
+
+var ensureCallableSingle, 
+	ensureCallable;
+(function () {
+	ensureCallable = function (arr) {
+		var out = [],
+			i = arr.length;
+		while(--i > -1) out[i] = ensureCallableSingle(arr[i]);
+		return out;
+	};
+	ensureCallableSingle = function (mix) {
+		if (is_Function(mix) === false) {
+			return mix;
+		}
+		var fn = mix;
+		var caller = directCaller;
+		var safe = false;
+		return function (self, args) {
+			if (safe === true) {
+				caller(fn, self, args);
+				return;
+			}
+			try {
+				caller(fn, self, args);
+				safe = true;					
+			} catch (error) {
+				caller = newCaller;
+				safe = true;
+				caller(fn, self, args);					
+			}
+		}
+	};
+	function directCaller (fn, self, args) {
+		return fn.apply(self, args);
+	}
+	function newCaller (fn, self, args) {
+		var x = new (fn.bind.apply(fn, [null].concat(args)));
+		obj_extend(self, x);
+	}
+}());

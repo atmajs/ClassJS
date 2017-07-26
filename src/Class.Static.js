@@ -36,9 +36,10 @@ Class.cfg = function(mix, value){
 		}
 	}
 };
-Class.mixin = function () {
+Class.mixin = function (base /**, ...mixins */) {
 	return Class({
-		Extends: _Array_slice.call(arguments)
+		Base: base,
+		Extends: _Array_slice.call(arguments, 1)
 	});
 }
 
