@@ -18,7 +18,9 @@ var Class = function(mix) {
 	
 	
 	var _base = data.Base,
+		_baseCallable = null,
 		_extends = data.Extends,
+		_extendsCallable = null,
 		_static = data.Static,
 		_construct = data.Construct,
 		_class = null,
@@ -29,7 +31,7 @@ var Class = function(mix) {
 		key;
 
 	if (_base != null) {
-		_base = ensureCallableSingle(_base);
+		_baseCallable = ensureCallableSingle(_base);
 		delete data.Base;
 	}
 	
@@ -42,8 +44,9 @@ var Class = function(mix) {
 	if (_self != null) 
 		delete data.Self;
 	
-	if (_construct != null) 
+	if (_construct != null) {
 		delete data.Construct;
+	}
 	
 	
 	if (_store != null) {		
@@ -59,7 +62,7 @@ var Class = function(mix) {
 	}
 	if (_extends != null) {
 		var wrap = is_Array(_extends) ? ensureCallable : ensureCallableSingle;
-		_extends = wrap(_extends);
+		_extendsCallable = wrap(_extends);
 	}
 	
 	if (_overrides != null) 
@@ -96,16 +99,15 @@ var Class = function(mix) {
 		////	return new (_class.bind.apply(_class, [null].concat(_Array_slice.call(arguments))));
 		
 	
-		if (_extends != null) {
-			var isarray = _extends instanceof Array,
-				
-				imax = isarray ? _extends.length : 1,
+		if (_extendsCallable != null) {
+			var isarray = _extendsCallable instanceof Array,				
+				imax = isarray ? _extendsCallable.length : 1,
 				i = 0,
 				x = null;
 			for (; i < imax; i++) {
 				x = isarray
-					? _extends[i]
-					: _extends
+					? _extendsCallable[i]
+					: _extendsCallable
 					;
 				if (typeof x === 'function') {
 					fn_apply(x, this, arguments);
@@ -114,7 +116,7 @@ var Class = function(mix) {
 		}
 
 		if (_base != null) {
-			fn_apply(_base, this, arguments);
+			fn_apply(_baseCallable, this, arguments);
 		}
 		
 		if (_self != null && is_NullOrGlobal(this) === false) {
@@ -172,24 +174,31 @@ var ensureCallableSingle,
 	ensureCallableSingle = function (mix) {
 		if (is_Function(mix) === false) {
 			return mix;
-		}
+		}		
 		var fn = mix;
 		var caller = directCaller;
 		var safe = false;
-		return function (self, args) {
+		var wrapped = function () {
+			var self = this;
+			var args = _Array_slice.call(arguments);
+			var x;
 			if (safe === true) {
 				caller(fn, self, args);
 				return;
 			}
 			try {
-				caller(fn, self, args);
+				x = caller(fn, self, args);
 				safe = true;					
 			} catch (error) {
 				caller = newCaller;
 				safe = true;
 				caller(fn, self, args);					
 			}
-		}
+			if (x != null) {
+				return x;
+			}
+		};		
+		return wrapped;
 	};
 	function directCaller (fn, self, args) {
 		return fn.apply(self, args);

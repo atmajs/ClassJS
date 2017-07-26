@@ -63,7 +63,7 @@ declare namespace Class {
     ): new (...args) => T1 & T2 & T3 & T4
 
     export namespace deco {
-        export function proto(proto: TAny): (Ctor: Function) => void
+        export function proto(proto: { [key: string]: any }): (Ctor: Function) => void
         export let memoize: IMethodDecorator
         export let self: IMethodDecorator
 

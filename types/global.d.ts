@@ -1,10 +1,7 @@
 declare module "atma-class" {
     export = Class;
 }
-
-declare function Class (prototype: IClassDeclaration & TAny)
-    : new (...args: any[]) => TAny;
-declare function Class<T>(prototype: IClassDeclaration & T)
+declare function Class<T>(prototype:  T & IClassDeclaration)
     : new (...args: any[]) => T;
 
 declare namespace Class {
@@ -50,9 +47,10 @@ declare namespace Class {
     export function Collection<T, TColl>(type: new (...args) => T, prototype: IClassDeclaration & TColl): new (...args: any[]) => Array<T> & TColl;
 
     export function validate(instance: object, validationModel?: object, isStrict?: boolean): void | Error
-    export function properties(Ctor: Function): string[]
-
-
+    export function properties(Ctor: Function | Object): string[]
+    export function stringify(instance: Object): string
+    export function parse<T>(json: string): T
+    
     export namespace Fn {
         export function memoize <T> (fn: T): T & {
             clearArgs: (...args: any[]) => void
@@ -68,17 +66,74 @@ declare namespace Class {
     ): new (...args) => T1 & T2 & T3 & T4
 
     export namespace deco {
-        export function proto(proto: TAny): (Ctor: Function) => void
+        export function proto(proto: { [key: string]: any }): (Ctor: Function) => void
         export let memoize: IMethodDecorator
+        export let self: IMethodDecorator
 
         export interface IMethodDecorator {
             (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>): any
         }
     }
-}
 
-declare interface TAny {
-    [x: string]: any
+    export namespace Store {
+        export interface IStoreConstructor {
+            new (...args): IStore
+        }
+        export interface IStore extends Deferred {
+            fetch(query: {[key: string]: any}, opts?: {[key: string]: any}): this
+            save(query: {[key: string]: any}, opts?: {[key: string]: any}): this
+            patch(query: {[key: string]: any}, opts?: {[key: string]: any}): this
+            del(): this
+        }
+        export function Remote(path: string): IStore
+        export function LocalStore(path: string): IStore        
+    }
+    export namespace MongoStore {
+        
+        export function Single(collName: string | StoreOpts): Store.IStore
+        export function Collection(collName: string): Store.IStore
+        export function settings(opts: {
+            db?: string
+            ip?: string
+            port?: string | number
+            connection?: string
+            params?: {
+                auto_reconnect?: boolean
+                native_parser?: boolean
+                w: number
+                [key: string]: any
+            }
+        }): void
+        export function resolveDb(): Deferred
+        export function resolveCollection(Store: Store.IStoreConstructor): Deferred
+        export function ensureIndexesAll(): Deferred
+        export function ensureIndexes(Store: Store.IStoreConstructor): Deferred
+        export interface StoreOpts {
+            collection: string
+            indexes?: { [key: string]: number} | ({ [key: string]: number})[]
+        }
+
+        export namespace profiler {
+            export function toggle(state: boolean)
+            /** Gets all slow queries seen so far */
+            export function getData(): QueryInfo[]
+
+            export interface ProfilerOptions {
+                slowLimit: number
+                onDetect: (info: QueryInfo) => void
+                detector?: (mongoDbPlanObject: any) => boolean
+            }
+            export interface QueryInfo {
+                coll: string,
+                query: string,
+                params?: {
+                    reason: string
+                }
+                /* MongoDB Plan */
+                plan?: any
+            }
+        }
+    }
 }
 
 declare interface IClassDeclaration {
@@ -88,5 +143,10 @@ declare interface IClassDeclaration {
     Construct?: (...args: any[]) => any | void
     Base?: any
     Extends?: any | any[]
-    Validation?: any
+    Validate?: any
+    Self?: {
+        [key: string]: Function
+    }
+    Store?: Class.Store.IStore[]
+    [x: string]: any
 }
