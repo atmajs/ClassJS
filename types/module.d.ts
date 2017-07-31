@@ -131,21 +131,21 @@ declare namespace Class {
             }
         }
     }
+
+    export interface IClassDeclaration {
+        Static?: {
+            [x: string]: any    
+        }
+        Construct?: (...args: any[]) => any | void
+        Base?: any
+        Extends?: any | any[]
+        Validate?: any
+        Self?: {
+            [key: string]: Function
+        }
+        Store?: Class.Store.IStore[]
+        [x: string]: any
+    }
 }
 
-export declare interface IClassDeclaration {
-    Static?: {
-        [x: string]: any    
-    }
-    Construct?: (...args: any[]) => any | void
-    Base?: any
-    Extends?: any | any[]
-    Validate?: any
-    Self?: {
-        [key: string]: Function
-    }
-    Store?: Class.Store.IStore[]
-    [x: string]: any
-}
-
-export default Class;
+export = Class;
