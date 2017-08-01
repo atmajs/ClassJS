@@ -1,7 +1,7 @@
 declare module "atma-class" {
     export = Class;
 }
-declare function Class<T>(prototype:  T & IClassDeclaration)
+declare function Class<T>(prototype:  T & Class.IClassDeclaration)
     : new (...args: any[]) => T;
 
 declare namespace Class {
@@ -42,6 +42,10 @@ declare namespace Class {
 
     export class Await extends Deferred {
         constructor(...arr: (DeferredLike | any)[])
+
+        delegate (name: string, errorable?: boolean): (...args) => any
+        deferred (name: string): Deferred
+        static TIMEOUT: number
     }
 
     export function Collection<T, TColl>(type: new (...args) => T, prototype: IClassDeclaration & TColl): new (...args: any[]) => Array<T> & TColl;
@@ -69,6 +73,8 @@ declare namespace Class {
         export function proto(proto: { [key: string]: any }): (Ctor: Function) => void
         export let memoize: IMethodDecorator
         export let self: IMethodDecorator
+        export function debounce(ms?: number): IMethodDecorator
+        export function throttle(timeWindowMs: number, shouldCallLater?: boolean): IMethodDecorator
 
         export interface IMethodDecorator {
             (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>): any
@@ -134,19 +140,19 @@ declare namespace Class {
             }
         }
     }
-}
 
-declare interface IClassDeclaration {
-    Static?: {
-        [x: string]: any    
+    export interface IClassDeclaration {
+        Static?: {
+            [x: string]: any    
+        }
+        Construct?: (...args: any[]) => any | void
+        Base?: any
+        Extends?: any | any[]
+        Validate?: any
+        Self?: {
+            [key: string]: Function
+        }
+        Store?: Class.Store.IStore[]
+        [x: string]: any
     }
-    Construct?: (...args: any[]) => any | void
-    Base?: any
-    Extends?: any | any[]
-    Validate?: any
-    Self?: {
-        [key: string]: Function
-    }
-    Store?: Class.Store.IStore[]
-    [x: string]: any
 }
