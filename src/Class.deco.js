@@ -5,11 +5,17 @@ Class.deco = {
         };
     },
     memoize: function(target, propertyKey, descriptor){
+         if (descriptor == null) {
+            descriptor = {
+                configurable: true,
+                value: target[propertyKey]
+            };
+        }
         descriptor.value = Class.Fn.memoize(descriptor.value);
         return descriptor;
     },
-    self: function(target, propertyKey, descriptor) {        
-        var fn = descriptor.value        
+    self: function(target, propertyKey, descriptor) {
+        var fn = descriptor == null ? target[propertyKey] : descriptor.value;
         return {
             configurable: true,
             get: function () {
@@ -22,6 +28,12 @@ Class.deco = {
     },
     debounce: function(timeout) {
         return function(target, propertyKey, descriptor) {
+            if (descriptor == null) {
+                descriptor = {
+                    configurable: true,
+                    value: target[propertyKey]
+                };
+            }
             var fn = descriptor.value;
             if (timeout == null || timeout === 0) {
                 var frame = 0;
