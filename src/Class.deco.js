@@ -5,30 +5,43 @@ Class.deco = {
         };
     },
     memoize: function(target, propertyKey, descriptor){
-         if (descriptor == null) {
-            descriptor = {
-                configurable: true,
-                value: target[propertyKey]
-            };
+        var viaProperty = descriptor == null;
+        var fn = Class.Fn.memoize(viaProperty ? target[propertyKey] : descriptor.value);
+        if (viaProperty) {
+            target[propertyKey] = fn;
+            return;
         }
-        descriptor.value = Class.Fn.memoize(descriptor.value);
+        descriptor.value = fn;
         return descriptor;
     },
     self: function(target, propertyKey, descriptor) {
-        var fn = descriptor == null ? target[propertyKey] : descriptor.value;
-        return {
+        var viaProperty = descriptor == null;
+        var fn = viaProperty ? target[propertyKey] : descriptor.value;
+        var result = {
             configurable: true,
             get: function () {
-                return this[propertyKey] = fn.bind(this);
+                var result = {
+                    writable: true,
+                    configurable: true,
+                    value: fn.bind(this)
+                };
+                Object.defineProperty(this, propertyKey, result);
+                return result.value;
             },
             set: function (value) {
                 fn = value;
             }
         };
+        if (viaProperty) {
+            Object.defineProperty(target, propertyKey, result);
+            return;
+        }
+        return result;            
     },
     debounce: function(timeout) {
         return function(target, propertyKey, descriptor) {
-            if (descriptor == null) {
+            var viaProperty = descriptor == null;
+            if (viaProperty) {
                 descriptor = {
                     configurable: true,
                     value: target[propertyKey]
@@ -58,17 +71,22 @@ Class.deco = {
                         fn.apply(self, args);
                     }, timeout);
                 };
-            }            
+            }
+            if (viaProperty) {
+                target[propertyKey] = descriptor.value;
+                return;
+            }
             return descriptor;
         };
     },
     throttle: function (timeWindow, shouldCallLater) {
         return function(target, propertyKey, descriptor) {
-            var fn = descriptor.value;
+            var viaProperty = descriptor == null;
+            var fn = viaProperty ? target[propertyKey] : descriptor.value;
             var timer = 0;
             var latestArgs = null;
             var latestCall = 0;
-		    descriptor.value = function () {
+		    var resultFn = function () {
                 var args = _Array_slice.call(arguments);
                 var self = this;
                 var now = Date.now();
@@ -89,6 +107,11 @@ Class.deco = {
                     }, diff >= timeWindow ? timeWindow : timeWindow - diff);
                 }
             };
+            if (viaProperty) {
+                target[propertyKey] = resultFn;
+                return;
+            }
+            descriptor.value = resultFn;
             return descriptor;
         }
     }
