@@ -22,7 +22,7 @@
 	// Browser OR Node
     construct();
 	
-	if (typeof module !== 'undefined') 
+	if (typeof module !== 'undefined' && module.exports != null) 
 		module.exports = _exports.Class;
 	
 }(this, function(global, exports){
