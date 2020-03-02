@@ -37,5 +37,5 @@
 	// import /src/fn/fn.js
 	
 	exports.Class = Class;
-	
+	return Class;
 }));

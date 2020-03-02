@@ -15,10 +15,6 @@ module.exports = {
 		files: 'builds/**',
 		output: 'lib/'
 	},
-	'jshint': {
-		files: ['lib/class.js'],
-		jshint: JSHint()
-	},
 	'uglify': {
 		files: 'lib/class.js'
 	},
@@ -30,9 +26,7 @@ module.exports = {
 	
 	'defaults': [
 		'add-handlers',
-		'import',
-		'jshint',
-		'uglify'
+		'import'
 	]
 };
 
