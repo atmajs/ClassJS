@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "atma": ">0.9.30",
-        "mongodb": "~2.0.0",
+        "mongodb": "~3.1.13",
         "atma-loader-traceur": ">0.0.0"
     },
     "scripts": {
